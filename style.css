@@ -6,24 +6,24 @@
     text-decoration: none;
     list-style: none;
 }
-:root{
-    --white: #fff;
-    --black: #000;
-    --black2: rgba(0,0,0,0.8);
-    --blueviolet: #8A2BE2;
-    --blueviolet2: rgba(0,0,0,0.6);
-    --yellow: #ffcc00;
-    -roll: #8A2BE2;
+:root {
+    --lightColor: #fff;
+    --darkColor: #000;
+    --colorHeader: rgba(0, 0, 0, 0.8);
+    --navbarColor: #2b4ce2;
+    --mainColor: #2b4ce2;
+    --secondColor: rgba(0, 0, 0, 0.6);
 }
-[data-theme="dark"]{
-    --white: #000;
-    --black: #d3d3d3;
-    --black2: #fff;
-    --yellow: #8A2BE2;
-    --blueviolet2: #ffff56;
-    --blueviolet: #ffcc00;
-    -roll: white;
+/*#e8c023*/
+[data-theme="dark"] {
+    --lightColor: #000;
+    --darkColor: #d3d3d3;
+    --colorHeader: rgba(176, 174, 174, 0.755);
+    --navbarColor: #fff701;
+    --mainColor: #deb925;
+    --secondColor: rgba(0, 0, 0, 0.6);
 }
+
 
 header{
     position: fixed;
@@ -31,7 +31,7 @@ header{
     left: 0;
     width: 100%;
     padding: 20px 12px;
-    background-color: var(--black2);
+    background-color: var(--colorHeader);
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: space-between;
@@ -47,22 +47,26 @@ header{
 .logo{
     margin-left: 10px;
     font-size: 25px;
-    color: var(--white);
+    color: var(--lightColor);
     font-weight: 600;
     transition: 0.3 ease;
 }
 .logo:hover{
-    color: var(--blueviolet);
-    text-shadow: 0 0 25px var(--blueviolet),
-                          var(--blueviolet);
+    color: var(--navbarColor);
+    text-shadow: 0 0 25px var(--mainColor),
+                          var(--mainColor);
     transform: scale(1.1);
 }
+
+.span-logo{
+    color: var(--navbarColor);
+}
 span{
-    color: var(--blueviolet);
+    color: var(--mainColor);
 }
 .navbar a{
     font-size: 18px;
-    color: var(--white);
+    color: var(--lightColor);
     font-weight: 500;
     margin: 0 20px;
     border-bottom: 3px solid transparent;
@@ -70,13 +74,13 @@ span{
 }
 
 .navbar a:hover, .navbar a:active{
-    color: var(--blueviolet);
-    border-bottom: 3px solid var(--blueviolet);
+    color: var(--navbarColor);
+    border-bottom: 3px solid var(--navbarColor);
 }
 .contact{
     padding: 10px 28px;
-    background-color: var(--white);
-    color: var(--black);
+    background-color: var(--lightColor);
+    color: var(--darkColor);
     border: 2px solid transparent;
     border-radius: 8px;
     font-size: 16px;
@@ -85,9 +89,9 @@ span{
     transition: 0.3 ease;
 }
 .contact:hover{
-    background-color: var(--blueviolet);
-    box-shadow: 0 0 25px var(--blueviolet);
-    color: var(--white);
+    background-color: var(--mainColor);
+    box-shadow: 0 0 25px var(--mainColor);
+    color: var(--lightColor);
 }
 .home{
     width: 100%;
@@ -119,8 +123,8 @@ span{
 }
 .btn-1{
     padding: 15px 28px;
-    background-color: var(--black);
-    color: var(--white);
+    background-color: var(--darkColor);
+    color: var(--lightColor);
     border: 2px solid transparent;
     border-radius: 8px;
     font-size: 18px;
@@ -130,15 +134,15 @@ span{
     cursor: pointer;
 }
 .btn-1:hover{
-    background-color: var(--white);
-    color: var(--black);
-    border: 2px solid var(--black);
+    background-color: var(--lightColor);
+    color: var(--darkColor);
+    border: 2px solid var(--darkColor);
 }
 .btn-2{
     padding: 15px 28px;
-    background-color: var(--blueviolet);
-    color: var(--white);
-    border: 1px solid var(--black);
+    background-color: var(--mainColor);
+    color: var(--lightColor);
+    border: 1px solid var(--darkColor);
     border-radius: 8px;
     font-size: 18px;
     letter-spacing: 1px;
@@ -147,8 +151,8 @@ span{
     cursor: pointer;
 }
 .btn-2:hover{
-    background-color: var(--white);
-    color: var(--blueviolet)
+    background-color: var(--lightColor);
+    color: var(--mainColor)
 }
 .img-box img{
     border-radius: 50%;
@@ -158,10 +162,10 @@ span{
     width: 15px;
 }
 ::-webkit-scrollbar-thumb{
-    background-color: var(--blueviolet);
+    background-color: var(--mainColor);
 }
 ::-webkit-scrollbar-track{
-    background-color: var(--blueviolet2);
+    background-color: var(--secondColor);
     width: 50px;
 }
 .about{
@@ -170,26 +174,26 @@ span{
     align-items: center;
     padding: 12% 8%;
     gap: 10em;
-    background: var(--black);
+    background: var(--darkColor);
 }
 .about-img img{
     position: relative;
     width: 550px;
-    box-shadow: 0 0 25px var(--blueviolet),
-                0 0 50px var(--blueviolet);
+    box-shadow: 0 0 25px var(--mainColor),
+                0 0 50px var(--mainColor);
     border-radius: 50%;
 }
 .about-content h2{
     text-align: left;
-    color: var(--white);
+    color: var(--lightColor);
     font-size: 42px;
 }
 .about-content h3{
-    color: var(--white);
+    color: var(--lightColor);
     font-size: 62px;
 }
 .about-content p{
-    color: var(--white);
+    color: var(--lightColor);
     font-size: 20px;
     margin: 2em 0 3em;
 }
@@ -231,7 +235,7 @@ span{
     margin-bottom: 1em;
 }
 .projects{
-    background-color: var(--blueviolet);
+    background-color: var(--mainColor);
     padding-top: 2rem;
 }
 .projects h1{
@@ -253,8 +257,8 @@ span{
   }
   
 .project{
-    box-shadow: 0 0 8px var(--white),
-                0 0 8px var(--white);
+    box-shadow: 0 0 8px var(--lightColor),
+                0 0 8px var(--lightColor);
     margin: 10px;
 }
 .project img {
@@ -264,8 +268,8 @@ span{
 .project a {
     display: block; 
     text-align: center; 
-    background-color: var(--black); 
-    color: var(--white); 
+    background-color: var(--darkColor); 
+    color: var(--lightColor); 
     padding: 10px; 
     text-decoration: none; 
 }
@@ -277,7 +281,7 @@ span{
     padding: 10px 13px;
     border: 2px solid black;
     border-radius: 50%;
-    background-color: var(--blueviolet);
+    background-color: var(--mainColor);
 }
 #btn-dark-mode-toggle:hover{
     cursor: pointer;
@@ -292,7 +296,7 @@ span{
     margin-top: 1rem;
     margin-bottom: 3rem;
     font-size: 36px;
-    color: var(--white);
+    color: var(--lightColor);
 }
 .project a{
     border-radius: 5px;
@@ -306,11 +310,11 @@ span{
     margin-top: 15px;
 }
 .services{
-    background-color: var(--black);
-    color: var(--white);
+    background-color: var(--darkColor);
+    color: var(--lightColor);
 }
 .services h1{
-    color: var(--white);
+    color: var(--lightColor);
     padding-top: 2em;
     padding-bottom: 2em;
     text-align: center;
@@ -328,8 +332,8 @@ span{
     max-width: 800px;
     margin-bottom: 30px;
     border-radius: 10px;
-    box-shadow: 0 0 10px var(--blueviolet),
-                0 0 10px var(--blueviolet);
+    box-shadow: 0 0 10px var(--mainColor),
+                0 0 10px var(--mainColor);
 
 }
 .service:hover{
