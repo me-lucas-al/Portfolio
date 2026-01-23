@@ -1,46 +1,30 @@
 generator client {
-  provider = "prisma-client-js"
+   provider = "prisma-client"
+   output = "./generated"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-model User {
+model Admin {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String
-  name      String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("users")
+  createdAt DateTime @default(now())
 }
 
 model Project {
-  id           String       @id @default(cuid())
-  title        String
-  slug         String       @unique
-  description  String       @db.Text
-  coverImage   String?      @map("cover_image")
-  githubUrl    String       @map("github_url")
-  deployUrl    String?      @map("deploy_url")
-  highlight    String?      @db.Text
-  technologies Technology[]
-  featured     Boolean      @default(false)
-  order        Int          @default(0)
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @updatedAt @map("updated_at")
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  tags        String[]
+  githubUrl   String
+  deployUrl   String?
+  imageUrl    String?
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("projects")
-}
-
-model Technology {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  color     String?
-  projects  Project[]
-  createdAt DateTime  @default(now()) @map("created_at")
-
-  @@map("technologies")
 }
