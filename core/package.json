@@ -15,11 +15,11 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "dotenv": "^16.0.0",
-    "prisma": "^6.2.1",
+    "prisma": "^7.3.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
-    "@prisma/client": "^6.2.1"
+    "@prisma/client": "^7.3.0"
   }
 }
