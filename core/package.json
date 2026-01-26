@@ -1,0 +1,25 @@
+{
+  "name": "@portfolio/core",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "type": "commonjs",
+  "types": "src/index.ts",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "dotenv": "^16.0.0",
+    "prisma": "^6.2.1",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^6.2.1"
+  }
+}

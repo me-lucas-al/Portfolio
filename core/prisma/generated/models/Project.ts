@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.ts"
+import type * as Prisma from "../internal/prismaNamespace.ts"
 
 /**
  * Model Project
@@ -31,7 +31,6 @@ export type ProjectMinAggregateOutputType = {
   githubUrl: string | null
   deployUrl: string | null
   imageUrl: string | null
-  featured: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -43,7 +42,6 @@ export type ProjectMaxAggregateOutputType = {
   githubUrl: string | null
   deployUrl: string | null
   imageUrl: string | null
-  featured: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,11 +50,9 @@ export type ProjectCountAggregateOutputType = {
   id: number
   title: number
   description: number
-  tags: number
   githubUrl: number
   deployUrl: number
   imageUrl: number
-  featured: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -70,7 +66,6 @@ export type ProjectMinAggregateInputType = {
   githubUrl?: true
   deployUrl?: true
   imageUrl?: true
-  featured?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,7 +77,6 @@ export type ProjectMaxAggregateInputType = {
   githubUrl?: true
   deployUrl?: true
   imageUrl?: true
-  featured?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -91,11 +85,9 @@ export type ProjectCountAggregateInputType = {
   id?: true
   title?: true
   description?: true
-  tags?: true
   githubUrl?: true
   deployUrl?: true
   imageUrl?: true
-  featured?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -177,11 +169,9 @@ export type ProjectGroupByOutputType = {
   id: string
   title: string
   description: string
-  tags: string[]
   githubUrl: string
   deployUrl: string | null
   imageUrl: string | null
-  featured: boolean
   createdAt: Date
   updatedAt: Date
   _count: ProjectCountAggregateOutputType | null
@@ -211,11 +201,9 @@ export type ProjectWhereInput = {
   id?: Prisma.StringFilter<"Project"> | string
   title?: Prisma.StringFilter<"Project"> | string
   description?: Prisma.StringFilter<"Project"> | string
-  tags?: Prisma.StringNullableListFilter<"Project">
   githubUrl?: Prisma.StringFilter<"Project"> | string
   deployUrl?: Prisma.StringNullableFilter<"Project"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Project"> | string | null
-  featured?: Prisma.BoolFilter<"Project"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
 }
@@ -224,11 +212,9 @@ export type ProjectOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  tags?: Prisma.SortOrder
   githubUrl?: Prisma.SortOrder
   deployUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -240,11 +226,9 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ProjectWhereInput | Prisma.ProjectWhereInput[]
   title?: Prisma.StringFilter<"Project"> | string
   description?: Prisma.StringFilter<"Project"> | string
-  tags?: Prisma.StringNullableListFilter<"Project">
   githubUrl?: Prisma.StringFilter<"Project"> | string
   deployUrl?: Prisma.StringNullableFilter<"Project"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Project"> | string | null
-  featured?: Prisma.BoolFilter<"Project"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
 }, "id">
@@ -253,11 +237,9 @@ export type ProjectOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  tags?: Prisma.SortOrder
   githubUrl?: Prisma.SortOrder
   deployUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProjectCountOrderByAggregateInput
@@ -272,11 +254,9 @@ export type ProjectScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Project"> | string
   title?: Prisma.StringWithAggregatesFilter<"Project"> | string
   description?: Prisma.StringWithAggregatesFilter<"Project"> | string
-  tags?: Prisma.StringNullableListFilter<"Project">
   githubUrl?: Prisma.StringWithAggregatesFilter<"Project"> | string
   deployUrl?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
-  featured?: Prisma.BoolWithAggregatesFilter<"Project"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
 }
@@ -285,11 +265,9 @@ export type ProjectCreateInput = {
   id?: string
   title: string
   description: string
-  tags?: Prisma.ProjectCreatetagsInput | string[]
   githubUrl: string
   deployUrl?: string | null
   imageUrl?: string | null
-  featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -298,11 +276,9 @@ export type ProjectUncheckedCreateInput = {
   id?: string
   title: string
   description: string
-  tags?: Prisma.ProjectCreatetagsInput | string[]
   githubUrl: string
   deployUrl?: string | null
   imageUrl?: string | null
-  featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -311,11 +287,9 @@ export type ProjectUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  tags?: Prisma.ProjectUpdatetagsInput | string[]
   githubUrl?: Prisma.StringFieldUpdateOperationsInput | string
   deployUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -324,11 +298,9 @@ export type ProjectUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  tags?: Prisma.ProjectUpdatetagsInput | string[]
   githubUrl?: Prisma.StringFieldUpdateOperationsInput | string
   deployUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -337,11 +309,9 @@ export type ProjectCreateManyInput = {
   id?: string
   title: string
   description: string
-  tags?: Prisma.ProjectCreatetagsInput | string[]
   githubUrl: string
   deployUrl?: string | null
   imageUrl?: string | null
-  featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -350,11 +320,9 @@ export type ProjectUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  tags?: Prisma.ProjectUpdatetagsInput | string[]
   githubUrl?: Prisma.StringFieldUpdateOperationsInput | string
   deployUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -363,32 +331,20 @@ export type ProjectUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  tags?: Prisma.ProjectUpdatetagsInput | string[]
   githubUrl?: Prisma.StringFieldUpdateOperationsInput | string
   deployUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type StringNullableListFilter<$PrismaModel = never> = {
-  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
-  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
-  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
 }
 
 export type ProjectCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  tags?: Prisma.SortOrder
   githubUrl?: Prisma.SortOrder
   deployUrl?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -400,7 +356,6 @@ export type ProjectMaxOrderByAggregateInput = {
   githubUrl?: Prisma.SortOrder
   deployUrl?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -412,26 +367,12 @@ export type ProjectMinOrderByAggregateInput = {
   githubUrl?: Prisma.SortOrder
   deployUrl?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
-export type ProjectCreatetagsInput = {
-  set: string[]
-}
-
-export type ProjectUpdatetagsInput = {
-  set?: string[]
-  push?: string | string[]
-}
-
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
-}
-
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
 }
 
 
@@ -440,11 +381,9 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   id?: boolean
   title?: boolean
   description?: boolean
-  tags?: boolean
   githubUrl?: boolean
   deployUrl?: boolean
   imageUrl?: boolean
-  featured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["project"]>
@@ -453,11 +392,9 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   title?: boolean
   description?: boolean
-  tags?: boolean
   githubUrl?: boolean
   deployUrl?: boolean
   imageUrl?: boolean
-  featured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["project"]>
@@ -466,11 +403,9 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   title?: boolean
   description?: boolean
-  tags?: boolean
   githubUrl?: boolean
   deployUrl?: boolean
   imageUrl?: boolean
-  featured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["project"]>
@@ -479,16 +414,14 @@ export type ProjectSelectScalar = {
   id?: boolean
   title?: boolean
   description?: boolean
-  tags?: boolean
   githubUrl?: boolean
   deployUrl?: boolean
   imageUrl?: boolean
-  featured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "tags" | "githubUrl" | "deployUrl" | "imageUrl" | "featured" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "githubUrl" | "deployUrl" | "imageUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
 
 export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Project"
@@ -497,11 +430,9 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id: string
     title: string
     description: string
-    tags: string[]
     githubUrl: string
     deployUrl: string | null
     imageUrl: string | null
-    featured: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["project"]>
@@ -930,11 +861,9 @@ export interface ProjectFieldRefs {
   readonly id: Prisma.FieldRef<"Project", 'String'>
   readonly title: Prisma.FieldRef<"Project", 'String'>
   readonly description: Prisma.FieldRef<"Project", 'String'>
-  readonly tags: Prisma.FieldRef<"Project", 'String[]'>
   readonly githubUrl: Prisma.FieldRef<"Project", 'String'>
   readonly deployUrl: Prisma.FieldRef<"Project", 'String'>
   readonly imageUrl: Prisma.FieldRef<"Project", 'String'>
-  readonly featured: Prisma.FieldRef<"Project", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Project", 'DateTime'>
 }

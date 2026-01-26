@@ -18,11 +18,9 @@ model Project {
   id          String   @id @default(cuid())
   title       String
   description String   @db.Text
-  tags        String[]
   githubUrl   String
   deployUrl   String?
   imageUrl    String?
-  featured    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

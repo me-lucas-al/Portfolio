@@ -8,6 +8,6 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Admin'
-export type * from './models/Project'
-export type * from './commonInputTypes'
+export type * from './models/Admin.ts'
+export type * from './models/Project.ts'
+export type * from './commonInputTypes.ts'
