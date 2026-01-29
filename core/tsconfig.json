@@ -44,7 +44,8 @@
     "skipLibCheck": true,
     "paths": {
       "@packages/*": ["../packages/*"],
-      "@prisma/*": ["../prisma/*"]
+      "@prisma/*": ["./database/prisma/*"],
+      "@database/*": ["./database/*"]
     }
   }
 }

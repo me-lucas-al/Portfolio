@@ -15,11 +15,15 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "dotenv": "^16.0.0",
+    "openapi3-ts": "^4.5.0",
     "prisma": "^7.3.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@prisma/adapter-pg": "^7.3.0",
-    "@prisma/client": "^7.3.0"
+    "@prisma/client": "^7.3.0",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.8.2"
   }
 }

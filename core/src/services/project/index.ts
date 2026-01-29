@@ -1,5 +1,5 @@
 import { CreateProjectType, DeleteProjectType, UpdateProjectType } from "@packages/schemas/project";
-import prisma from "../../../prisma";
+import prisma from "@database/prisma";
 export class ProjectService {
   static async createProject(data: CreateProjectType) {
     const newProject = await prisma.project.create({
@@ -22,9 +22,9 @@ export class ProjectService {
     return projects;
   }
   
-  static async deleteProjectById(params: DeleteProjectType) {
+  static async deleteProjectById(data: DeleteProjectType) {
     const deletedProject = await prisma.project.delete({
-      where: { id:params.id },
+      where: { id: data.id },
     });
     return deletedProject;
   }

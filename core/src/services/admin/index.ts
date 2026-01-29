@@ -1,5 +1,5 @@
 import { CreateAdminType, DeleteAdminType, UpdateAdminType } from "@packages/schemas/admin";
-import prisma from "../../../prisma";
+import prisma from "@database/prisma";
 
 export class AdminService {
     static async createAdmin(data: CreateAdminType){
