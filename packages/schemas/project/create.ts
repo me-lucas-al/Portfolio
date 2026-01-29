@@ -1,11 +1,8 @@
 import { z } from "zod"
 import { ProjectSchema } from "./base";
 
-export const CreateProjectSchema = ProjectSchema.pick({
-    title: true,
-    deployUrl: true,
-    githubUrl: true,
-    description: true
+export const CreateProjectSchema = ProjectSchema.omit({
+    id: true,
 })
 
-export type CreateProjectType = z.infer<typeof ProjectSchema>
+export type CreateProjectType = z.infer<typeof CreateProjectSchema>

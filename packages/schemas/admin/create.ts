@@ -7,3 +7,5 @@ export const CreateAdminSchema = AdminSchema.pick({
 }).extend({
     password: z.string().min(1).max(255),
 })
+
+export type CreateAdminType = z.infer<typeof CreateAdminSchema>

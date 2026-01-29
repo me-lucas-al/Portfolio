@@ -43,7 +43,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "@packages/*": ["../packages/*"]
+      "@packages/*": ["../packages/*"],
+      "@prisma/*": ["../prisma/*"]
     }
   }
 }
