@@ -3,7 +3,6 @@ import { AdminSchema } from "./base";
 
 export const UpdateAdminSchema = AdminSchema.pick({
     id: true,
-    email: true,
     username: true,
 }).extend({
     password: z.string().min(1).max(255),
