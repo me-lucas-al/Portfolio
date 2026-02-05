@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
     "@types/node": "^22.0.0",
     "dotenv": "^16.0.0",
     "openapi3-ts": "^4.5.0",
@@ -23,6 +24,7 @@
     "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
+    "bcryptjs": "^3.0.3",
     "swagger-ui-express": "^5.0.1",
     "yaml": "^2.8.2"
   }

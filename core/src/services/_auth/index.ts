@@ -1,50 +1,42 @@
-// src/services/auth-service.ts
-import { prisma } from "@/lib/prisma"
-import { AdminSchema } from "@packages/schemas/admin"
+import prisma  from "@database/prisma"
+import { CreateAdminSchema, CreateAdminType } from "@packages/schemas/admin"
 import bcrypt from "bcryptjs"
-import { z } from "zod"
-
-
-
+import { BadRequestError, ConflictError } from "./errors/status"
 export class AuthService {
-  static async login(credentials: unknown) {
-    const { username, password } = AdminSchema.parse(credentials)
+  static async login(credentials: CreateAdminType) {
+    const { username, password } = CreateAdminSchema.parse(credentials)
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.admin.findUnique({
       where: { username },
     })
 
-    if (!user) throw new Error("Usuário não encontrado.")
+    if (!user) throw new BadRequestError()
 
     const isPasswordValid = await bcrypt.compare(password, user.password)
 
-    if (!isPasswordValid) throw new Error("Senha incorreta.")
+    if (!isPasswordValid) throw new BadRequestError()
 
     return {
       id: user.id,
       username: user.username,
-      name: user.name,
     }
   }
 
-  static async register(data: unknown) {
-    const { username, password, name } = registerSchema.parse(data)
+  static async register(data: CreateAdminType) {
+    const { username, password } = CreateAdminSchema.parse(data)
 
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.admin.findUnique({
       where: { username },
     })
 
-    if (existingUser) {
-      throw new Error("Este username já está em uso.")
-    }
+    if (existingUser) throw new ConflictError("Nome de usuário já existente")
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    const user = await prisma.user.create({
+    const user = await prisma.admin.create({
       data: {
         username,
         password: hashedPassword,
-        name,
       },
     })
 

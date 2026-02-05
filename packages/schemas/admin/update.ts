@@ -4,8 +4,7 @@ import { AdminSchema } from "./base";
 export const UpdateAdminSchema = AdminSchema.pick({
     id: true,
     username: true,
-}).extend({
-    password: z.string().min(1).max(255),
+    password: true,
 })
 
 export type UpdateAdminType = z.infer<typeof UpdateAdminSchema>
