@@ -2,6 +2,7 @@ import prisma  from "@database/prisma"
 import { CreateAdminSchema, CreateAdminType } from "@packages/schemas/admin"
 import bcrypt from "bcryptjs"
 import { BadRequestError, ConflictError } from "./errors/status"
+import { TokenService } from "./token"
 export class AuthService {
   static async login(credentials: CreateAdminType) {
     const { username, password } = CreateAdminSchema.parse(credentials)
@@ -16,9 +17,15 @@ export class AuthService {
 
     if (!isPasswordValid) throw new BadRequestError()
 
+    const accessToken = await TokenService.generate({
+      sub: user.id.toString(),
+      username: user.username
+    })
+
     return {
       id: user.id,
       username: user.username,
+      accessToken,
     }
   }
 
