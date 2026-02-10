@@ -1,8 +1,10 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { AuthService } from "../../core/src/services/_auth" 
+import { authConfig } from "./auth.config" // <--- Importa a config leve
+import { AuthService } from "@core/services/_auth" 
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig, // Espalha a config base
   providers: [
     Credentials({
       name: "credentials",
@@ -20,26 +22,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.sub = user.id
-        token.username = user.name as string
-        token.accessToken = (user as any).accessToken 
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.sub as string
-        session.user.name = token.username as string
-        session.user.accessToken = token.accessToken as string 
-      }
-      return session
-    },
-  },
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: "/login", 
-  },
 })
