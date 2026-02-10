@@ -1,7 +1,6 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { AuthService } from "./services/_auth" 
-import { CreateAdminSchema } from "@packages/schemas/admin"
+import { AuthService } from "../../core/src/services/_auth" 
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -25,7 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.sub = user.id
-        token.username = user.username as string
+        token.username = user.name as string
         token.accessToken = (user as any).accessToken 
       }
       return token
@@ -33,7 +32,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.sub as string
-        session.user.username = token.username as string
+        session.user.name = token.username as string
         session.user.accessToken = token.accessToken as string 
       }
       return session
