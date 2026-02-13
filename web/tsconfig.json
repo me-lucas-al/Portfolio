@@ -20,7 +20,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@core/*": ["../core/src/*"],
+      "@core/*": ["../core/*"],
       "@packages/*": ["../packages/*"]
     }
   },

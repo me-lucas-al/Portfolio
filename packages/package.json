@@ -1,5 +1,10 @@
 {
-	"dependencies": {
-		"zod": "^4.3.6"
-	}
+  "name": "@portfolio/packages",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "types": "index.ts",
+  "dependencies": {
+    "zod": "^4.3.6"
+  }
 }

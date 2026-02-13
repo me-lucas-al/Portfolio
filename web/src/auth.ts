@@ -1,10 +1,10 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { authConfig } from "./auth.config" // <--- Importa a config leve
-import { AuthService } from "@core/services/_auth" 
+import { authConfig } from "./auth.config"
+import { AuthService }  from "@core/src/services/_auth" 
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  ...authConfig, // Espalha a config base
+  ...authConfig,
   providers: [
     Credentials({
       name: "credentials",
