@@ -1,4 +1,4 @@
-import prisma  from "@database/prisma"
+import prisma  from "@portfolio/database"
 import { CreateAdminSchema, CreateAdminType } from "@packages/schemas/admin"
 import bcrypt from "bcryptjs"
 import { BadRequestError, ConflictError } from "./errors/status"
