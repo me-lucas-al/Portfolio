@@ -1,3 +1,4 @@
+import "./globals.css";
 import Provider from "@/components/auth/session-provider"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
