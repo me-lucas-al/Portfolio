@@ -1,9 +1,15 @@
 packages:
-  - "web"
-  - "core"
-  - "packages"
-  - "database"
+  - web
+  - core
+  - packages
+  - database
 
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - '@scarf/scarf'
+  - esbuild
+  - prisma
