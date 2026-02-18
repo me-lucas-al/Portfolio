@@ -1,7 +1,8 @@
 {
   "name": "@portfolio/database",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "prisma.ts",
+  "type": "module",
   "license": "ISC",
   "scripts": {
     "db:generate": "prisma generate",
@@ -10,13 +11,16 @@
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.0",
-    "@prisma/client": "^7.3.0"
+    "@prisma/client": "^7.3.0",
+    "bcryptjs": "^3.0.3"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
     "@types/node": "^25.2.3",
     "dotenv": "^16.6.1",
-    "prisma": "^7.3.0",
+    "prisma": "^7.4.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.0"
   }
 }
