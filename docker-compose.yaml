@@ -1,0 +1,43 @@
+services:
+  portfolio-postgres-db:
+    image: bitnami/postgresql:latest
+    container_name: portfolio-postgres-db
+    ports:
+      - "5434:5432"
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DATABASE_USER:-docker}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-docker}
+      - POSTGRES_DB=portfolio
+      - POSTGRESQL_TIMEZONE=America/Sao_Paulo
+    volumes:
+      - db_volume:/bitnami/postgresql
+    networks:
+      - local-network
+
+  portfolio-pg-admin:
+    image: dpage/pgadmin4:latest
+    container_name: portfolio-pg-admin
+    depends_on:
+      - portfolio-postgres-db
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-user@localhost.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin}
+      - TZ=America/Sao_Paulo 
+    ports:
+      - "8082:80"
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - local-network 
+      
+volumes:
+  db_volume:
+  pgadmin_data:
+
+networks:
+  local-network:
+    driver: bridge
