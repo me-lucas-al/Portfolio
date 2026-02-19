@@ -5,18 +5,62 @@ import { revalidatePath } from "next/cache"
 import { auth } from "@/auth"
 
 export async function createProjectAction(prevState: any, formData: FormData) {
-  const session = await auth()
-  if (!session) throw new Error("Unauthorized")
+  try {
+    const session = await auth()
+    if (!session) return { error: "Não autorizado" }
 
-  const data = {
-    title: formData.get("title") as string,
-    description: formData.get("description") as string,
-    deployUrl: formData.get("deployUrl") as string,
-    githubUrl: formData.get("githubUrl") as string,
-    imageUrl: formData.get("imageUrl") as string,
+    const techs = formData.get("technologies") as string
+    const images = formData.get("imagesUrl") as string
+
+    await ProjectService.createProject({
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      technologies: techs ? techs.split(",").map(t => t.trim()).filter(Boolean) : [],
+      deployUrl: formData.get("deployUrl") as string,
+      githubUrl: formData.get("githubUrl") as string,
+      imagesUrl: images ? images.split(",").map(i => i.trim()).filter(Boolean) : [],
+    })
+    
+    revalidatePath("/")
+    revalidatePath("/admin")
+    return { success: true }
+  } catch (error) {
+    return { error: "Erro ao criar projeto" }
   }
+}
 
-  await ProjectService.createProject(data)
+export async function updateProjectAction(prevState: any, formData: FormData) {
+  try {
+    const session = await auth()
+    if (!session) return { error: "Não autorizado" }
+
+    const id = Number(formData.get("id"))
+    const techs = formData.get("technologies") as string
+    const images = formData.get("imagesUrl") as string
+    
+    await ProjectService.updateProjectById({
+      id,
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      technologies: techs ? techs.split(",").map(t => t.trim()).filter(Boolean) : [],
+      deployUrl: formData.get("deployUrl") as string,
+      githubUrl: formData.get("githubUrl") as string,
+      imagesUrl: images ? images.split(",").map(i => i.trim()).filter(Boolean) : [],
+    })
+
+    revalidatePath("/")
+    revalidatePath("/admin")
+    return { success: true }
+  } catch (error) {
+    return { error: "Erro ao atualizar projeto" }
+  }
+}
+
+export async function deleteProjectAction(id: number) {
+  const session = await auth()
+  if (!session) throw new Error("Não autorizado")
+  
+  await ProjectService.deleteProjectById({ id })
   
   revalidatePath("/")
   revalidatePath("/admin")

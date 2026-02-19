@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import prisma from "../prisma";
 import bcrypt from 'bcryptjs';
 
@@ -27,7 +28,7 @@ async function main() {
       githubUrl: 'https://github.com/me-lucas-al/self-checkout',
       technologies: ['Next.js', 'Prisma', 'PostgreSQL', 'Tailwind CSS', 'Stripe'],
       deployUrl: 'selfcheckout-app.vercel.app',
-      imageUrl: null,
+      imagesUrl: [],
     },
     {
       title: 'Agenda de Contatos',
@@ -35,7 +36,7 @@ async function main() {
       githubUrl: 'https://github.com/me-lucas-al/Agenda-de-Contatos',
       technologies: ['Next.js', 'Node.js','Prisma', 'PostgreSQL', 'Tailwind CSS'],
       deployUrl: 'https://agenda-de-contatos-starseg.vercel.app', 
-      imageUrl: null,
+      imagesUrl: [],
     },
     {
       title: 'Clínica Roberto Watanabe',
@@ -43,7 +44,7 @@ async function main() {
       githubUrl: 'https://github.com/Clinica-Roberto-Watanabe/Clinica-Roberto-Watanabe',
       technologies: ['React.js', 'Python', 'Flask', 'MySQL', 'SQLAlchemy','Tailwind CSS'],
       deployUrl: 'clinicarobertowatanabe.vercel.app',
-      imageUrl: null,
+      imagesUrl: [],
     }
   ];
 

@@ -4,8 +4,8 @@ import Link from "next/link"
 
 export default function AdminPage() {
   return (
-    <main className="min-h-screen bg-black px-6 py-12 md:py-24">
-      <div>
+    <main className="min-h-screen bg-black">
+      <div className="flex items-center gap-4 pt-6 px-6">
         <Link
           href="/"
         >

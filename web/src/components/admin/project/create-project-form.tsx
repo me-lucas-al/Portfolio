@@ -51,14 +51,36 @@ export function CreateProjectForm() {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-neutral-400 ml-1">URL da Imagem (Firebase)</label>
-        <input 
-          name="imageUrl" 
-          type="url" 
+        <label className="text-sm font-medium text-neutral-400 ml-1">
+          Imagens (URLs separadas por vírgula)
+        </label>
+        <textarea
+          name="imagesUrl"
+          rows={3}
           disabled={isPending}
-          className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50" 
+          placeholder="https://img1.png, https://img2.png, https://img3.png"
+          className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all resize-none disabled:opacity-50" 
+        />
+        <p className="text-xs text-neutral-600 ml-1">
+          Cola as URLs das imagens separadas por vírgula — a primeira será a imagem de capa.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-neutral-400 ml-1">
+          Tecnologias (separadas por vírgula)
+        </label>
+        <input
+          name="technologies"
+          disabled={isPending}
+          placeholder="Next.js, Prisma, PostgreSQL"
+          className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50"
         />
       </div>
+
+      {state?.error && (
+        <p className="text-sm text-red-400 ml-1">{state.error}</p>
+      )}
 
       <button 
         type="submit" 

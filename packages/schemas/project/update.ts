@@ -6,7 +6,9 @@ export const UpdateProjectSchema = ProjectSchema.pick({
     title: true,
     description: true,
     githubUrl: true,
+    technologies: true,
     deployUrl: true,
+    imagesUrl: true,
 })
 
 export type UpdateProjectType = z.infer<typeof UpdateProjectSchema>
