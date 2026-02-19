@@ -1,6 +1,14 @@
 {
-	"dependencies": {
-		"@prisma/adapter-pg": "^7.4.0",
-		"@prisma/client": "^7.4.0"
-	}
+  "name": "portfolio",
+  "private": true,
+  "packageManager": "pnpm@10.26.1", 
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "generate": "turbo run generate"
+  },
+  "devDependencies": {
+    "turbo": "^2.8.10"
+  }
 }

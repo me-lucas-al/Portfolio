@@ -20,8 +20,6 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@core/*": ["../core/*"],
-      "@packages/*": ["../packages/*"]
     }
   },
   "include": [
