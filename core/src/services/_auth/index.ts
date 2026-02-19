@@ -1,5 +1,5 @@
 import prisma  from "@portfolio/database"
-import { CreateAdminSchema, CreateAdminType } from "@packages/schemas/admin"
+import { CreateAdminSchema, CreateAdminType } from "@portfolio/packages/schemas/admin"
 import bcrypt from "bcryptjs"
 import { BadRequestError, ConflictError } from "./errors/status"
 import { TokenService } from "./token"

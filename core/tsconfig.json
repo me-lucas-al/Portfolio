@@ -8,7 +8,7 @@
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "esnext",
-    
+    "moduleResolution": "bundler",
     "target": "esnext",
     "types": ["node"],
     // For nodejs:
@@ -43,9 +43,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "@packages/*": ["../packages/*"],
-      "@prisma/*": ["../database/prisma/*"],
-      "@database/*": ["../database/*"]
+      "@/*": ["./src/*"],
     }
   }
 }

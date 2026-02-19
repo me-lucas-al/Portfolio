@@ -1,5 +1,5 @@
-import { CreateProjectType, DeleteProjectType, UpdateProjectType } from "@packages/schemas/project";
-import prisma from "@database/prisma";
+import { CreateProjectType, DeleteProjectType, UpdateProjectType } from "@portfolio/packages/schemas/project/index";
+import prisma from "@portfolio/database/prisma";
 export class ProjectService {
   static async createProject(data: CreateProjectType) {
     const newProject = await prisma.project.create({
