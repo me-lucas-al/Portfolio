@@ -4,13 +4,17 @@ import bcrypt from 'bcryptjs';
 
 async function main() {
   console.log('🌱 A iniciar o seed da base de dados...');
-  const hashedPassword = await bcrypt.hash('12345678', 10);
+
+  const username = process.env.SEED_ADMIN_USERNAME!;
+  const password = process.env.SEED_ADMIN_PASSWORD!;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
   
   const admin = await prisma.admin.upsert({
-    where: { username: 'lucas' },
+    where: { username: username },
     update: {}, 
     create: {
-      username: 'lucas',
+      username: username,
       password: hashedPassword,
     },
   });
@@ -18,24 +22,27 @@ async function main() {
 
   const projetos = [
     {
-      title: 'Star Lockers',
-      description: 'Sistema de gestão de permissões e acessos para lockers inteligentes.',
-      githubUrl: 'https://github.com/seu-user/star-lockers',
-      deployUrl: 'https://star-lockers.com',
-      imageUrl: 'https://via.placeholder.com/800x600?text=Star+Lockers',
+      title: 'Self Checkout',
+      description: 'Sistema de Autoatendimento para Restaurantes (Self-Checkout)',
+      githubUrl: 'https://github.com/me-lucas-al/self-checkout',
+      technologies: ['Next.js', 'Prisma', 'PostgreSQL', 'Tailwind CSS', 'Stripe'],
+      deployUrl: 'selfcheckout-app.vercel.app',
+      imageUrl: null,
     },
     {
-      title: 'Star Stock v2',
+      title: 'Agenda de Contatos',
       description: 'Nova versão do sistema de gestão de stock e inventário.',
-      githubUrl: 'https://github.com/seu-user/star-stock-v2',
-      deployUrl: null, 
-      imageUrl: 'https://via.placeholder.com/800x600?text=Star+Stock+v2',
+      githubUrl: 'https://github.com/me-lucas-al/Agenda-de-Contatos',
+      technologies: ['Next.js', 'Node.js','Prisma', 'PostgreSQL', 'Tailwind CSS'],
+      deployUrl: 'https://agenda-de-contatos-starseg.vercel.app', 
+      imageUrl: null,
     },
     {
       title: 'Clínica Roberto Watanabe',
       description: 'Website desenvolvido para uma clínica holística.',
-      githubUrl: 'https://github.com/seu-user/clinica-roberto-watanabe',
-      deployUrl: 'https://clinicarobertowatanabe.com',
+      githubUrl: 'https://github.com/Clinica-Roberto-Watanabe/Clinica-Roberto-Watanabe',
+      technologies: ['React.js', 'Python', 'Flask', 'MySQL', 'SQLAlchemy','Tailwind CSS'],
+      deployUrl: 'clinicarobertowatanabe.vercel.app',
       imageUrl: null,
     }
   ];
