@@ -1,8 +1,11 @@
-import { CreateProjectForm } from "@/components/admin/project/create-project-form"
+import { getProjectsAction } from "@/app/actions/project"
+import { AdminDashboard } from "@/modules/admin/admin-dashboard"
 import { ArrowLeftIcon } from "lucide-react"
 import Link from "next/link"
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const projects = await getProjectsAction()
+
   return (
     <main className="min-h-screen bg-black">
       <div className="flex items-center gap-4 pt-6 px-6">
@@ -12,25 +15,13 @@ export default function AdminPage() {
           <ArrowLeftIcon />
         </Link>
       </div>
-      <div className="h-12" />
-      <div className="max-w-3xl mx-auto mb-12">
-        <h1 className="text-3xl font-bold text-white tracking-tight">Bem-vindo, Admin!</h1>
-        <p className="text-neutral-500 mt-2 text-sm">Use o painel abaixo para gerenciar seus projetos.</p>
-      </div>
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-12">
+      <div className="max-w-4xl mx-auto space-y-12">
+        <div>
           <h1 className="text-3xl font-bold text-white tracking-tight">Painel de Controle</h1>
-          <p className="text-neutral-500 mt-2 text-sm">Adicione novos projetos para exibição pública.</p>
+          <p className="text-neutral-500 mt-2 text-sm">Faça a gestão dos projetos em destaque no seu portfólio.</p>
         </div>
 
-        <div className="p-8 md:p-10 rounded-2xl bg-neutral-950 border border-blue-950/50 shadow-[0_0_50px_-15px_rgba(23,37,84,0.4)]">
-          <div className="mb-8">
-            <h2 className="text-xl font-medium text-white">Novo Projeto</h2>
-            <div className="h-px w-12 bg-blue-800 mt-4" />
-          </div>
-          
-          <CreateProjectForm />
-        </div>
+        <AdminDashboard projects={projects} />
       </div>
     </main>
   )
