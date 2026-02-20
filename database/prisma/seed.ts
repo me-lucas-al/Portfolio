@@ -20,7 +20,18 @@ async function main() {
       role: 'ADMIN'
     },
   });
+
+  const user = await prisma.user.upsert({
+    where: { username: 'teste' },
+    update: {}, 
+    create: {
+      username: 'teste',
+      password:  await bcrypt.hash('teste123', 10),
+      role: 'USER'
+    },
+  });
   console.log(`✅ Admin criado/verificado com sucesso: ${admin.username}`);
+  console.log(`✅ User criado/verificado com sucesso: ${user.username}`);
 
   const projetos = [
     {
