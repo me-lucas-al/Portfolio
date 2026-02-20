@@ -3,12 +3,14 @@
 import { ProjectService } from "@portfolio/core/src/services/project"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/auth"
+import { getUserRole } from "@/lib/get-user-role"
 
 export async function createProjectAction(prevState: any, formData: FormData) {
   try {
-    const session = await auth()
-    if (!session) return { error: "Não autorizado" }
+    const admin = getUserRole('ADMIN')
 
+    if (!admin) return { error: "Não autorizado" }
+    
     const techs = formData.get("technologies") as string
     const images = formData.get("imagesUrl") as string
 
