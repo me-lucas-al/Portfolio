@@ -33,6 +33,33 @@ services:
       - .env
     networks:
       - local-network 
+  
+  firebase-emulator:
+    image: spine3/firebase-emulator
+    container_name: firebase-emulator
+    environment:
+      - GCP_PROJECT=portfolio-lucas-dev
+      - ENABLE_UI=true
+    ports:
+      - "9000:9000" # Realtime Database
+      - "8080:8080" # Firestore
+      - "4000:4000" # Painel do Emulator Suite
+      - "9099:9099" # Authentication
+      - "8085:8085" # Cloud Firestore Emulator UI (se aplicável)
+      - "5001:5001" # Cloud Functions
+      - "9199:9199" # Storage
+    stdin_open: true
+    tty: true
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "/entrypoint.sh && firebase emulators:start --import=/firebase/baseline-data",
+      ]
+    volumes:
+      - ./baseline-data:/firebase/baseline-data
+      - ./entrypoint.sh:/entrypoint.sh
+    restart: always
       
 volumes:
   db_volume:
