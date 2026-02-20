@@ -1,13 +1,13 @@
 import prisma  from "@portfolio/database"
-import { CreateAdminSchema, CreateAdminType } from "@portfolio/packages/schemas/admin"
+import { CreateUserSchema, CreateUserType } from "@portfolio/packages/schemas/user"
 import bcrypt from "bcryptjs"
 import { BadRequestError, ConflictError } from "./errors/status"
 import { TokenService } from "./token"
 export class AuthService {
-  static async login(credentials: CreateAdminType) {
-    const { username, password } = CreateAdminSchema.parse(credentials)
+  static async login(credentials: CreateUserType) {
+    const { username, password } = CreateUserSchema.parse(credentials)
 
-    const user = await prisma.admin.findUnique({
+    const user = await prisma.user.findUnique({
       where: { username },
     })
 
@@ -29,10 +29,10 @@ export class AuthService {
     }
   }
 
-  static async register(data: CreateAdminType) {
-    const { username, password } = CreateAdminSchema.parse(data)
+  static async register(data: CreateUserType) {
+    const { username, password } = CreateUserSchema.parse(data)
 
-    const existingUser = await prisma.admin.findUnique({
+    const existingUser = await prisma.user.findUnique({
       where: { username },
     })
 
@@ -40,7 +40,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    const user = await prisma.admin.create({
+    const user = await prisma.user.create({
       data: {
         username,
         password: hashedPassword,

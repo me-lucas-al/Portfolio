@@ -1,6 +1,7 @@
+import { ProjectType } from "@portfolio/packages"
 import { ProjectCard } from "./project-card"
 
-export function ProjectGrid({ projects }: { projects: any[] }) {
+export function ProjectGrid({ projects }: { projects: ProjectType[] }) {
   if (!projects?.length) return null
 
   return (

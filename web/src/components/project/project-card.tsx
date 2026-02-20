@@ -1,16 +1,8 @@
+import { ProjectType } from "@portfolio/packages"
 import { ExternalLink, Github, FolderGit2 } from "lucide-react"
 import Link from "next/link"
 
-interface ProjectCardProps {
-  title: string
-  description: string
-  technologies?: string[]
-  deployUrl: string | null
-  githubUrl: string | null
-  imagesUrl: string[]
-}
-
-export function ProjectCard({ title, description, technologies, deployUrl, githubUrl, imagesUrl }: ProjectCardProps) {
+export function ProjectCard({ title, description, technologies, deployUrl, githubUrl, imagesUrl }: ProjectType) {
   return (
     <div className="group relative flex flex-col justify-between p-6 md:p-8 rounded-2xl bg-neutral-950 border border-neutral-900 hover:border-blue-900/50 transition-all duration-300 hover:shadow-[0_0_40px_-15px_rgba(23,37,84,0.6)] hover:-translate-y-1">
       <div>

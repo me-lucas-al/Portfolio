@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
 import { AuthService } from "@portfolio/core/src/services/_auth";
-import { CreateAdminType } from "@portfolio/packages/index";
+import { CreateUserType } from "@portfolio/packages/index";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -15,7 +15,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       authorize: async (credentials) => {
         try {
-          const user = await AuthService.login(credentials as CreateAdminType);
+          const user = await AuthService.login(credentials as CreateUserType);
 
           if (user) {
             return {

@@ -1,2 +1,2 @@
-export * from './schemas/admin';
+export * from './schemas/user';
 export * from './schemas/project';
