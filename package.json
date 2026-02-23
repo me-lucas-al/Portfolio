@@ -1,7 +1,7 @@
 {
   "name": "portfolio",
   "private": true,
-  "packageManager": "pnpm@10.26.1", 
+  "packageManager": "pnpm@10.26.1",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "turbo": "^2.8.10"
+  },
+  "dependencies": {
+    "react-toastify": "^11.0.5"
   }
 }
