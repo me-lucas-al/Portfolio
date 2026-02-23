@@ -1,5 +1,6 @@
 import { CreateProjectType, DeleteProjectType, UpdateProjectType } from "@portfolio/packages/schemas/project/index";
 import prisma from "@portfolio/database/prisma";
+
 export class ProjectService {
   static async createProject(data: CreateProjectType) {
     const newProject = await prisma.project.create({
@@ -8,17 +9,8 @@ export class ProjectService {
     return newProject;
   }
 
-  static async getAllProjects(query?: string | number) {
-    const projects = await prisma.project.findMany({
-      where: query
-        ? {
-            OR: [
-                { title: { contains: String(query), mode: "insensitive" } },
-                ...(!isNaN(Number(query)) ? [{ id: Number(query) }] : []),
-            ],
-          }
-        : {},
-    });
+  static async getAllProjects() {
+    const projects = await prisma.project.findMany();
     return projects;
   }
   
