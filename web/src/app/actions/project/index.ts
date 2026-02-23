@@ -7,10 +7,10 @@ import { getUserRole } from "@/lib/get-user-role"
 
 export async function createProjectAction(prevState: any, formData: FormData) {
   try {
-    const admin = getUserRole('ADMIN')
+    const admin = await getUserRole('ADMIN')
 
     if (!admin) return { error: "Não autorizado" }
-    
+
     const techs = formData.get("technologies") as string
     const images = formData.get("imagesUrl") as string
 
@@ -24,8 +24,9 @@ export async function createProjectAction(prevState: any, formData: FormData) {
     })
     
     revalidatePath("/")
-    revalidatePath("/admin")
-    return { success: true }
+    revalidatePath("/control-painel")
+
+    return { success: true, message: "Projeto criado com sucesso!" }
   } catch (error) {
     return { error: "Erro ao criar projeto" }
   }
@@ -51,8 +52,9 @@ export async function updateProjectAction(prevState: any, formData: FormData) {
     })
 
     revalidatePath("/")
-    revalidatePath("/admin")
-    return { success: true }
+    revalidatePath("/control-painel")
+    
+    return { success: true, message: "Projeto atualizado com sucesso!" }
   } catch (error) {
     return { error: "Erro ao atualizar projeto" }
   }
@@ -65,7 +67,9 @@ export async function deleteProjectAction(id: number) {
   await ProjectService.deleteProjectById({ id })
   
   revalidatePath("/")
-  revalidatePath("/admin")
+  revalidatePath("/control-painel")
+  
+  return { success: true, message: "Projeto deletado com sucesso!" }
 }
 
 export async function getProjectsAction() {

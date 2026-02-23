@@ -1,11 +1,22 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, useEffect } from "react"
 import { createProjectAction } from "@/app/actions/project"
+import { toast } from "react-toastify"
 
 export function CreateProjectForm() {
   const [state, formAction, isPending] = useActionState(createProjectAction, null)
 
+  useEffect(() => {
+    if (state?.error) {
+      toast.error(state.error)
+    }
+    
+    if (state?.success && state?.message) {
+      toast.success(state.message)
+    }
+  }, [state])
+  
   return (
     <form action={formAction} className="space-y-6">
       <div className="space-y-2">
