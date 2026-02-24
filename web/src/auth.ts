@@ -22,6 +22,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return {
               ...user,
               id: user.id.toString(),
+              role: user.role,
             };
           }
           return null;
