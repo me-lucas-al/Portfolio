@@ -1,68 +1,75 @@
-"use server"
+"use server";
 
-import { EducationService } from "@portfolio/core/src/services/education"
-import { revalidatePath } from "next/cache"
-import { auth } from "@/auth"
-import { getUserRole } from "@/lib/get-user-role"
+import { EducationService } from "@portfolio/core/src/services/education";
+import { revalidatePath } from "next/cache";
+import { getUserRole } from "@/lib/get-user-role";
 
-export async function createEducationAction(prevState: any, formData: FormData) {
+export async function createEducationAction(
+  prevState: any,
+  formData: FormData,
+) {
   try {
-    const admin = await getUserRole('ADMIN')
-    
-    if (!admin) return { error: "Não autorizado" }
+    const admin = await getUserRole("ADMIN");
+
+    if (!admin) return { error: "Não autorizado" };
 
     await EducationService.createEducation({
       course: formData.get("course") as string,
       institution: formData.get("institution") as string,
       period: formData.get("period") as string,
       type: formData.get("type") as string,
-    })
-    
-    revalidatePath("/")
-    revalidatePath("/control-painel")
+    });
 
-    return { success: true, message: "Formação criada com sucesso!" }
+    revalidatePath("/");
+    revalidatePath("/control-painel");
+
+    return { success: true, message: "Formação criada com sucesso!" };
   } catch (error) {
-    return { error: "Erro ao criar formação acadêmica" }
+    return { error: "Erro ao criar formação acadêmica" };
   }
 }
 
-export async function updateEducationAction(prevState: any, formData: FormData) {
+export async function updateEducationAction(
+  prevState: any,
+  formData: FormData,
+) {
   try {
-    const session = await auth()
-    if (!session) return { error: "Não autorizado" }
+    const admin = await getUserRole("ADMIN");
 
-    const id = Number(formData.get("id"))
-    
+    if (!admin) return { error: "Não autorizado" };
+
+    const id = Number(formData.get("id"));
+
     await EducationService.updateEducationById({
       id,
       course: formData.get("course") as string,
       institution: formData.get("institution") as string,
       period: formData.get("period") as string,
       type: formData.get("type") as string,
-    })
+    });
 
-    revalidatePath("/")
-    revalidatePath("/control-painel")
-    
-    return { success: true, message: "Formação atualizada com sucesso!" }
+    revalidatePath("/");
+    revalidatePath("/control-painel");
+
+    return { success: true, message: "Formação atualizada com sucesso!" };
   } catch (error) {
-    return { error: "Erro ao atualizar formação acadêmica" }
+    return { error: "Erro ao atualizar formação acadêmica" };
   }
 }
 
 export async function deleteEducationAction(id: number) {
-  const session = await auth()
-  if (!session) throw new Error("Não autorizado")
-  
-  await EducationService.deleteEducationById({ id })
-  
-  revalidatePath("/")
-  revalidatePath("/control-painel")
-  
-  return { success: true, message: "Formação deletada com sucesso!" }
+  const admin = await getUserRole("ADMIN");
+
+  if (!admin) return { error: "Não autorizado" };
+
+  await EducationService.deleteEducationById({ id });
+
+  revalidatePath("/");
+  revalidatePath("/control-painel");
+
+  return { success: true, message: "Formação deletada com sucesso!" };
 }
 
 export async function getEducationsAction() {
-  return EducationService.getAllEducations()
+  return EducationService.getAllEducations();
 }
