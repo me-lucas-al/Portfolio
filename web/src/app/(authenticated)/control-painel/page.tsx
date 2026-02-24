@@ -13,7 +13,7 @@ export default async function AdminPage() {
 
   return (
     <main className="min-h-screen bg-black">
-      <BackButton />
+      <BackButton path="/login"/>
       <div className="max-w-5xl mx-auto space-y-12 px-6 pb-20">
         <div>
           <h1 className="text-3xl font-bold text-white tracking-tight">Painel de Controle</h1>
