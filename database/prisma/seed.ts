@@ -2,10 +2,12 @@ import 'dotenv/config'
 import prisma from "../prisma";
 import bcrypt from 'bcryptjs';
 
-
 async function main() {
   console.log('🌱 A iniciar o seed da base de dados...');
 
+  // ==========================================
+  // 1. SEED DE USUÁRIOS (ADMIN E TESTE)
+  // ==========================================
   const username = process.env.SEED_ADMIN_USERNAME!;
   const password = process.env.SEED_ADMIN_PASSWORD!;
 
@@ -33,6 +35,10 @@ async function main() {
   console.log(`✅ Admin criado/verificado com sucesso: ${admin.username}`);
   console.log(`✅ User criado/verificado com sucesso: ${user.username}`);
 
+
+  // ==========================================
+  // 2. SEED DE PROJETOS
+  // ==========================================
   const projetos = [
     {
       title: 'Self Checkout',
@@ -62,10 +68,82 @@ async function main() {
 
   for (const proj of projetos) {
     const existe = await prisma.project.findFirst({ where: { title: proj.title } });
-    
     if (!existe) {
       await prisma.project.create({ data: proj });
       console.log(`✅ Projeto inserido: ${proj.title}`);
+    }
+  }
+
+
+  // ==========================================
+  // 3. SEED DE EXPERIÊNCIAS
+  // ==========================================
+  const experiencias = [
+    {
+      role: "Desenvolvedor Full Stack",
+      company: "Star Seg",
+      period: "Ago 2025 - Atual",
+      description: "Desenvolvimento e modernização de sistemas de monitoramento e segurança utilizados por +40 condomínios e +4.000 usuários ativos. Alcancei uma melhora de 91% no tempo de carregamento da plataforma. Aplicação de Clean Architecture, CI/CD e correções críticas de segurança.",
+      techs: ["Next.js", "TypeScript", "Node.js", "Docker", "PostgreSQL", "Tailwind CSS"]
+    },
+    {
+      role: "Desenvolvedor Front-End",
+      company: "BNR System (Freelance)",
+      period: "Ago 2024 - Ago 2025",
+      description: "Desenvolvimento do Front-End para um sistema de vendas e cotação de peças automotivas. Utilização de React.js, Tailwind CSS e integração com APIs REST. Responsável pelo deploy do sistema e gerenciamento de arquivos.",
+      techs: ["React.js", "Tailwind CSS", "API REST"]
+    },
+    {
+      role: "Desenvolvedor Full Stack",
+      company: "MedSea Connect (Freelance)",
+      period: "Ago 2024 - Dez 2024",
+      description: "Desenvolvimento completo de uma plataforma web para doação de medula óssea, garantindo segurança e eficiência na gestão de dados.",
+      techs: ["React.js", "Java Spring Boot", "MySQL"]
+    }
+  ];
+
+  for (const exp of experiencias) {
+    const existe = await prisma.experience.findFirst({ 
+      where: { company: exp.company, role: exp.role } 
+    });
+    if (!existe) {
+      await prisma.experience.create({ data: exp });
+      console.log(`✅ Experiência inserida: ${exp.role} na ${exp.company}`);
+    }
+  }
+
+
+  // ==========================================
+  // 4. SEED DE FORMAÇÕES ACADÊMICAS
+  // ==========================================
+  const formacoes = [
+    {
+      course: "Engenharia de Software",
+      institution: "Universidade Federal de Itajubá (UNIFEI)",
+      period: "Aprovado em 2026",
+      type: "Bacharelado"
+    },
+    {
+      course: "Análise e Desenvolvimento de Sistemas",
+      institution: "Instituto Federal de São Paulo (IFSP) - Bragança Paulista",
+      period: "Fev 2025 - Dez 2027",
+      type: "Tecnólogo"
+    },
+    {
+      course: "Técnico em Informática",
+      institution: "Instituto Federal de São Paulo (IFSP) - Bragança Paulista",
+      period: "2022 - 2024",
+      type: "Ensino Técnico"
+    }
+  ];
+
+  for (const form of formacoes) {
+    const existe = await prisma.education.findFirst({ 
+      where: { course: form.course, institution: form.institution } 
+    });
+    if (!existe) {
+      await prisma.education.create({ data: form });
+      console.log(`✅ Formação inserida: ${form.course} no(a) ${form.institution}`);
     }
   }
 
