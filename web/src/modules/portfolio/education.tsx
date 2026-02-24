@@ -1,4 +1,4 @@
-import { EducationType } from "@portfolio/packages/schemas/education";
+import { EducationType } from "@portfolio/packages";
 
 export function Education({ educations }: { educations: EducationType[] }) {
   if (!educations?.length) return null;

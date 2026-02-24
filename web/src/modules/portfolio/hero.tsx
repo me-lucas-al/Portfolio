@@ -9,10 +9,10 @@ export function Hero() {
           Software Engineer
         </h2>
         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight">
-          Lucas Almeida.
+          Lucas Almeida
         </h1>
         <h3 className="text-3xl md:text-5xl font-semibold text-neutral-400">
-          Desenvolvedor Full Stack.
+          Desenvolvedor Full Stack
         </h3>
         
         <p className="text-neutral-400 text-lg leading-relaxed pt-4 max-w-2xl">

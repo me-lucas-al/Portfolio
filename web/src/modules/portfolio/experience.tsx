@@ -1,4 +1,4 @@
-import { ExperienceType } from "@portfolio/packages/schemas/experience";
+import { ExperienceType } from "@portfolio/packages";
 
 export function Experience({ experiences }: { experiences: ExperienceType[] }) {
   if (!experiences?.length) return null;
