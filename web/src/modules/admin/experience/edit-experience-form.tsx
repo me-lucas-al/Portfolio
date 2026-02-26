@@ -6,6 +6,13 @@ import { ExperienceType } from "@portfolio/packages"
 import { Loader2 } from "lucide-react"
 import { toast } from "react-toastify"
 
+// Função para converter o Date do banco para formato "YYYY-MM" do input type="month"
+const formatMonthForInput = (date: Date | string | null | undefined) => {
+  if (!date) return "";
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+};
+
 export function EditExperienceForm({ experience, onSuccess }: { experience: ExperienceType, onSuccess?: () => void }) {
   const [isPending, startTransition] = useTransition()
 
@@ -33,11 +40,21 @@ export function EditExperienceForm({ experience, onSuccess }: { experience: Expe
           <label className="text-sm text-neutral-400">Empresa</label>
           <input required name="company" defaultValue={experience.company} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
         </div>
+        
+        {/* Novos inputs de Data */}
+        <div className="space-y-2">
+          <label className="text-sm text-neutral-400">Data de Início</label>
+          <input required type="month" name="startDate" defaultValue={formatMonthForInput(experience.startDate)} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm text-neutral-400 flex justify-between">
+            Data de Término
+            <span className="text-neutral-600 text-[10px] mt-1">Opcional</span>
+          </label>
+          <input type="month" name="endDate" defaultValue={formatMonthForInput(experience.endDate)} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+        </div>
       </div>
-      <div className="space-y-2">
-        <label className="text-sm text-neutral-400">Período</label>
-        <input required name="period" defaultValue={experience.period} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
-      </div>
+
       <div className="space-y-2">
         <label className="text-sm text-neutral-400">Descrição</label>
         <textarea required name="description" defaultValue={experience.description} rows={4} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500 resize-none" />

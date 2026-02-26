@@ -34,9 +34,19 @@ export function CreateExperienceForm() {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-neutral-300">Período</label>
-        <input required name="period" placeholder="Ex: Ago 2024 - Atual" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
+      {/* Trocado o period pelos inputs de Data */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-neutral-300">Data de Início</label>
+          <input required type="month" name="startDate" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-neutral-300 flex justify-between">
+            Data de Término
+            <span className="text-neutral-500 text-xs font-normal">Opcional (Deixe vazio se atual)</span>
+          </label>
+          <input type="month" name="endDate" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
+        </div>
       </div>
 
       <div className="space-y-2">

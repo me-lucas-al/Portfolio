@@ -36,13 +36,21 @@ export function CreateEducationForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-300">Período</label>
-          <input required name="period" placeholder="Ex: 2022 - 2026" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
+          <label className="text-sm font-medium text-neutral-300">Data de Início</label>
+          <input required type="month" name="startDate" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-300">Tipo</label>
-          <input required name="type" placeholder="Ex: Bacharelado, Tecnólogo..." className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
+          <label className="text-sm font-medium text-neutral-300 flex justify-between">
+            Data de Término
+            <span className="text-neutral-500 text-xs font-normal">Opcional (Deixe vazio se atual)</span>
+          </label>
+          <input type="month" name="endDate" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-neutral-300">Tipo</label>
+        <input required name="type" placeholder="Ex: Bacharelado, Tecnólogo..." className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
       </div>
 
       <button disabled={isPending} type="submit" className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2">

@@ -1,5 +1,23 @@
 import { ExperienceType } from "@portfolio/packages";
 
+function formatPeriod(startDate: Date | string, endDate?: Date | string | null, showMonth: boolean = true) {
+  const options: Intl.DateTimeFormatOptions = showMonth
+    ? { month: "short", year: "numeric" }
+    : { year: "numeric" };
+
+  const formatter = new Intl.DateTimeFormat("pt-BR", options);
+
+  const format = (date: Date | string) => {
+    const str = formatter.format(new Date(date));
+    return str.replace(/ de /g, " ").replace(/\./g, "").replace(/^\w/, (c) => c.toUpperCase());
+  };
+
+  const start = format(startDate);
+  const end = endDate ? format(endDate) : "Atual";
+
+  return `${start} — ${end}`;
+}
+
 export function Experience({ experiences }: { experiences: ExperienceType[] }) {
   if (!experiences?.length) return null;
 
@@ -16,7 +34,8 @@ export function Experience({ experiences }: { experiences: ExperienceType[] }) {
             className="group flex flex-col md:flex-row gap-4 md:gap-8"
           >
             <div className="md:w-1/4 text-neutral-500 font-mono text-sm mt-1">
-              {exp.period}
+              {/* Substituindo o exp.period pela função */}
+              {formatPeriod(exp.startDate, exp.endDate)}
             </div>
             <div className="md:w-3/4 space-y-3">
               <h4 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">

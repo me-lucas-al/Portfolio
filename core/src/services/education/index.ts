@@ -10,7 +10,9 @@ export class EducationService {
   }
 
   static async getAllEducations() {
-    const educations = await prisma.education.findMany();
+    const educations = await prisma.education.findMany({
+      orderBy: { startDate: "desc" },
+    });
     return educations;
   }
   

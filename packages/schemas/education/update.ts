@@ -5,7 +5,8 @@ export const UpdateEducationSchema = EducationSchema.pick({
     id: true,
     course: true,
     institution: true,
-    period: true,
+    startDate: true,
+    endDate: true,
     type: true,
 })
 

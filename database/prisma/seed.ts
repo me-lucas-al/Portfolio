@@ -82,21 +82,24 @@ async function main() {
     {
       role: "Desenvolvedor Full Stack",
       company: "Star Seg",
-      period: "Ago 2025 - Atual",
+      startDate: new Date("2025-08-01"),
+      endDate: null, // "Atual"
       description: "Desenvolvimento e modernização de sistemas de monitoramento e segurança utilizados por +40 condomínios e +4.000 usuários ativos. Alcancei uma melhora de 91% no tempo de carregamento da plataforma. Aplicação de Clean Architecture, CI/CD e correções críticas de segurança.",
       techs: ["Next.js", "TypeScript", "Node.js", "Docker", "PostgreSQL", "Tailwind CSS"]
     },
     {
       role: "Desenvolvedor Front-End",
       company: "BNR System (Freelance)",
-      period: "Ago 2024 - Ago 2025",
+      startDate: new Date("2024-08-01"),
+      endDate: new Date("2025-08-01"),
       description: "Desenvolvimento do Front-End para um sistema de vendas e cotação de peças automotivas. Utilização de React.js, Tailwind CSS e integração com APIs REST. Responsável pelo deploy do sistema e gerenciamento de arquivos.",
       techs: ["React.js", "Tailwind CSS", "API REST"]
     },
     {
       role: "Desenvolvedor Full Stack",
       company: "MedSea Connect (Freelance)",
-      period: "Ago 2024 - Dez 2024",
+      startDate: new Date("2024-08-01"),
+      endDate: new Date("2024-12-01"),
       description: "Desenvolvimento completo de uma plataforma web para doação de medula óssea, garantindo segurança e eficiência na gestão de dados.",
       techs: ["React.js", "Java Spring Boot", "MySQL"]
     }
@@ -120,19 +123,22 @@ async function main() {
     {
       course: "Engenharia de Software",
       institution: "Universidade Federal de Itajubá (UNIFEI)",
-      period: "Aprovado em 2026",
+      startDate: new Date("2026-02-01"), // Aprovado em 2026 (Assumi Fevereiro)
+      endDate: null,
       type: "Bacharelado"
     },
     {
       course: "Análise e Desenvolvimento de Sistemas",
       institution: "Instituto Federal de São Paulo (IFSP) - Bragança Paulista",
-      period: "Fev 2025 - Dez 2027",
+      startDate: new Date("2025-02-01"),
+      endDate: new Date("2027-12-01"),
       type: "Tecnólogo"
     },
     {
       course: "Técnico em Informática",
       institution: "Instituto Federal de São Paulo (IFSP) - Bragança Paulista",
-      period: "2022 - 2024",
+      startDate: new Date("2022-02-01"),
+      endDate: new Date("2024-12-01"),
       type: "Ensino Técnico"
     }
   ];

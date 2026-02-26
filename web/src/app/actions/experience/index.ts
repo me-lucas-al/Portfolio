@@ -17,7 +17,8 @@ export async function createExperienceAction(
     await ExperienceService.createExperience({
       role: formData.get("role") as string,
       company: formData.get("company") as string,
-      period: formData.get("period") as string,
+      startDate: new Date(formData.get("startDate") as string),
+      endDate: new Date(formData.get("endDate") as string),
       description: formData.get("description") as string,
       techs: techs
         ? techs
@@ -52,7 +53,8 @@ export async function updateExperienceAction(
       id,
       role: formData.get("role") as string,
       company: formData.get("company") as string,
-      period: formData.get("period") as string,
+      startDate: new Date(formData.get("startDate") as string),
+      endDate: new Date(formData.get("endDate") as string),
       description: formData.get("description") as string,
       techs: techs
         ? techs

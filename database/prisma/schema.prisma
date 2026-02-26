@@ -33,7 +33,8 @@ model Experience {
   id          Int      @id @default(autoincrement())
   role        String
   company     String
-  period      String
+  startDate   DateTime
+  endDate     DateTime?
   description String   @db.Text
   techs       String[] 
   createdAt   DateTime @default(now())
@@ -44,7 +45,8 @@ model Education {
   id          Int      @id @default(autoincrement())
   course      String
   institution String
-  period      String
+  startDate   DateTime
+  endDate     DateTime?
   type        String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -6,7 +6,8 @@ export const UpdateExperienceSchema = ExperienceSchema.pick({
     role: true,
     description: true,
     company: true,
-    period: true,
+    startDate: true,
+    endDate: true,
     techs: true,
 })
 

@@ -16,7 +16,8 @@ export async function createEducationAction(
     await EducationService.createEducation({
       course: formData.get("course") as string,
       institution: formData.get("institution") as string,
-      period: formData.get("period") as string,
+      startDate: new Date(formData.get("startDate") as string),
+      endDate: new Date(formData.get("endDate") as string),
       type: formData.get("type") as string,
     });
 
@@ -44,7 +45,8 @@ export async function updateEducationAction(
       id,
       course: formData.get("course") as string,
       institution: formData.get("institution") as string,
-      period: formData.get("period") as string,
+      startDate: new Date(formData.get("startDate") as string),
+      endDate: new Date(formData.get("endDate") as string),
       type: formData.get("type") as string,
     });
 
