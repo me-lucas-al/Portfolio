@@ -21,12 +21,12 @@ export async function loginAction(prevState: any, formData: FormData) {
   }
 }
 
-export async function logoutAction() {
+export async function logoutAction(_formData?: FormData): Promise<void> {
   try {
     await signOut({ redirectTo: "/login" })
   } catch (error) {
     if (error instanceof AuthError) {
-      return { error: "Ocorreu um erro ao tentar sair da conta." }
+      return
     }
     throw error
   }
