@@ -50,7 +50,7 @@ async function main() {
     },
     {
       title: 'Agenda de Contatos',
-      description: 'Nova versão do sistema de gestão de stock e inventário.',
+      description: 'Sistema de Agenda de Contatos com CRUD de contatos, tags e grupos.',
       githubUrl: 'https://github.com/me-lucas-al/Agenda-de-Contatos',
       technologies: ['Next.js', 'Node.js','Prisma', 'PostgreSQL', 'Tailwind CSS'],
       deployUrl: 'https://agenda-de-contatos-starseg.vercel.app', 
@@ -120,13 +120,6 @@ async function main() {
   // 4. SEED DE FORMAÇÕES ACADÊMICAS
   // ==========================================
   const formacoes = [
-    {
-      course: "Engenharia de Software",
-      institution: "Universidade Federal de Itajubá (UNIFEI)",
-      startDate: new Date("2026-02-01"), // Aprovado em 2026 (Assumi Fevereiro)
-      endDate: null,
-      type: "Bacharelado"
-    },
     {
       course: "Análise e Desenvolvimento de Sistemas",
       institution: "Instituto Federal de São Paulo (IFSP) - Bragança Paulista",
