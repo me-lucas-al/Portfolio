@@ -23,10 +23,13 @@ export function Experience({ experiences }: { experiences: ExperienceType[] }) {
 
   return (
     <section id="experiencia" className="py-24 scroll-mt-20">
-      <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-        <span className="text-blue-500 font-mono text-lg font-normal">04.</span>
-        Experiências
-      </h3>
+      <div className="flex items-center gap-6 mb-12">
+        <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+          <span className="text-blue-500 font-mono text-lg font-normal">04.</span>
+          Experiências
+        </h3>
+        <div className="h-px bg-neutral-900 flex-1" />
+      </div>
       <div className="space-y-12">
         {experiences.map((exp) => (
           <div
@@ -34,7 +37,6 @@ export function Experience({ experiences }: { experiences: ExperienceType[] }) {
             className="group flex flex-col md:flex-row gap-4 md:gap-8"
           >
             <div className="md:w-1/4 text-neutral-500 font-mono text-sm mt-1">
-              {/* Substituindo o exp.period pela função */}
               {formatPeriod(exp.startDate, exp.endDate)}
             </div>
             <div className="md:w-3/4 space-y-3">

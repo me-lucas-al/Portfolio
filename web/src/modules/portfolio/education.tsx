@@ -1,16 +1,14 @@
 import { EducationType } from "@portfolio/packages";
 
-// Função para formatar a data. (Dica: você pode mover isso para um arquivo utils.ts depois)
 function formatPeriod(startDate: Date | string, endDate?: Date | string | null, showMonth: boolean = true) {
   const options: Intl.DateTimeFormatOptions = showMonth
-    ? { month: "short", year: "numeric" } // Ex: "out de 2023"
-    : { year: "numeric" };                // Ex: "2023"
+    ? { month: "short", year: "numeric" } 
+    : { year: "numeric" };                
 
   const formatter = new Intl.DateTimeFormat("pt-BR", options);
 
   const format = (date: Date | string) => {
     const str = formatter.format(new Date(date));
-    // Limpa a string (remove o " de " e o ponto, e deixa a 1ª letra maiúscula -> "Out 2023")
     return str.replace(/ de /g, " ").replace(/\./g, "").replace(/^\w/, (c) => c.toUpperCase());
   };
 
@@ -25,10 +23,14 @@ export function Education({ educations }: { educations: EducationType[] }) {
 
   return (
     <section id="formacao" className="py-24 scroll-mt-20">
-      <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-        <span className="text-blue-500 font-mono text-lg font-normal">05.</span>
-        Formação Acadêmica
-      </h3>
+      <div className="flex items-center gap-6 mb-12">
+        <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+          <span className="text-blue-500 font-mono text-lg font-normal">05.</span>
+          Formação Acadêmica
+        </h3>
+        <div className="h-px bg-neutral-900 flex-1" />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {educations.map((edu) => (
           <div

@@ -37,24 +37,24 @@ export function Hero() {
             LinkedIn
           </Link>
           
-          <div className="flex items-center gap-3 ml-auto bg-neutral-950/50 p-1.5 rounded-xl border border-neutral-900">
-            <a
-              href="/Curriculo-Lucas_Almeida_De_Souza.pdf"
-              download
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-sm font-medium"
+          <div className="flex flex-col max-w-sm sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto sm:ml-auto bg-neutral-950/50 p-1.5 rounded-xl border border-neutral-900">
+            <Link
+              href="https://drive.google.com/file/d/145nnzLHLlkUMpumXU_oT0T1dXjqnUOJ_/view?usp=sharing"
+              target="_blank"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-sm font-medium"
             >
               <Download className="w-4 h-4" />
               CV (PT)
-            </a>
-            <div className="w-px h-4 bg-neutral-800" />
-            <a
-              href="/Resume_Lucas_Almeida.pdf"
-              download
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-sm font-medium"
+            </Link>
+            <div className="hidden sm:block w-px h-4 bg-neutral-800" />
+            <Link
+              href="https://drive.google.com/file/d/1r-buCGPwzNeRhXUnj5XNe_6aSErGNsKW/view?usp=sharing"
+              target="_blank"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-sm font-medium"
             >
               <Download className="w-4 h-4" />
               CV (EN)
-            </a>
+            </Link>
           </div>
         </div>
       </div>
