@@ -32,7 +32,9 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
         <div key={edu.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-neutral-800 bg-neutral-900/50 hover:border-neutral-700 transition-colors">
           <div>
             <h4 className="text-white font-medium">{edu.course}</h4>
-            <p className="text-sm text-neutral-400 mt-1">{edu.institution} • {edu.period}</p>
+            <p className="text-sm text-neutral-400 mt-1">
+              {edu.institution} • {new Date(edu.startDate).getFullYear()} - {edu.endDate ? new Date(edu.endDate).getFullYear() : 'Presente'}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setEditingEdu(edu)} className="p-2 text-neutral-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors">

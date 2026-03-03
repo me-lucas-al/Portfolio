@@ -28,6 +28,9 @@ export async function Header() {
           <Link href="#formacao" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">
             <span className="text-blue-500 font-mono mr-1">05.</span>Formação
           </Link>
+          <Link href="#contatos" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">
+            <span className="text-blue-500 font-mono mr-1">06.</span>Contatos
+          </Link>
           </nav>
 
           {admin && (

@@ -4,6 +4,7 @@ import { About } from "@/modules/portfolio/about"
 import { Skills } from "@/modules/portfolio/skills"
 import { Experience } from "@/modules/portfolio/experience"
 import { Education } from "@/modules/portfolio/education"
+import { Contact } from "@/modules/portfolio/contact"
 import { ProjectGrid } from "@/components/project/project-grid"
 import { getProjectsAction } from "@/app/actions/project"
 import { getExperiencesAction } from "@/app/actions/experience"
@@ -30,6 +31,7 @@ export default async function HomePage() {
         </div>
         <Experience experiences={experiences} />
         <Education educations={educations} />
+        <Contact />
       </div>
     </main>
   )
