@@ -1,6 +1,7 @@
 import { getProjectsAction } from "@/app/actions/project"
 import { getExperiencesAction } from "@/app/actions/experience"
 import { getEducationsAction } from "@/app/actions/education"
+import { getLinksAction } from "@/app/actions/link"
 import { AdminDashboard } from "@/modules/admin/admin-dashboard"
 import { getUserRole } from "@/lib/get-user-role"
 import { redirect } from "next/navigation"
@@ -12,10 +13,11 @@ export default async function AdminPage() {
 
   if (!admin) redirect("/unauthorized")
 
-  const [projects, experiences, educations] = await Promise.all([
+  const [projects, experiences, educations, links] = await Promise.all([
     getProjectsAction(),
     getExperiencesAction(),
     getEducationsAction(),
+    getLinksAction(),
   ])
 
   return (
@@ -54,6 +56,7 @@ export default async function AdminPage() {
           projects={projects}
           experiences={experiences}
           educations={educations}
+          links={links}
         />
       </div>
     </main>

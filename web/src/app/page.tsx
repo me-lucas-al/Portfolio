@@ -9,21 +9,23 @@ import { ProjectGrid } from "@/components/project/project-grid"
 import { getProjectsAction } from "@/app/actions/project"
 import { getExperiencesAction } from "@/app/actions/experience"
 import { getEducationsAction } from "@/app/actions/education"
+import { getLinksAction } from "@/app/actions/link"
 
 export const revalidate = 3600
 
 export default async function HomePage() {
-  const [projects, experiences, educations] = await Promise.all([
+  const [projects, experiences, educations, links] = await Promise.all([
     getProjectsAction(),
     getExperiencesAction(),
-    getEducationsAction()
+    getEducationsAction(),
+    getLinksAction()
   ])
 
   return (
     <main className="min-h-screen bg-black selection:bg-blue-900/30 selection:text-blue-200">
       <Header />
       <div className="max-w-6xl mx-auto px-6 md:px-12 pt-20">
-        <Hero />
+        <Hero links={links} />
         <About />
         <Skills />
         <div id="projetos" className="scroll-mt-20">
@@ -31,7 +33,7 @@ export default async function HomePage() {
         </div>
         <Experience experiences={experiences} />
         <Education educations={educations} />
-        <Contact />
+        <Contact links={links} />
       </div>
     </main>
   )
