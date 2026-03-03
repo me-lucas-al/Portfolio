@@ -10,7 +10,9 @@ export class ExperienceService {
   }
 
   static async getAllExperiences() {
-    const experiences = await prisma.experience.findMany();
+    const experiences = await prisma.experience.findMany({
+      orderBy: { startDate: "desc" },
+    });
     return experiences;
   }
   

@@ -50,7 +50,7 @@ export function ProjectCard({ title, description, technologies, deployUrl, githu
         {deployUrl && (
           <Link href={deployUrl} target="_blank" className="flex items-center gap-2 text-sm font-medium text-neutral-500 hover:text-blue-400 transition-colors">
             <ExternalLink className="w-4 h-4" />
-            Live Preview
+            Site (Deploy)
           </Link>
         )}
       </div>
