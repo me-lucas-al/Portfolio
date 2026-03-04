@@ -1,7 +1,9 @@
 import Link from "next/link"
-import { Github, Linkedin, Download } from "lucide-react"
+import { Download, Link as LinkIcon } from "lucide-react"
+import { DefaultLinkType } from "@portfolio/packages/schemas/link"
+import * as LucideIcons from "lucide-react"
 
-export function Hero() {
+export function Hero({ links }: { links?: (DefaultLinkType & { id: number })[] }) {
   return (
     <section className="min-h-[85vh] flex flex-col justify-center items-start pt-20">
       <div className="space-y-6 max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -20,22 +22,21 @@ export function Hero() {
         </p>
 
         <div className="flex flex-wrap items-center gap-4 pt-8">
-          <Link
-            href="https://github.com/me-lucas-al"
-            target="_blank"
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-neutral-950 border border-neutral-800 hover:border-blue-800 hover:bg-neutral-900 transition-all text-white font-medium"
-          >
-            <Github className="w-5 h-5" />
-            GitHub
-          </Link>
-          <Link
-            href="https://linkedin.com/in/lucas-almeida-development"
-            target="_blank"
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-950 border border-blue-800 hover:bg-blue-900 transition-all text-white font-medium shadow-[0_0_30px_-10px_rgba(23,37,84,0.5)]"
-          >
-            <Linkedin className="w-5 h-5" />
-            LinkedIn
-          </Link>
+          {links?.map(link => {
+            // @ts-ignore
+            const IconComp = LucideIcons[link.icon] || LinkIcon;
+            return (
+              <Link
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-neutral-950 border border-neutral-800 hover:border-blue-800 hover:bg-neutral-900 transition-all text-white font-medium"
+              >
+                <IconComp className="w-5 h-5" />
+                {link.title}
+              </Link>
+            )
+          })}
           
           <div className="flex flex-col max-w-sm sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto sm:ml-auto bg-neutral-950/50 p-1.5 rounded-xl border border-neutral-900">
             <Link

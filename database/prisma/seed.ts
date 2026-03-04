@@ -146,6 +146,42 @@ async function main() {
     }
   }
 
+  // ==========================================
+  // 5. SEED DE LINKS / CONTATOS
+  // ==========================================
+  const links = [
+    {
+      title: "GitHub",
+      url: "https://github.com/me-lucas-al",
+      icon: "Github",
+    },
+    {
+      title: "LinkedIn",
+      url: "https://linkedin.com/in/lucas-almeida-development",
+      icon: "Linkedin",
+    },
+    {
+      title: "WhatsApp",
+      url: "https://api.whatsapp.com/send/?phone=5511917609074&text=Ol%C3%A1+Lucas%21&type=phone_number&app_absent=0",
+      icon: "Smartphone",
+    },
+    {
+      title: "Email",
+      url: "https://mail.google.com/mail/?view=cm&fs=1&to=me.lucasalmeida@gmail.com&su=Assunto%20aqui&body=Escreva%20sua%20mensagem%20aqui",
+      icon: "Mail",
+    }
+  ];
+
+  for (const linkData of links) {
+    const existe = await prisma.link.findFirst({ 
+      where: { url: linkData.url } 
+    });
+    if (!existe) {
+      await prisma.link.create({ data: linkData });
+      console.log(`✅ Link inserido: ${linkData.title}`);
+    }
+  }
+
   console.log('✅ Seed concluído com sucesso!');
 }
 

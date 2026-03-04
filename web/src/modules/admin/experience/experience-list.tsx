@@ -32,7 +32,9 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
         <div key={exp.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-neutral-800 bg-neutral-900/50 hover:border-neutral-700 transition-colors">
           <div>
             <h4 className="text-white font-medium">{exp.role} <span className="text-neutral-500 font-normal">na {exp.company}</span></h4>
-            <p className="text-sm text-neutral-400 mt-1">{exp.period}</p>
+            <p className="text-sm text-neutral-400 mt-1">
+              {new Date(exp.startDate).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })} - {exp.endDate ? new Date(exp.endDate).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : 'Presente'}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setEditingExp(exp)} className="p-2 text-neutral-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors">

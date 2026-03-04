@@ -7,17 +7,20 @@ import { ProjectType, ExperienceType, EducationType } from "@portfolio/packages"
 import { ProjectTabContent } from "./project/project-tab-content"
 import { ExperienceTabContent } from "./experience/experience-tab-content"
 import { EducationTabContent } from "./education/education-tab-content"
+import { LinkTabContent } from "./link/link-tab-content"
+import { DefaultLinkType } from "@portfolio/packages/schemas/link"
 
-export type EntityTab = "projects" | "experiences" | "educations"
+export type EntityTab = "projects" | "experiences" | "educations" | "links"
 export type ViewTab = "view" | "create"
 
 interface AdminDashboardProps {
   projects: ProjectType[]
   experiences: ExperienceType[]
   educations: EducationType[]
+  links: (DefaultLinkType & { id: number })[]
 }
 
-export function AdminDashboard({ projects, experiences, educations }: AdminDashboardProps) {
+export function AdminDashboard({ projects, experiences, educations, links }: AdminDashboardProps) {
   const [activeEntity, setActiveEntity] = useState<EntityTab>("projects")
   const [activeView, setActiveView] = useState<ViewTab>("view")
 
@@ -47,6 +50,15 @@ export function AdminDashboard({ projects, experiences, educations }: AdminDashb
           }`}
         >
           <GraduationCap className="w-4 h-4" /> Formação
+        </button>
+        <button
+          onClick={() => { setActiveEntity("links"); setActiveView("view"); }}
+          className={`flex items-center gap-2 pb-4 border-b-2 font-medium transition-colors whitespace-nowrap ${
+            activeEntity === "links" ? "text-blue-400 border-blue-500" : "text-neutral-500 border-transparent hover:text-neutral-300"
+          }`}
+        >
+          {/* Using LayoutGrid as a placeholder icon for now, since LinkIcon might conflict. Wait, I can import LinkIcon from lucide-react. */}
+          Links
         </button>
       </div>
 
@@ -84,6 +96,9 @@ export function AdminDashboard({ projects, experiences, educations }: AdminDashb
         )}
         {activeEntity === "educations" && (
           <EducationTabContent activeView={activeView} educations={educations} />
+        )}
+        {activeEntity === "links" && (
+          <LinkTabContent activeView={activeView} links={links} />
         )}
       </div>
     </div>

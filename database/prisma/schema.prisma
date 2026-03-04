@@ -56,3 +56,14 @@ enum Roles {
   ADMIN
   USER
 }
+
+model Link {
+  id        Int      @id @default(autoincrement())
+  title     String
+  url       String
+  icon      String 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("links")
+}
