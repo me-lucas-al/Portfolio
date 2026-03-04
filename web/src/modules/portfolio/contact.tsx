@@ -40,17 +40,16 @@ export function Contact() {
   return (
     <section id="contatos" className="py-20 scroll-mt-20">
       <div className="space-y-12">
-        <div className="space-y-4">
-          <h2 className="text-blue-500 font-medium tracking-wider text-sm uppercase">
-            06. Contatos
-          </h2>
-          <h3 className="text-3xl md:text-5xl font-bold text-white tracking-tight">
-            Entre em Contato
-          </h3>
+        <div className="flex items-center gap-6 mb-6">
+        <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+          <span className="text-blue-500 font-mono text-lg font-normal">06.</span>
+          Contatos
+        </h3>
+        <div className="h-px bg-neutral-900 flex-1" />
+      </div>
           <p className="text-neutral-400 text-lg max-w-2xl leading-relaxed">
-            Estou sempre aberto a novas oportunidades e parcerias. Sinta-se à vontade para me mandar uma mensagem através de qualquer uma das plataformas abaixo.
+            Entre em contato através de qualquer uma das plataformas abaixo.
           </p>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {contacts.map((contact) => (
