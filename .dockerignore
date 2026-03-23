@@ -1,5 +1,10 @@
+**/node_modules
+**/.pnpm-store
 .pnpm-store
-node_modules
 .turbo
 .git
+**/.git
+baseline-data
+entrypoint.sh
 *.log
+.env
