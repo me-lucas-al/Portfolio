@@ -60,10 +60,46 @@ services:
       - ./baseline-data:/firebase/baseline-data
       - ./entrypoint.sh:/entrypoint.sh
     restart: always
+
+  portfolio-app:
+    image: node:22-alpine
+    container_name: portfolio-app
+    entrypoint: ["/bin/sh"]
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - CI=true
+      - PNPM_HOME=/pnpm/home
+      - PATH=/usr/local/bin:/usr/bin:/bin:/pnpm/home
+    command:
+      - "-c"
+      - "npm install -g pnpm@10.26.1 && pnpm install && pnpm run dev"
+    volumes:
+      - ./core:/app/core
+      - ./database:/app/database
+      - ./packages:/app/packages
+      - ./web:/app/web
+      - ./package.json:/app/package.json
+      - ./pnpm-lock.yaml:/app/pnpm-lock.yaml
+      - ./pnpm-workspace.yaml:/app/pnpm-workspace.yaml
+      - ./turbo.json:/app/turbo.json
+      - ./.npmrc:/app/.npmrc
+      - ./.env:/app/.env
+      - pnpm_data:/pnpm/home
+      - node_modules:/app/node_modules 
+    depends_on:
+      - portfolio-postgres-db
+      - firebase-emulator
+    networks:
+      - local-network
       
 volumes:
   db_volume:
   pgadmin_data:
+  pnpm_data:
+  node_modules:
 
 networks:
   local-network:
