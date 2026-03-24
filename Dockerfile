@@ -1,7 +1,5 @@
 FROM node:22-alpine
-
 RUN npm install -g pnpm@10.26.1
-
 WORKDIR /app
 
 # Copia apenas os manifests primeiro (cache de dependências)
@@ -10,7 +8,6 @@ COPY core/package.json ./core/
 COPY database/package.json ./database/
 COPY packages/package.json ./packages/
 COPY web/package.json ./web/
-
 RUN pnpm install
 
 # Copia o restante do código
@@ -19,4 +16,8 @@ COPY database ./database
 COPY packages ./packages
 COPY web ./web
 
-CMD ["pnpm", "run", "dev"]
+# Copia e permissiona o entrypoint do app
+COPY app-entrypoint.sh ./app-entrypoint.sh
+RUN chmod +x ./app-entrypoint.sh
+
+CMD ["./app-entrypoint.sh"]
