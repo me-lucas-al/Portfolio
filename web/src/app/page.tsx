@@ -25,7 +25,7 @@ export default async function HomePage() {
     <main className="min-h-screen bg-black selection:bg-blue-900/30 selection:text-blue-200">
       <Header />
       <div className="max-w-6xl mx-auto px-6 md:px-12 pt-20">
-        <Hero links={links} />
+        <Hero />
         <About />
         <Skills />
         <div id="projetos" className="scroll-mt-20">

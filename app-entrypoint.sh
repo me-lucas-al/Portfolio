@@ -1,9 +1,27 @@
 #!/bin/sh
 set -e
 
-echo "Rodando migrations do Prisma..."
 cd /app/database
-pnpm exec prisma migrate deploy
+
+echo "Aguardando banco ficar disponível para rodar migrations..."
+attempt=1
+max_attempts=30
+
+while [ "$attempt" -le "$max_attempts" ]; do
+	if pnpm exec prisma migrate deploy; then
+		echo "Migrations aplicadas com sucesso."
+		break
+	fi
+
+	if [ "$attempt" -eq "$max_attempts" ]; then
+		echo "Falha ao conectar no banco após $max_attempts tentativas."
+		exit 1
+	fi
+
+	echo "Tentativa $attempt/$max_attempts falhou. Tentando novamente em 3s..."
+	attempt=$((attempt + 1))
+	sleep 3
+done
 
 echo "Iniciando aplicação..."
 cd /app

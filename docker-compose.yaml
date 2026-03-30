@@ -14,6 +14,12 @@ services:
       - POSTGRESQL_TIMEZONE=America/Sao_Paulo
     volumes:
       - db_volume:/bitnami/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d portfolio -h 127.0.0.1 -p 5432"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
     networks:
       - local-network
 
@@ -60,6 +66,8 @@ services:
       - ./baseline-data:/firebase/baseline-data
       - ./entrypoint.sh:/entrypoint.sh
     restart: always
+    networks:
+      - local-network
 
   portfolio-app:
     build:
@@ -72,6 +80,11 @@ services:
       - .env
     environment:
       - NODE_ENV=development
+      - GCP_PROJECT=${GCP_PROJECT}
+      - FIREBASE_PROJECT_ID=${GCP_PROJECT}
+      - FIREBASE_STORAGE_BUCKET=${GCP_PROJECT}.appspot.com
+      - FIREBASE_STORAGE_EMULATOR_HOST=firebase-emulator:9199
+      - FIREBASE_STORAGE_EMULATOR_PUBLIC_HOST=localhost:9199
     volumes:
       - ./core:/app/core
       - ./database:/app/database
@@ -83,8 +96,11 @@ services:
       - /app/packages/node_modules
       - /app/web/node_modules
     depends_on:
-      - portfolio-postgres-db
-      - firebase-emulator
+      portfolio-postgres-db:
+        condition: service_healthy
+      firebase-emulator:
+        condition: service_started
+    restart: unless-stopped
     networks:
       - local-network
 
