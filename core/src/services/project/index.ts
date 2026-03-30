@@ -1,32 +1,23 @@
 import { CreateProjectType, DeleteProjectType, UpdateProjectType } from "@portfolio/packages/schemas/project/index";
-import prisma from "@portfolio/database/prisma";
+import { IProjectRepository } from "../../repositories/project-repository.interface";
 
 export class ProjectService {
-  static async createProject(data: CreateProjectType) {
-    const newProject = await prisma.project.create({
-      data: data,
-    });
-    return newProject;
+  constructor(private projectRepository: IProjectRepository) {}
+
+  async createProject(data: CreateProjectType) {
+    return this.projectRepository.create(data);
   }
 
-  static async getAllProjects() {
-    const projects = await prisma.project.findMany();
-    return projects;
-  }
-  
-  static async deleteProjectById(data: DeleteProjectType) {
-    const deletedProject = await prisma.project.delete({
-      where: { id: data.id },
-    });
-    return deletedProject;
+  async getAllProjects() {
+    return this.projectRepository.findAll();
   }
 
-  static async updateProjectById(data: UpdateProjectType) {
-    const { id, ...projectData } = data;
-    const updatedProject = await prisma.project.update({
-      where: { id },
-      data: { ...projectData },
-    });
-    return updatedProject;
+  async deleteProjectById(data: DeleteProjectType) {
+    return this.projectRepository.delete(data.id);
+  }
+
+  async updateProjectById(data: UpdateProjectType) {
+    return this.projectRepository.update(data);
   }
 }
+

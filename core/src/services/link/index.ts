@@ -1,32 +1,23 @@
 import { CreateLinkType, DeleteLinkType, UpdateLinkType } from "@portfolio/packages/schemas/link";
-import prisma from "@portfolio/database/prisma";
+import { ILinkRepository } from "../../repositories/link-repository.interface";
 
 export class LinkService {
-  static async createLink(data: CreateLinkType) {
-    const newLink = await prisma.link.create({
-      data: data,
-    });
-    return newLink;
+  constructor(private linkRepository: ILinkRepository) {}
+
+  async createLink(data: CreateLinkType) {
+    return this.linkRepository.create(data);
   }
 
-  static async getAllLinks() {
-    const links = await prisma.link.findMany();
-    return links;
-  }
-  
-  static async deleteLinkById(data: DeleteLinkType) {
-    const deletedLink = await prisma.link.delete({
-      where: { id: data.id },
-    });
-    return deletedLink;
+  async getAllLinks() {
+    return this.linkRepository.findAll();
   }
 
-  static async updateLinkById(data: UpdateLinkType) {
-    const { id, ...linkData } = data;
-    const updatedLink = await prisma.link.update({
-      where: { id },
-      data: { ...linkData },
-    });
-    return updatedLink;
+  async deleteLinkById(data: DeleteLinkType) {
+    return this.linkRepository.delete(data.id);
+  }
+
+  async updateLinkById(data: UpdateLinkType) {
+    return this.linkRepository.update(data);
   }
 }
+

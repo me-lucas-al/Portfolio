@@ -1,6 +1,6 @@
 "use server";
 
-import { EducationService } from "@portfolio/core/src/services/education";
+import { makeEducationService } from "@portfolio/core/src/factories/_index";
 import { revalidatePath } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
@@ -13,7 +13,7 @@ export async function createEducationAction(
 
     if (!admin) return { error: "Não autorizado" };
 
-    await EducationService.createEducation({
+    await makeEducationService().createEducation({
       course: formData.get("course") as string,
       institution: formData.get("institution") as string,
       startDate: new Date(formData.get("startDate") as string),
@@ -41,7 +41,7 @@ export async function updateEducationAction(
 
     const id = Number(formData.get("id"));
 
-    await EducationService.updateEducationById({
+    await makeEducationService().updateEducationById({
       id,
       course: formData.get("course") as string,
       institution: formData.get("institution") as string,
@@ -64,7 +64,7 @@ export async function deleteEducationAction(id: number) {
 
   if (!admin) return { error: "Não autorizado" };
 
-  await EducationService.deleteEducationById({ id });
+  await makeEducationService().deleteEducationById({ id });
 
   revalidatePath("/");
   revalidatePath("/control-painel");
@@ -73,5 +73,5 @@ export async function deleteEducationAction(id: number) {
 }
 
 export async function getEducationsAction() {
-  return EducationService.getAllEducations();
+  return makeEducationService().getAllEducations();
 }

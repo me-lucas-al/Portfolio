@@ -1,34 +1,23 @@
 import { CreateEducationType, DeleteEducationType, UpdateEducationType } from "@portfolio/packages/schemas/education/index";
-import prisma from "@portfolio/database/prisma";
+import { IEducationRepository } from "../../repositories/education-repository.interface";
 
 export class EducationService {
-  static async createEducation(data: CreateEducationType) {
-    const newEducation = await prisma.education.create({
-      data: data,
-    });
-    return newEducation;
+  constructor(private educationRepository: IEducationRepository) {}
+
+  async createEducation(data: CreateEducationType) {
+    return this.educationRepository.create(data);
   }
 
-  static async getAllEducations() {
-    const educations = await prisma.education.findMany({
-      orderBy: { startDate: "desc" },
-    });
-    return educations;
-  }
-  
-  static async deleteEducationById(data: DeleteEducationType) {
-    const deletedEducation = await prisma.education.delete({
-      where: { id: data.id },
-    });
-    return deletedEducation;
+  async getAllEducations() {
+    return this.educationRepository.findAll();
   }
 
-  static async updateEducationById(data: UpdateEducationType) {
-    const { id, ...educationData } = data;
-    const updatedEducation = await prisma.education.update({
-      where: { id },
-      data: { ...educationData },
-    });
-    return updatedEducation;
+  async deleteEducationById(data: DeleteEducationType) {
+    return this.educationRepository.delete(data.id);
+  }
+
+  async updateEducationById(data: UpdateEducationType) {
+    return this.educationRepository.update(data);
   }
 }
+

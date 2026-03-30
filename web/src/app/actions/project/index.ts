@@ -1,6 +1,6 @@
 "use server";
 
-import { ProjectService } from "@portfolio/core/src/services/project";
+import { makeProjectService } from "@portfolio/core/src/factories/_index";
 import { revalidatePath } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
@@ -12,7 +12,7 @@ export async function createProjectAction(prevState: any, formData: FormData) {
     const techs = formData.get("technologies") as string;
     const images = formData.get("imagesUrl") as string;
 
-    await ProjectService.createProject({
+    await makeProjectService().createProject({
       title: formData.get("title") as string,
       description: formData.get("description") as string,
       technologies: techs
@@ -50,7 +50,7 @@ export async function updateProjectAction(prevState: any, formData: FormData) {
     const techs = formData.get("technologies") as string;
     const images = formData.get("imagesUrl") as string;
 
-    await ProjectService.updateProjectById({
+    await makeProjectService().updateProjectById({
       id,
       title: formData.get("title") as string,
       description: formData.get("description") as string,
@@ -84,7 +84,7 @@ export async function deleteProjectAction(id: number) {
 
   if (!admin) return { error: "Não autorizado" };
 
-  await ProjectService.deleteProjectById({ id });
+  await makeProjectService().deleteProjectById({ id });
 
   revalidatePath("/");
   revalidatePath("/control-painel");
@@ -93,5 +93,5 @@ export async function deleteProjectAction(id: number) {
 }
 
 export async function getProjectsAction() {
-  return ProjectService.getAllProjects();
+  return makeProjectService().getAllProjects();
 }

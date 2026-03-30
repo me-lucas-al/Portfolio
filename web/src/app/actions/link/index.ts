@@ -1,6 +1,6 @@
 "use server";
 
-import { LinkService } from "@portfolio/core/src/services/link";
+import { makeLinkService } from "@portfolio/core/src/factories/_index";
 import { revalidatePath } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
@@ -9,7 +9,7 @@ export async function createLinkAction(prevState: any, formData: FormData) {
     const admin = await getUserRole("ADMIN");
     if (!admin) return { error: "Não autorizado" };
 
-    await LinkService.createLink({
+    await makeLinkService().createLink({
       title: formData.get("title") as string,
       url: formData.get("url") as string,
       icon: formData.get("icon") as string,
@@ -32,7 +32,7 @@ export async function updateLinkAction(prevState: any, formData: FormData) {
 
     const id = Number(formData.get("id"));
 
-    await LinkService.updateLinkById({
+    await makeLinkService().updateLinkById({
       id,
       title: formData.get("title") as string,
       url: formData.get("url") as string,
@@ -53,7 +53,7 @@ export async function deleteLinkAction(id: number) {
 
   if (!admin) return { error: "Não autorizado" };
 
-  await LinkService.deleteLinkById({ id });
+  await makeLinkService().deleteLinkById({ id });
 
   revalidatePath("/");
   revalidatePath("/control-painel");
@@ -62,5 +62,5 @@ export async function deleteLinkAction(id: number) {
 }
 
 export async function getLinksAction() {
-  return LinkService.getAllLinks();
+  return makeLinkService().getAllLinks();
 }

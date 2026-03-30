@@ -1,34 +1,23 @@
 import { CreateExperienceType, DeleteExperienceType, UpdateExperienceType } from "@portfolio/packages/schemas/experience/index";
-import prisma from "@portfolio/database/prisma";
+import { IExperienceRepository } from "../../repositories/experience-repository.interface";
 
 export class ExperienceService {
-  static async createExperience(data: CreateExperienceType) {
-    const newExperience = await prisma.experience.create({
-      data: data,
-    });
-    return newExperience;
+  constructor(private experienceRepository: IExperienceRepository) {}
+
+  async createExperience(data: CreateExperienceType) {
+    return this.experienceRepository.create(data);
   }
 
-  static async getAllExperiences() {
-    const experiences = await prisma.experience.findMany({
-      orderBy: { startDate: "desc" },
-    });
-    return experiences;
-  }
-  
-  static async deleteExperienceById(data: DeleteExperienceType) {
-    const deletedExperience = await prisma.experience.delete({
-      where: { id: data.id },
-    });
-    return deletedExperience;
+  async getAllExperiences() {
+    return this.experienceRepository.findAll();
   }
 
-  static async updateExperienceById(data: UpdateExperienceType) {
-    const { id, ...experienceData } = data;
-    const updatedExperience = await prisma.experience.update({
-      where: { id },
-      data: { ...experienceData },
-    });
-    return updatedExperience;
+  async deleteExperienceById(data: DeleteExperienceType) {
+    return this.experienceRepository.delete(data.id);
+  }
+
+  async updateExperienceById(data: UpdateExperienceType) {
+    return this.experienceRepository.update(data);
   }
 }
+

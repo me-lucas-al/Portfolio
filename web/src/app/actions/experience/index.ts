@@ -1,6 +1,6 @@
 "use server";
 
-import { ExperienceService } from "@portfolio/core/src/services/experience";
+import { makeExperienceService } from "@portfolio/core/src/factories/_index";
 import { revalidatePath } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
@@ -14,7 +14,7 @@ export async function createExperienceAction(
 
     const techs = formData.get("techs") as string;
 
-    await ExperienceService.createExperience({
+    await makeExperienceService().createExperience({
       role: formData.get("role") as string,
       company: formData.get("company") as string,
       startDate: new Date(formData.get("startDate") as string),
@@ -49,7 +49,7 @@ export async function updateExperienceAction(
     const id = Number(formData.get("id"));
     const techs = formData.get("techs") as string;
 
-    await ExperienceService.updateExperienceById({
+    await makeExperienceService().updateExperienceById({
       id,
       role: formData.get("role") as string,
       company: formData.get("company") as string,
@@ -77,7 +77,7 @@ export async function deleteExperienceAction(id: number) {
   const admin = await getUserRole("ADMIN");
 
   if (!admin) return { error: "Não autorizado" };
-  await ExperienceService.deleteExperienceById({ id });
+  await makeExperienceService().deleteExperienceById({ id });
 
   revalidatePath("/");
   revalidatePath("/control-painel");
@@ -86,5 +86,5 @@ export async function deleteExperienceAction(id: number) {
 }
 
 export async function getExperiencesAction() {
-  return ExperienceService.getAllExperiences();
+  return makeExperienceService().getAllExperiences();
 }

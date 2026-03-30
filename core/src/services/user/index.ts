@@ -1,34 +1,26 @@
 import { CreateUserType, DeleteUserType, UpdateUserType } from "@portfolio/packages/schemas/user/index";
-import prisma from "@portfolio/database/prisma";
+import { IUserRepository } from "../../repositories/user-repository.interface";
 
 export class UserService {
-    static async createUser(data: CreateUserType){
-        const newUser = await prisma.user.create({
-            data: data,
-        });
-        return newUser;
-    }
+  constructor(private userRepository: IUserRepository) {}
 
-    static async getAllUsers(id?:number){
-        const users = await prisma.user.findMany({
-            where: id !== undefined ? { id } : {}
-        });
-        return users;
-    }
+  async createUser(data: CreateUserType) {
+    return this.userRepository.create(data);
+  }
 
-    static async deleteUser(data: DeleteUserType){
-        const deletedUser = await prisma.user.delete({
-            where: { id: data.id }
-        })
-        return deletedUser;
+  async getAllUsers(id?: number) {
+    if (id !== undefined) {
+      const user = await this.userRepository.findById(id);
+      return user ? [user] : [];
     }
+    return this.userRepository.findAll();
+  }
 
-    static async updateUser(data: UpdateUserType){
-        const { id, ...userData } = data
-        const updatedUser = await prisma.user.update({
-            where: { id },
-            data: { ...userData }
-        })
-        return updatedUser;
-    }
+  async deleteUser(data: DeleteUserType) {
+    return this.userRepository.delete(data.id);
+  }
+
+  async updateUser(data: UpdateUserType) {
+    return this.userRepository.update(data);
+  }
 }
