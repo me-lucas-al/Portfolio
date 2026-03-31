@@ -8,9 +8,9 @@ services:
     env_file:
       - .env
     environment:
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=portfolio
+      - POSTGRESQL_USERNAME=${DATABASE_USER}
+      - POSTGRESQL_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRESQL_DATABASE=portfolio
       - POSTGRESQL_TIMEZONE=America/Sao_Paulo
     volumes:
       - db_volume:/bitnami/postgresql
