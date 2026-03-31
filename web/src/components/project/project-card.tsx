@@ -1,6 +1,13 @@
 import { ProjectType } from "@portfolio/packages"
 import { ExternalLink, Github, FolderGit2 } from "lucide-react"
 import Link from "next/link"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 export function ProjectCard({ title, description, technologies, deployUrl, githubUrl, imagesUrl }: ProjectType) {
   return (
@@ -8,12 +15,36 @@ export function ProjectCard({ title, description, technologies, deployUrl, githu
       <div>
         {imagesUrl && imagesUrl.length > 0 ? (
           <div className="w-full h-48 mb-6 rounded-xl overflow-hidden relative border border-neutral-800/50">
-            <img 
-              src={imagesUrl[0]} 
-              alt={title} 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent opacity-80" />
+            {imagesUrl.length > 1 ? (
+              <Carousel className="w-full h-full">
+                <CarouselContent className="h-full -ml-0">
+                  {imagesUrl.map((url, index) => (
+                    <CarouselItem key={index} className="h-full pl-0">
+                      <img 
+                        src={url} 
+                        alt={`${title} - ${index + 1}`} 
+                        className="w-full h-full object-cover" 
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent opacity-60" />
+                
+                <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <CarouselPrevious className="static translate-y-0 h-8 w-8 bg-black/50 border-neutral-800 hover:bg-blue-900/40 hover:text-white transition-all" />
+                  <CarouselNext className="static translate-y-0 h-8 w-8 bg-black/50 border-neutral-800 hover:bg-blue-900/40 hover:text-white transition-all" />
+                </div>
+              </Carousel>
+            ) : (
+              <>
+                <img 
+                  src={imagesUrl[0]} 
+                  alt={title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent opacity-80" />
+              </>
+            )}
           </div>
         ) : (
           <div className="w-12 h-12 rounded-xl bg-blue-950/40 flex items-center justify-center mb-6 border border-blue-900/50">
