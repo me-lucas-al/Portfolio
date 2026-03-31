@@ -78,6 +78,9 @@ export async function createProjectAction(prevState: any, formData: FormData) {
       .filter((value): value is File => value instanceof File && value.size > 0);
 
     const imagesUrl = imageFiles.length > 0 ? await uploadProjectImages(imageFiles) : [];
+    
+    const projects = await makeProjectService().getAllProjects();
+    const nextOrder = projects.length > 0 ? Math.max(...projects.map(p => p.order ?? 0)) + 1 : 0;
 
     await makeProjectService().createProject({
       title: formData.get("title") as string,
@@ -91,6 +94,7 @@ export async function createProjectAction(prevState: any, formData: FormData) {
       deployUrl: formData.get("deployUrl") as string,
       githubUrl: formData.get("githubUrl") as string,
       imagesUrl,
+      order: nextOrder
     });
 
     revalidatePath("/");
@@ -99,6 +103,39 @@ export async function createProjectAction(prevState: any, formData: FormData) {
     return { success: true, message: "Projeto criado com sucesso!" };
   } catch (error) {
     return { error: "Erro ao criar projeto" };
+  }
+}
+
+export async function reorderProjectAction(id: number, direction: 'up' | 'down') {
+  try {
+    const admin = await getUserRole("ADMIN");
+    if (!admin) return { error: "Não autorizado" };
+
+    const projects = await makeProjectService().getAllProjects();
+    const index = projects.findIndex(p => p.id === id);
+
+    if (index === -1) return { error: "Projeto não encontrado" };
+    if (direction === 'up' && index === 0) return { error: "Já é o primeiro" };
+    if (direction === 'down' && index === projects.length - 1) return { error: "Já é o último" };
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const currentProject = projects[index];
+    const targetProject = projects[targetIndex];
+
+    const currentOrder = currentProject.order;
+    const targetOrder = targetProject.order;
+
+    await Promise.all([
+      makeProjectService().updateProjectById({ ...currentProject, order: targetOrder } as any),
+      makeProjectService().updateProjectById({ ...targetProject, order: currentOrder } as any)
+    ]);
+
+    revalidatePath("/");
+    revalidatePath("/control-painel");
+
+    return { success: true };
+  } catch (error) {
+    return { error: "Erro ao reordenar projeto" };
   }
 }
 

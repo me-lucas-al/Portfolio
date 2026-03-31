@@ -8,6 +8,7 @@ export const ExperienceSchema = z.object({
   endDate: z.coerce.date().nullable(),
   description: z.string().min(1).max(500),
   techs: z.array(z.string().min(1).max(100)),
+  order: z.number().int().default(0),
 })
 
 export type ExperienceType = z.infer<typeof ExperienceSchema>

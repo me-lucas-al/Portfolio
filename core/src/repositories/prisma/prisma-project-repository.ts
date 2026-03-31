@@ -10,7 +10,7 @@ export class PrismaProjectRepository implements IProjectRepository {
   }
 
   async findAll(): Promise<Project[]> {
-    return this.prisma.project.findMany();
+    return this.prisma.project.findMany({ orderBy: { order: 'asc' } });
   }
 
   async delete(id: number): Promise<Project> {

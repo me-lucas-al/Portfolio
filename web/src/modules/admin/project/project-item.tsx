@@ -2,8 +2,8 @@
 
 
 import { useState, useTransition } from "react"
-import { Trash2, Edit2, Loader2 } from "lucide-react"
-import { deleteProjectAction } from "@/app/actions/project"
+import { Trash2, Edit2, Loader2, ChevronUp, ChevronDown } from "lucide-react"
+import { deleteProjectAction, reorderProjectAction } from "@/app/actions/project"
 import { EditProjectForm } from "./edit-project-form"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog"
@@ -23,6 +23,15 @@ export function ProjectItem({ project }: { project: ProjectType }) {
     })
   }
 
+  const handleReorder = (direction: 'up' | 'down') => {
+    startTransition(async () => {
+      const result = await reorderProjectAction(project.id, direction)
+      if (result.error) {
+        toast.error(result.error)
+      }
+    })
+  }
+
   return (
     <div className="flex items-center justify-between p-5 rounded-xl border border-neutral-900 bg-neutral-950/50 group transition-all duration-300 hover:bg-neutral-900/50 hover:border-neutral-800">
       <div className="flex-1 min-w-0 pr-4">
@@ -37,6 +46,25 @@ export function ProjectItem({ project }: { project: ProjectType }) {
       </div>
 
       <div className="flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
+        <div className="flex items-center gap-1 mr-2 border-r border-neutral-800 pr-2">
+          <button 
+            disabled={isPending}
+            onClick={() => handleReorder('up')}
+            className="p-1.5 text-neutral-500 hover:text-blue-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-30"
+            title="Mover para cima"
+          >
+            <ChevronUp className="w-4 h-4" />
+          </button>
+          <button 
+            disabled={isPending}
+            onClick={() => handleReorder('down')}
+            className="p-1.5 text-neutral-500 hover:text-blue-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-30"
+            title="Mover para baixo"
+          >
+            <ChevronDown className="w-4 h-4" />
+          </button>
+        </div>
+
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <button className="p-2.5 text-neutral-500 hover:text-blue-400 hover:bg-blue-950/50 rounded-lg transition-all">

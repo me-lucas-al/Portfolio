@@ -13,6 +13,9 @@ export async function createExperienceAction(
     if (!admin) return { error: "Não autorizado" };
 
     const techs = formData.get("techs") as string;
+    
+    const experiences = await makeExperienceService().getAllExperiences();
+    const nextOrder = experiences.length > 0 ? Math.max(...experiences.map(e => e.order ?? 0)) + 1 : 0;
 
     await makeExperienceService().createExperience({
       role: formData.get("role") as string,
@@ -26,6 +29,7 @@ export async function createExperienceAction(
             .map((t) => t.trim())
             .filter(Boolean)
         : [],
+      order: nextOrder
     });
 
     revalidatePath("/");
@@ -34,6 +38,39 @@ export async function createExperienceAction(
     return { success: true, message: "Experiência criada com sucesso!" };
   } catch (error) {
     return { error: "Erro ao criar experiência" };
+  }
+}
+
+export async function reorderExperienceAction(id: number, direction: 'up' | 'down') {
+  try {
+    const admin = await getUserRole("ADMIN");
+    if (!admin) return { error: "Não autorizado" };
+
+    const experiences = await makeExperienceService().getAllExperiences();
+    const index = experiences.findIndex(e => e.id === id);
+
+    if (index === -1) return { error: "Experiência não encontrada" };
+    if (direction === 'up' && index === 0) return { error: "Já é a primeira" };
+    if (direction === 'down' && index === experiences.length - 1) return { error: "Já é a última" };
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const currentExperience = experiences[index];
+    const targetExperience = experiences[targetIndex];
+
+    const currentOrder = currentExperience.order;
+    const targetOrder = targetExperience.order;
+
+    await Promise.all([
+      makeExperienceService().updateExperienceById({ ...currentExperience, order: targetOrder } as any),
+      makeExperienceService().updateExperienceById({ ...targetExperience, order: currentOrder } as any)
+    ]);
+
+    revalidatePath("/");
+    revalidatePath("/control-painel");
+
+    return { success: true };
+  } catch (error) {
+    return { error: "Erro ao reordenar experiência" };
   }
 }
 

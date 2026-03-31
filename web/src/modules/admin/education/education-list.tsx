@@ -1,8 +1,8 @@
 "use client"
 
 import { EducationType } from "@portfolio/packages"
-import { Pencil, Trash2, Loader2 } from "lucide-react"
-import { deleteEducationAction } from "@/app/actions/education"
+import { Pencil, Trash2, Loader2, ChevronUp, ChevronDown } from "lucide-react"
+import { deleteEducationAction, reorderEducationAction } from "@/app/actions/education"
 import { useState, useTransition } from "react"
 import { SideSheet } from "@/components/side-sheet"
 import { Modal } from "@/components/modal"
@@ -24,6 +24,15 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
     }
   }
 
+  const handleReorder = (id: number, direction: 'up' | 'down') => {
+    startTransition(async () => {
+      const result = await reorderEducationAction(id, direction)
+      if (result.error) {
+        toast.error(result.error)
+      }
+    })
+  }
+
   if (!educations.length) return <p className="text-neutral-500">Nenhuma formação cadastrada.</p>
 
   return (
@@ -37,6 +46,24 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 mr-2 border-r border-neutral-800 pr-2">
+              <button 
+                disabled={isPending}
+                onClick={() => handleReorder(edu.id, 'up')}
+                className="p-1.5 text-neutral-400 hover:text-blue-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-30"
+                title="Mover para cima"
+              >
+                <ChevronUp className="w-4 h-4" />
+              </button>
+              <button 
+                disabled={isPending}
+                onClick={() => handleReorder(edu.id, 'down')}
+                className="p-1.5 text-neutral-400 hover:text-blue-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-30"
+                title="Mover para baixo"
+              >
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
             <button onClick={() => setEditingEdu(edu)} className="p-2 text-neutral-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors">
               <Pencil className="w-4 h-4" />
             </button>

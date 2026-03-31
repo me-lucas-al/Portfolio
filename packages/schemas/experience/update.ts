@@ -9,6 +9,7 @@ export const UpdateExperienceSchema = ExperienceSchema.pick({
     startDate: true,
     endDate: true,
     techs: true,
+    order: true,
 })
 
 export type UpdateExperienceType = z.infer<typeof UpdateExperienceSchema>

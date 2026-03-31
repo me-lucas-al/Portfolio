@@ -8,6 +8,7 @@ export const UpdateEducationSchema = EducationSchema.pick({
     startDate: true,
     endDate: true,
     type: true,
+    order: true,
 })
 
 export type UpdateEducationType = z.infer<typeof UpdateEducationSchema>

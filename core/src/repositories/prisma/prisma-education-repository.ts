@@ -10,7 +10,7 @@ export class PrismaEducationRepository implements IEducationRepository {
   }
 
   async findAll(): Promise<Education[]> {
-    return this.prisma.education.findMany({ orderBy: { startDate: "desc" } });
+    return this.prisma.education.findMany({ orderBy: { order: "asc" } });
   }
 
   async delete(id: number): Promise<Education> {

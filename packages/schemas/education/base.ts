@@ -7,6 +7,7 @@ export const EducationSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date().nullable(),
   type: z.string().min(1).max(100),
+  order: z.number().int().default(0),
 })
 
 export type EducationType = z.infer<typeof EducationSchema>

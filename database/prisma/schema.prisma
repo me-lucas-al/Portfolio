@@ -23,6 +23,7 @@ model Project {
   technologies String[]
   deployUrl    String?
   imagesUrl    String[]
+  order        Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -37,6 +38,7 @@ model Experience {
   endDate     DateTime?
   description String   @db.Text
   techs       String[] 
+  order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -48,6 +50,7 @@ model Education {
   startDate   DateTime
   endDate     DateTime?
   type        String
+  order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -62,6 +65,7 @@ model Link {
   title     String
   url       String
   icon      String 
+  order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

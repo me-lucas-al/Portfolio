@@ -10,7 +10,7 @@ export class PrismaLinkRepository implements ILinkRepository {
   }
 
   async findAll(): Promise<Link[]> {
-    return this.prisma.link.findMany();
+    return this.prisma.link.findMany({ orderBy: { order: "asc" } });
   }
 
   async delete(id: number): Promise<Link> {

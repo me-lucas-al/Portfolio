@@ -9,10 +9,14 @@ export async function createLinkAction(prevState: any, formData: FormData) {
     const admin = await getUserRole("ADMIN");
     if (!admin) return { error: "Não autorizado" };
 
+    const links = await makeLinkService().getAllLinks();
+    const nextOrder = links.length > 0 ? Math.max(...links.map(l => l.order ?? 0)) + 1 : 0;
+
     await makeLinkService().createLink({
       title: formData.get("title") as string,
       url: formData.get("url") as string,
       icon: formData.get("icon") as string,
+      order: nextOrder
     });
 
     revalidatePath("/");
@@ -21,6 +25,39 @@ export async function createLinkAction(prevState: any, formData: FormData) {
     return { success: true, message: "Link criado com sucesso!" };
   } catch (error) {
     return { error: "Erro ao criar link" };
+  }
+}
+
+export async function reorderLinkAction(id: number, direction: 'up' | 'down') {
+  try {
+    const admin = await getUserRole("ADMIN");
+    if (!admin) return { error: "Não autorizado" };
+
+    const links = await makeLinkService().getAllLinks();
+    const index = links.findIndex(l => l.id === id);
+
+    if (index === -1) return { error: "Link não encontrado" };
+    if (direction === 'up' && index === 0) return { error: "Já é o primeiro" };
+    if (direction === 'down' && index === links.length - 1) return { error: "Já é o último" };
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const currentLink = links[index];
+    const targetLink = links[targetIndex];
+
+    const currentOrder = currentLink.order;
+    const targetOrder = targetLink.order;
+
+    await Promise.all([
+      makeLinkService().updateLinkById({ ...currentLink, order: targetOrder } as any),
+      makeLinkService().updateLinkById({ ...targetLink, order: currentOrder } as any)
+    ]);
+
+    revalidatePath("/");
+    revalidatePath("/control-painel");
+
+    return { success: true };
+  } catch (error) {
+    return { error: "Erro ao reordenar link" };
   }
 }
 

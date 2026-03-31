@@ -10,7 +10,7 @@ export class PrismaExperienceRepository implements IExperienceRepository {
   }
 
   async findAll(): Promise<Experience[]> {
-    return this.prisma.experience.findMany({ orderBy: { startDate: "desc" } });
+    return this.prisma.experience.findMany({ orderBy: { order: "asc" } });
   }
 
   async delete(id: number): Promise<Experience> {

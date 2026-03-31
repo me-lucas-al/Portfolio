@@ -82,7 +82,7 @@ services:
       - NODE_ENV=development
       - GCP_PROJECT=${GCP_PROJECT}
       - FIREBASE_PROJECT_ID=${GCP_PROJECT}
-      - FIREBASE_STORAGE_BUCKET=${GCP_PROJECT}.appspot.com
+      - FIREBASE_STORAGE_BUCKET=${GCP_PROJECT}.firebasestorage.app
       - FIREBASE_STORAGE_EMULATOR_HOST=firebase-emulator:9199
       - FIREBASE_STORAGE_EMULATOR_PUBLIC_HOST=localhost:9199
     volumes:
