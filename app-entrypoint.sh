@@ -10,6 +10,10 @@ max_attempts=30
 while [ "$attempt" -le "$max_attempts" ]; do
 	if pnpm exec prisma migrate deploy; then
 		echo "Migrations aplicadas com sucesso."
+
+		echo "Gerando Prisma Client atualizado..."
+		pnpm exec prisma generate
+		
 		break
 	fi
 
