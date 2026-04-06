@@ -5,12 +5,12 @@
       "cache": false,
       "env": ["DATABASE_URL"]
     },
-    "db:migrate": {
+    "db:push": {
       "cache": false,
       "env": ["DATABASE_URL"]
     },
     "build": {
-      "dependsOn": ["^build", "^db:generate", "^db:migrate"],
+      "dependsOn": ["^build", "^db:generate", "^db:push"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "env": [
         "AUTH_SECRET",
