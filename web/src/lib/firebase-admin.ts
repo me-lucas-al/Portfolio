@@ -1,12 +1,6 @@
 import { App, cert, getApps, initializeApp } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 
-const isDevelopment = process.env.NODE_ENV === "development";
-
-if (isDevelopment && !process.env.FIREBASE_STORAGE_EMULATOR_HOST) {
-  process.env.FIREBASE_STORAGE_EMULATOR_HOST = "localhost:9199";
-}
-
 function getFirebaseCredentials() {
   const projectId = process.env.GCP_PROJECT ?? process.env.FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
@@ -46,10 +40,7 @@ export function getFirebaseStorageBucket() {
   return getStorage(getFirebaseApp()).bucket();
 }
 
-export function isFirebaseStorageEmulator() {
-  return isDevelopment;
-}
-
-export function getFirebaseStorageEmulatorPublicHost() {
-  return process.env.FIREBASE_STORAGE_EMULATOR_PUBLIC_HOST ?? "localhost:9199";
+export function getFirebaseStorageUrl(bucketName: string, filePath: string, downloadToken: string) {
+  const encodedPath = encodeURIComponent(filePath);
+  return `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedPath}?alt=media&token=${downloadToken}`;
 }
