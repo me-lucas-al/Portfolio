@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Lucas Almeida | Full Stack Developer Portfolio
 
-## Getting Started
+Este projeto é um portfólio moderno e interativo, desenvolvido para apresentar projetos, experiências profissionais e formação acadêmica de forma elegante e performática. 
 
-First, run the development server:
+O grande diferencial deste projeto é o seu **Painel de Controle Administrativo "Secreto"**, que permite gerenciar todo o conteúdo do site em tempo real, sem a necessidade de alterar o código-fonte manualmente para cada atualização.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Painel de Controle (Admin Dashboard)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Diferente de portfólios estáticos, este projeto conta com uma área administrativa protegida por autenticação, onde o desenvolvedor pode gerenciar dinamicamente todas as informações exibidas no site.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+![Painel de Controle](web/public/control-painel.png)
 
-## Learn More
+### ⚙️ Funcionalidades do Painel:
+O painel de controle interage diretamente com o banco de dados via **Prisma ORM**, permitindo as seguintes operações de **CRUD** (Create, Read, Update, Delete):
 
-To learn more about Next.js, take a look at the following resources:
+- **📁 Gerenciamento de Projetos**: Adicionar novos projetos, editar os existentes, atualizar links de Deploy/GitHub e gerenciar as tecnologias utilizadas.
+- **💼 Experiências Profissionais**: Cadastrar novas experiências, descrever responsabilidades e tecnologias aplicadas em cada cargo.
+- **🎓 Formação Acadêmica**: Manter o currículo acadêmico atualizado com cursos e instituições.
+- **🔗 Links e Redes Sociais**: Alterar links de contato e redes sociais de forma centralizada.
+- **↕️ Ordenação Dinâmica**: Organizador de prioridade (Drag & Drop ou campos de ordem) para definir quais itens aparecem primeiro no site.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 💻 Tech Stack
 
-## Deploy on Vercel
+O projeto utiliza o que há de mais moderno no ecossistema JavaScript/TypeScript, focado em performance, SEO e escalabilidade:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router & Server Actions)
+- **Internacionalização/UI**: React 19 & Tailwind CSS 4.0
+- **Linguagem**: TypeScript
+- **Autenticação**: Next-Auth v5 (Auth.js)
+- **Banco de Dados**: PostgreSQL
+- **ORM**: Prisma
+- **Gerenciamento de Monorepo**: Turborepo
+- **Ícones**: Lucide React & React Icons
+- **Notificações**: React Toastify
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🏗️ Estrutura e Arquitetura de Pacotes
+
+O projeto é organizado em um **Monorepo** gerenciado pelo **Turborepo**, utilizando uma arquitetura de pacotes internos para separar as responsabilidades e facilitar a manutenção:
+
+- **`web` (`@portfolio/web`)**: A aplicação principal em Next.js. Responsável por toda a interface do usuário (UI), rotas públicas, Server Actions e o Painel de Controle Administrativo.
+- **`database` (`@portfolio/database`)**: Camada de persistência. Contém o schema do Prisma, as migrações do banco de dados e a configuração do cliente Prisma para interagir com o PostgreSQL.
+- **`core` (`@portfolio/core`)**: Pacote de lógica de negócio e utilitários. Responsável por funções compartilhadas, validações centrais e regras que podem ser reutilizadas em diferentes partes do sistema.
+- **`packages` (`@portfolio/packages`)**: Contém schemas de validação e tipos compartilhados entre o frontend e o backend, garantindo consistência de dados em todo o monorepo.
+
+---
+
+## 🐳 Desenvolvimento Local com Docker (Branch `local`)
+
+Para facilitar o setup do ambiente de desenvolvimento, o projeto possui uma branch específica chamada **`local`**. 
+
+Nesta branch, é possível subir todo o ecossistema do projeto utilizando **Docker Compose**, incluindo:
+- Banco de Dados PostgreSQL.
+- **Firebase Emulator**: Permite testar funcionalidades que dependem do Firebase (como Storage ou Auth) localmente, sem custo e sem necessidade de conexão externa.
+
+Isso garante que qualquer desenvolvedor consiga rodar o projeto completo com apenas um comando, sem precisar configurar cada serviço manualmente.
+
+---
+
+## 🚀 Como Executar
+
+### Pré-requisitos:
+- [Node.js](https://nodejs.org/) (v18+)
+- [pnpm](https://pnpm.io/) (recomendado) ou npm/yarn
+- Instância do PostgreSQL
+
+### Instalação:
+
+1. Instale as dependências:
+   ```bash
+   pnpm install
+   ```
+
+2. Configure as variáveis de ambiente:
+   Crie arquivos `.env` nas pastas `web` e `database` conforme os exemplos `.env.example` (Configurações de Database URL, NextAuth Secret, etc).
+
+3. Gere o cliente do Prisma e rode as migrações:
+   ```bash
+   pnpm db:generate
+   ```
+
+4. Inicie o ambiente de desenvolvimento:
+   ```bash
+   pnpm dev
+   ```
+
+O portfólio estará disponível em `http://localhost:3000`.
+
+---
+Feito por [Lucas Almeida](https://github.com/me-lucas-al)
