@@ -1,6 +1,8 @@
 import Link from "next/link"
+import { auth } from "@/auth"
 
-export function Header() {
+export async function Header() {
+  const session = await auth()
   return (
     <header className="fixed top-0 w-full bg-black/70 backdrop-blur-md z-50 border-b border-neutral-900">
       <div className="max-w-6xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
@@ -50,6 +52,15 @@ export function Header() {
               <span className="text-blue-500 font-mono mr-1">06.</span>Contatos
             </Link>
           </nav>
+
+          {session && (
+            <Link
+              href="/control-painel"
+              className="px-4 py-2 rounded-lg bg-blue-950/30 text-blue-400 border border-blue-900/50 text-xs font-medium hover:bg-blue-900 hover:text-white transition-all whitespace-nowrap"
+            >
+              Painel de Controle
+            </Link>
+          )}
         </div>
       </div>
     </header>

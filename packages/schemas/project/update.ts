@@ -9,7 +9,8 @@ export const UpdateProjectSchema = ProjectSchema.pick({
     technologies: true,
     deployUrl: true,
     imagesUrl: true,
-    order: true,
+}).partial().extend({
+    order: z.number().optional()
 })
 
 export type UpdateProjectType = z.infer<typeof UpdateProjectSchema>

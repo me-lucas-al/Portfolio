@@ -119,16 +119,15 @@ export async function reorderProjectAction(id: number, direction: 'up' | 'down')
     if (direction === 'down' && index === projects.length - 1) return { error: "Já é o último" };
 
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    const currentProject = projects[index];
-    const targetProject = projects[targetIndex];
+    const newProjects = [...projects];
+    const [movedProject] = newProjects.splice(index, 1);
+    newProjects.splice(targetIndex, 0, movedProject);
 
-    const currentOrder = currentProject.order;
-    const targetOrder = targetProject.order;
-
-    await Promise.all([
-      makeProjectService().updateProjectById({ ...currentProject, order: targetOrder } as any),
-      makeProjectService().updateProjectById({ ...targetProject, order: currentOrder } as any)
-    ]);
+    await Promise.all(
+      newProjects.map((project, i) => 
+        makeProjectService().updateProjectById({ ...project, order: i } as any)
+      )
+    );
 
     revalidatePath("/");
     revalidatePath("/control-painel");

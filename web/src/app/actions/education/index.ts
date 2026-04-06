@@ -47,16 +47,15 @@ export async function reorderEducationAction(id: number, direction: 'up' | 'down
     if (direction === 'down' && index === educations.length - 1) return { error: "Já é a última" };
 
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    const currentEducation = educations[index];
-    const targetEducation = educations[targetIndex];
+    const newEducations = [...educations];
+    const [movedEducation] = newEducations.splice(index, 1);
+    newEducations.splice(targetIndex, 0, movedEducation);
 
-    const currentOrder = currentEducation.order;
-    const targetOrder = targetEducation.order;
-
-    await Promise.all([
-      makeEducationService().updateEducationById({ ...currentEducation, order: targetOrder } as any),
-      makeEducationService().updateEducationById({ ...targetEducation, order: currentOrder } as any)
-    ]);
+    await Promise.all(
+      newEducations.map((education, i) => 
+        makeEducationService().updateEducationById({ ...education, order: i } as any)
+      )
+    );
 
     revalidatePath("/");
     revalidatePath("/control-painel");

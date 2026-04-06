@@ -41,16 +41,15 @@ export async function reorderLinkAction(id: number, direction: 'up' | 'down') {
     if (direction === 'down' && index === links.length - 1) return { error: "Já é o último" };
 
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    const currentLink = links[index];
-    const targetLink = links[targetIndex];
+    const newLinks = [...links];
+    const [movedLink] = newLinks.splice(index, 1);
+    newLinks.splice(targetIndex, 0, movedLink);
 
-    const currentOrder = currentLink.order;
-    const targetOrder = targetLink.order;
-
-    await Promise.all([
-      makeLinkService().updateLinkById({ ...currentLink, order: targetOrder } as any),
-      makeLinkService().updateLinkById({ ...targetLink, order: currentOrder } as any)
-    ]);
+    await Promise.all(
+      newLinks.map((link, i) => 
+        makeLinkService().updateLinkById({ ...link, order: i } as any)
+      )
+    );
 
     revalidatePath("/");
     revalidatePath("/control-painel");

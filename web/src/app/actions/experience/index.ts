@@ -54,16 +54,15 @@ export async function reorderExperienceAction(id: number, direction: 'up' | 'dow
     if (direction === 'down' && index === experiences.length - 1) return { error: "Já é a última" };
 
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    const currentExperience = experiences[index];
-    const targetExperience = experiences[targetIndex];
+    const newExperiences = [...experiences];
+    const [movedExperience] = newExperiences.splice(index, 1);
+    newExperiences.splice(targetIndex, 0, movedExperience);
 
-    const currentOrder = currentExperience.order;
-    const targetOrder = targetExperience.order;
-
-    await Promise.all([
-      makeExperienceService().updateExperienceById({ ...currentExperience, order: targetOrder } as any),
-      makeExperienceService().updateExperienceById({ ...targetExperience, order: currentOrder } as any)
-    ]);
+    await Promise.all(
+      newExperiences.map((experience, i) => 
+        makeExperienceService().updateExperienceById({ ...experience, order: i } as any)
+      )
+    );
 
     revalidatePath("/");
     revalidatePath("/control-painel");
