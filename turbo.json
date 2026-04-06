@@ -1,17 +1,23 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
   "tasks": {
+    "db:generate": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"],
+      "dependsOn": ["^build", "^db:generate", "^db:migrate"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "env": [
         "AUTH_SECRET",
         "JWT_SECRET",
         "SEED_ADMIN_USERNAME",
         "SEED_ADMIN_PASSWORD",
         "DATABASE_URL",
-        "NEXT_PUBLIC_URL" 
+        "NEXT_PUBLIC_URL"
       ]
     },
     "lint": {
@@ -20,6 +26,9 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "generate": {
+      "dependsOn": ["^generate"]
     }
   }
 }
