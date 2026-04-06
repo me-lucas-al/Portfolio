@@ -1,9 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "tasks": {
+  "globalDependencies": ["**/.env.*local"],
+  "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "AUTH_SECRET",
+        "JWT_SECRET",
+        "SEED_ADMIN_USERNAME",
+        "SEED_ADMIN_PASSWORD",
+        "DATABASE_URL",
+        "NEXT_PUBLIC_URL" 
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -11,9 +20,6 @@
     "dev": {
       "cache": false,
       "persistent": true
-    },
-    "generate": {
-      "dependsOn": ["^generate"]
     }
   }
 }
