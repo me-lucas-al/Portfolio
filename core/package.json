@@ -5,9 +5,9 @@
   "type": "module",
   "types": "src/index.ts",
   "scripts": {
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts"
   },
   "keywords": [],
   "author": "",
