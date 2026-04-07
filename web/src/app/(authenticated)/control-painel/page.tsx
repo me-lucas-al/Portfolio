@@ -2,6 +2,7 @@ import { getProjectsAction } from "@/app/actions/project"
 import { getExperiencesAction } from "@/app/actions/experience"
 import { getEducationsAction } from "@/app/actions/education"
 import { getLinksAction } from "@/app/actions/link"
+import { getSystemSettingAction } from "@/app/actions/system-setting"
 import { AdminDashboard } from "@/modules/admin/admin-dashboard"
 import { getUserRole } from "@/lib/get-user-role"
 import { redirect } from "next/navigation"
@@ -13,11 +14,13 @@ export default async function AdminPage() {
 
   if (!admin) redirect("/unauthorized")
 
-  const [projects, experiences, educations, links] = await Promise.all([
+  const [projects, experiences, educations, links, cvUrlPt, cvUrlEn] = await Promise.all([
     getProjectsAction(),
     getExperiencesAction(),
     getEducationsAction(),
     getLinksAction(),
+    getSystemSettingAction("cvUrlPt"),
+    getSystemSettingAction("cvUrlEn"),
   ])
 
   return (
@@ -57,6 +60,8 @@ export default async function AdminPage() {
           experiences={experiences}
           educations={educations}
           links={links}
+          cvUrlPt={cvUrlPt ?? ""}
+          cvUrlEn={cvUrlEn ?? ""}
         />
       </div>
     </main>

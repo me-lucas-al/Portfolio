@@ -110,7 +110,19 @@ export async function updateProjectAction(prevState: any, formData: FormData) {
 
     const id = Number(formData.get("id"));
     const techs = formData.get("technologies") as string;
-    const images = formData.get("imagesUrl") as string;
+
+    // Images already kept by the user (not removed via X button)
+    const keptImages = formData.getAll("keptImages").filter((v): v is string => typeof v === "string");
+
+    // New files uploaded in this edit
+    const imageFiles = formData
+      .getAll("images")
+      .filter((value): value is File => value instanceof File && value.size > 0);
+
+    const uploadedUrls = imageFiles.length > 0 ? await uploadProjectImages(imageFiles) : [];
+
+    // Merge: kept first (preserves order/cover), then newly uploaded
+    const imagesUrl = [...keptImages, ...uploadedUrls];
 
     await makeProjectService().updateProjectById({
       id,
@@ -124,12 +136,7 @@ export async function updateProjectAction(prevState: any, formData: FormData) {
         : [],
       deployUrl: formData.get("deployUrl") as string,
       githubUrl: formData.get("githubUrl") as string,
-      imagesUrl: images
-        ? images
-            .split(",")
-            .map((i) => i.trim())
-            .filter(Boolean)
-        : [],
+      imagesUrl,
     });
 
     revalidatePath("/");

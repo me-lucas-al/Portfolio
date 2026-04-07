@@ -18,9 +18,11 @@ interface AdminDashboardProps {
   experiences: ExperienceType[]
   educations: EducationType[]
   links: (DefaultLinkType & { id: number })[]
+  cvUrlPt: string
+  cvUrlEn: string
 }
 
-export function AdminDashboard({ projects, experiences, educations, links }: AdminDashboardProps) {
+export function AdminDashboard({ projects, experiences, educations, links, cvUrlPt, cvUrlEn }: AdminDashboardProps) {
   const [activeEntity, setActiveEntity] = useState<EntityTab>("projects")
   const [activeView, setActiveView] = useState<ViewTab>("view")
 
@@ -98,7 +100,7 @@ export function AdminDashboard({ projects, experiences, educations, links }: Adm
           <EducationTabContent activeView={activeView} educations={educations} />
         )}
         {activeEntity === "links" && (
-          <LinkTabContent activeView={activeView} links={links} />
+          <LinkTabContent activeView={activeView} links={links} cvUrlPt={cvUrlPt} cvUrlEn={cvUrlEn} />
         )}
       </div>
     </div>

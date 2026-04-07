@@ -13,6 +13,7 @@
     "types": ["node"],
     // For nodejs:
     // "lib": ["esnext"],
+    "outDir": "./dist",
     // "types": ["node"],
     // and npm install -D @types/node
 

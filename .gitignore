@@ -39,3 +39,8 @@ next-env.d.ts
 
 # Turborepo
 .turbo
+
+# Pastas de Build
+dist/
+dist
+**/dist/

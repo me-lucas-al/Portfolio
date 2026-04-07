@@ -60,6 +60,16 @@ enum Roles {
   USER
 }
 
+model SystemSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
 model Link {
   id        Int      @id @default(autoincrement())
   title     String
