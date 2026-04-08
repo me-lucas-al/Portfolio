@@ -2,7 +2,7 @@
 
 
 import { useState, useTransition } from "react"
-import { Trash2, Edit2, Loader2, ChevronUp, ChevronDown } from "lucide-react"
+import { Trash2, Edit2, Loader2, ChevronUp, ChevronDown, FolderGit2 } from "lucide-react"
 import { deleteProjectAction, reorderProjectAction } from "@/app/actions/project"
 import { EditProjectForm } from "./edit-project-form"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
@@ -34,14 +34,23 @@ export function ProjectItem({ project }: { project: ProjectType }) {
 
   return (
     <div className="flex items-center justify-between p-5 rounded-xl border border-neutral-900 bg-neutral-950/50 group transition-all duration-300 hover:bg-neutral-900/50 hover:border-neutral-800">
-      <div className="flex-1 min-w-0 pr-4">
-        <h4 className="text-white font-medium truncate">{project.title}</h4>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {project.technologies?.map((tech: string) => (
-            <span key={tech} className="text-[10px] px-2 py-0.5 rounded-full bg-blue-950/30 text-blue-400 border border-blue-900/30">
-              {tech}
-            </span>
-          ))}
+      <div className="flex flex-1 min-w-0 pr-4 items-center">
+        <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900 flex items-center justify-center mr-4">
+          {project.imagesUrl && project.imagesUrl.length > 0 ? (
+            <img src={project.imagesUrl[0]} alt={project.title} className="w-full h-full object-cover" />
+          ) : (
+            <FolderGit2 className="w-6 h-6 text-neutral-500" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="text-white font-medium truncate">{project.title}</h4>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {project.technologies?.map((tech: string) => (
+              <span key={tech} className="text-[10px] px-2 py-0.5 rounded-full bg-blue-950/30 text-blue-400 border border-blue-900/30">
+                {tech}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 

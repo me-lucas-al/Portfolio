@@ -1,11 +1,16 @@
 "use client"
 
-import { useActionState, useEffect } from "react"
+import { useActionState, useEffect, useRef, useState } from "react"
 import { createProjectAction } from "@/app/actions/project"
 import { toast } from "react-toastify"
+import { Loader2, X, ImageIcon } from "lucide-react"
 
 export function CreateProjectForm() {
   const [state, formAction, isPending] = useActionState(createProjectAction, null)
+  
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [newFiles, setNewFiles] = useState<File[]>([])
+  const [newPreviews, setNewPreviews] = useState<string[]>([])
 
   useEffect(() => {
     if (state?.error) {
@@ -14,11 +19,38 @@ export function CreateProjectForm() {
     
     if (state?.success && state?.message) {
       toast.success(state.message)
+      setNewFiles([])
+      setNewPreviews([])
     }
   }, [state])
   
+  const handleNewFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? [])
+    if (!files.length) return
+    setNewFiles(prev => [...prev, ...files])
+    const previews = files.map(f => URL.createObjectURL(f))
+    setNewPreviews(prev => [...prev, ...previews])
+    if (fileInputRef.current) fileInputRef.current.value = ""
+  }
+
+  const handleRemoveNew = (index: number) => {
+    setNewFiles(prev => prev.filter((_, i) => i !== index))
+    setNewPreviews(prev => {
+      URL.revokeObjectURL(prev[index])
+      return prev.filter((_, i) => i !== index)
+    })
+  }
+
+  const handleSubmit = async (formData: FormData) => {
+    // Adiciona os arquivos de imagem manualmente ao FormData
+    newFiles.forEach(file => formData.append("images", file))
+    return formAction(formData)
+  }
+  
+  const hasImages = newPreviews.length > 0
+
   return (
-    <form action={formAction} encType="multipart/form-data" className="space-y-6">
+    <form action={handleSubmit} className="space-y-6">
       <div className="space-y-2">
         <label className="text-sm font-medium text-neutral-400 ml-1">Título do Projeto</label>
         <input 
@@ -61,36 +93,50 @@ export function CreateProjectForm() {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-neutral-400 ml-1">
-          Imagens do Projeto
-        </label>
+      <div className="space-y-3">
+        <label className="text-sm font-medium text-neutral-400 ml-1">Imagens do Projeto</label>
+
+        {hasImages && (
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {newPreviews.map((src, i) => (
+              <div key={src} className="relative group aspect-video rounded-lg overflow-hidden border border-blue-900/50 bg-neutral-900">
+                <img src={src} alt={`Nova imagem ${i + 1}`} className="w-full h-full object-cover" />
+                {i === 0 && (
+                  <span className="absolute top-1 left-1 text-[10px] font-semibold bg-blue-900/80 text-blue-200 px-1.5 py-0.5 rounded">Capa</span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveNew(i)}
+                  className="absolute top-1 right-1 p-0.5 rounded-full bg-black/60 text-red-400 hover:bg-red-950 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         <label
-          htmlFor="project-images"
-          className="group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-blue-800/60 bg-linear-to-b from-neutral-900/70 to-neutral-950 px-6 py-10 text-center transition-all hover:border-blue-700 hover:from-neutral-900 hover:to-neutral-900"
+          htmlFor="create-project-images"
+          className="group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-blue-800/50 bg-neutral-900/30 px-6 py-8 text-center transition-all hover:border-blue-700 hover:bg-neutral-900/60 disabled:opacity-50"
         >
-          <span className="text-sm font-medium text-neutral-200">
-            Arraste imagens aqui ou clique para selecionar
+          <ImageIcon className="w-8 h-8 text-neutral-600 group-hover:text-blue-500 transition-colors mb-2" />
+          <span className="text-sm font-medium text-neutral-400 group-hover:text-neutral-200 transition-colors">
+            {hasImages ? "Adicionar mais imagens" : "Selecionar imagens"}
           </span>
-          <span className="mt-2 text-xs text-neutral-500">
-            PNG, JPG ou WEBP até 10MB por arquivo
-          </span>
-          <span className="mt-5 inline-flex items-center rounded-lg border border-blue-800/70 bg-blue-950/50 px-4 py-2 text-xs font-medium text-blue-200 transition-colors group-hover:bg-blue-900/60">
-            Escolher arquivos
-          </span>
+          <span className="mt-1 text-xs text-neutral-600">PNG, JPG ou WEBP até 10MB</span>
         </label>
+
         <input
-          id="project-images"
-          name="images"
+          ref={fileInputRef}
+          id="create-project-images"
           type="file"
           accept="image/*"
           multiple
           disabled={isPending}
+          onChange={handleNewFiles}
           className="sr-only"
         />
-        <p className="text-xs text-neutral-600 ml-1">
-          A primeira imagem enviada será usada como capa do projeto.
-        </p>
       </div>
 
       <div className="space-y-2">
@@ -112,9 +158,9 @@ export function CreateProjectForm() {
       <button 
         type="submit" 
         disabled={isPending}
-        className="w-full py-4 rounded-xl bg-blue-950 hover:bg-blue-900 border border-blue-800/50 text-white text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 flex justify-center items-center"
+        className="w-full py-4 rounded-xl bg-blue-950 hover:bg-blue-900 border border-blue-800/50 text-white text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-800 disabled:opacity-50 flex justify-center items-center"
       >
-        {isPending ? "A publicar..." : "Adicionar ao Portfólio"}
+        {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Adicionar ao Portfólio"}
       </button>
     </form>
   )

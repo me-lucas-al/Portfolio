@@ -58,7 +58,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
   const hasImages = keptImages.length > 0 || newPreviews.length > 0
 
   return (
-    <form action={handleSubmit} encType="multipart/form-data" className="space-y-5 p-4">
+    <form action={handleSubmit} className="space-y-5 p-4">
       <input type="hidden" name="id" value={project.id} />
 
       <div className="space-y-2">
