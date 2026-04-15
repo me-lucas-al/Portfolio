@@ -39,7 +39,7 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
         <div className="w-full aspect-video bg-neutral-900/50 rounded-xl overflow-hidden relative border border-neutral-800/50 mb-5">
           <Dialog>
             <DialogTrigger asChild>
-              <div className="w-full h-full cursor-pointer relative block">
+              <div className="w-full h-full cursor-pointer absolute inset-0 block">
                 <Image 
                   src={imagesUrl[0]} 
                   alt={title} 
@@ -68,7 +68,7 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
             <CarouselItem key={index} className="h-full pl-0 overflow-hidden relative">
               <Dialog>
                 <DialogTrigger asChild>
-                  <div className="w-full h-full cursor-pointer relative block">
+                  <div className="w-full h-full cursor-pointer absolute inset-0 block">
                     <Image 
                       src={url} 
                       alt={`${title} - Imagem ${index + 1}`} 
