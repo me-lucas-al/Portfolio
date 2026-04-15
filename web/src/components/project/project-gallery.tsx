@@ -39,12 +39,13 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
         <div className="w-full aspect-video bg-neutral-900/50 rounded-xl overflow-hidden relative border border-neutral-800/50 mb-5">
           <Dialog>
             <DialogTrigger asChild>
-              <div className="w-full h-full cursor-pointer absolute inset-0 block">
+              <div className="w-full h-full cursor-pointer block">
                 <Image
                   src={imagesUrl[0]}
                   alt={title}
-                  fill
-                  className="object-cover object-top"
+                  width={1280}
+                  height={720}
+                  className="w-full h-full object-cover object-top"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   priority
                 />
@@ -62,21 +63,22 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
 
   return (
     <Carousel className="w-full">
-      <div className="w-full aspect-video bg-neutral-900/50 rounded-xl overflow-hidden relative border border-neutral-800/50 mb-5">
-        <CarouselContent className="h-full ml-0">
+      <div className="w-full bg-neutral-900/50 rounded-xl overflow-hidden border border-neutral-800/50 mb-5 relative">
+        <CarouselContent className="ml-0">
           {imagesUrl.map((url, index) => (
             <CarouselItem
               key={index}
-              className="h-full pl-0 overflow-hidden relative"
+              className="pl-0"
             >
               <Dialog>
                 <DialogTrigger asChild>
-                  <div className="w-full h-full cursor-pointer absolute inset-0 block">
+                  <div className="w-full aspect-video cursor-pointer block">
                     <Image
                       src={url}
                       alt={`${title} - Imagem ${index + 1}`}
-                      fill
-                      className="object-cover object-top"
+                      width={1280}
+                      height={720}
+                      className="w-full h-full object-cover object-top"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       priority={index === 0}
                     />
