@@ -28,12 +28,13 @@ export function ProjectFullscreenDialog({ title, imagesUrl, startIndex = 0 }: Pr
       </DialogClose>
 
       {imagesUrl.length === 1 ? (
-        <div className="relative w-full h-[85vh]">
+        <div className="relative w-full h-[85vh] flex justify-center items-center">
           <Image 
             src={imagesUrl[0]} 
             alt={title} 
-            fill
-            className="object-contain rounded-xl shadow-2xl" 
+            width={1920}
+            height={1080}
+            className="w-full h-full object-contain rounded-xl shadow-2xl" 
             sizes="100vw"
           />
         </div>
@@ -42,12 +43,13 @@ export function ProjectFullscreenDialog({ title, imagesUrl, startIndex = 0 }: Pr
           <CarouselContent className="w-full max-h-[80vh] flex items-center ml-0">
             {imagesUrl.map((fullUrl, fIndex) => (
               <CarouselItem key={fIndex} className="basis-full flex justify-center items-center h-full pl-0 relative">
-                <div className="relative w-full h-[80vh]">
+                <div className="relative flex justify-center items-center w-full h-[80vh]">
                   <Image 
                     src={fullUrl} 
                     alt={`${title} - Tela cheia ${fIndex + 1}`} 
-                    fill
-                    className="object-contain rounded-xl shadow-2xl" 
+                    width={1920}
+                    height={1080}
+                    className="w-full h-full object-contain rounded-xl shadow-2xl" 
                     sizes="100vw"
                   />
                 </div>
