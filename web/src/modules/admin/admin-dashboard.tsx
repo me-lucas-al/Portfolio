@@ -1,16 +1,17 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
-import { LayoutGrid, Plus, Briefcase, GraduationCap, Code } from "lucide-react"
+import { LayoutGrid, Plus, Briefcase, GraduationCap, Code, User } from "lucide-react"
 import { ProjectType, ExperienceType, EducationType } from "@portfolio/packages"
 
 import { ProjectTabContent } from "./project/project-tab-content"
 import { ExperienceTabContent } from "./experience/experience-tab-content"
 import { EducationTabContent } from "./education/education-tab-content"
 import { LinkTabContent } from "./link/link-tab-content"
+import { ProfileTabContent } from "./profile/profile-tab-content"
 import { DefaultLinkType } from "@portfolio/packages/schemas/link"
 
-export type EntityTab = "projects" | "experiences" | "educations" | "links"
+export type EntityTab = "projects" | "experiences" | "educations" | "links" | "profile"
 export type ViewTab = "view" | "create"
 
 interface AdminDashboardProps {
@@ -18,13 +19,15 @@ interface AdminDashboardProps {
   experiences: ExperienceType[]
   educations: EducationType[]
   links: (DefaultLinkType & { id: number })[]
-  cvUrlPt: string
-  cvUrlEn: string
+  systemSettings: Record<string, string>
 }
 
-export function AdminDashboard({ projects, experiences, educations, links, cvUrlPt, cvUrlEn }: AdminDashboardProps) {
+export function AdminDashboard({ projects, experiences, educations, links, systemSettings }: AdminDashboardProps) {
   const [activeEntity, setActiveEntity] = useState<EntityTab>("projects")
   const [activeView, setActiveView] = useState<ViewTab>("view")
+
+  const cvUrlPt = systemSettings["cvUrlPt"] || ""
+  const cvUrlEn = systemSettings["cvUrlEn"] || ""
 
   return (
     <div className="space-y-8">
@@ -59,35 +62,44 @@ export function AdminDashboard({ projects, experiences, educations, links, cvUrl
             activeEntity === "links" ? "text-blue-400 border-blue-500" : "text-neutral-500 border-transparent hover:text-neutral-300"
           }`}
         >
-          {/* Using LayoutGrid as a placeholder icon for now, since LinkIcon might conflict. Wait, I can import LinkIcon from lucide-react. */}
           Links
+        </button>
+        <button
+          onClick={() => { setActiveEntity("profile"); setActiveView("view"); }}
+          className={`flex items-center gap-2 pb-4 border-b-2 font-medium transition-colors whitespace-nowrap ${
+            activeEntity === "profile" ? "text-blue-400 border-blue-500" : "text-neutral-500 border-transparent hover:text-neutral-300"
+          }`}
+        >
+          <User className="w-4 h-4" /> Perfil
         </button>
       </div>
 
-      <div className="flex p-1 bg-neutral-950 border border-neutral-900 rounded-xl w-fit">
-        <button
-          onClick={() => setActiveView("view")}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
-            activeView === "view"
-              ? "bg-blue-950 text-blue-400 border border-blue-900/50 shadow-[0_0_20px_-5px_rgba(23,37,84,0.5)]"
-              : "text-neutral-500 hover:text-neutral-300 hover:bg-neutral-900/50"
-          }`}
-        >
-          <LayoutGrid className="w-4 h-4" />
-          Visualizar
-        </button>
-        <button
-          onClick={() => setActiveView("create")}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
-            activeView === "create"
-              ? "bg-blue-950 text-blue-400 border border-blue-900/50 shadow-[0_0_20px_-5px_rgba(23,37,84,0.5)]"
-              : "text-neutral-500 hover:text-neutral-300 hover:bg-neutral-900/50"
-          }`}
-        >
-          <Plus className="w-4 h-4" />
-          Adicionar Novo
-        </button>
-      </div>
+      {activeEntity !== "profile" && (
+        <div className="flex p-1 bg-neutral-950 border border-neutral-900 rounded-xl w-fit">
+          <button
+            onClick={() => setActiveView("view")}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              activeView === "view"
+                ? "bg-blue-950 text-blue-400 border border-blue-900/50 shadow-[0_0_20px_-5px_rgba(23,37,84,0.5)]"
+                : "text-neutral-500 hover:text-neutral-300 hover:bg-neutral-900/50"
+            }`}
+          >
+            <LayoutGrid className="w-4 h-4" />
+            Visualizar
+          </button>
+          <button
+            onClick={() => setActiveView("create")}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              activeView === "create"
+                ? "bg-blue-950 text-blue-400 border border-blue-900/50 shadow-[0_0_20px_-5px_rgba(23,37,84,0.5)]"
+                : "text-neutral-500 hover:text-neutral-300 hover:bg-neutral-900/50"
+            }`}
+          >
+            <Plus className="w-4 h-4" />
+            Adicionar Novo
+          </button>
+        </div>
+      )}
 
       <div className="p-8 md:p-10 rounded-2xl bg-neutral-950 border border-blue-950/50 shadow-[0_0_50px_-15px_rgba(23,37,84,0.4)]">
         {activeEntity === "projects" && (
@@ -101,6 +113,9 @@ export function AdminDashboard({ projects, experiences, educations, links, cvUrl
         )}
         {activeEntity === "links" && (
           <LinkTabContent activeView={activeView} links={links} cvUrlPt={cvUrlPt} cvUrlEn={cvUrlEn} />
+        )}
+        {activeEntity === "profile" && (
+          <ProfileTabContent systemSettings={systemSettings} />
         )}
       </div>
     </div>

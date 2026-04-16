@@ -1,7 +1,16 @@
 import Image from "next/image"
 import profilePicture from "@/public/portfolio_profile.jpg"
 
-export function About() {
+interface AboutProps {
+  text?: string;
+}
+
+export function About({ text }: AboutProps) {
+  const defaultText = `Sou um Desenvolvedor Full Stack com foco em arquitetura de software, construindo aplicações web escaláveis e orientadas a resultados de negócios. Com experiência prática no ecossistema JavaScript e TypeScript, atuo diariamente com Node.js, React.js e Next.js.\n\nMinha experiência inclui a aplicação de Clean Architecture, refatoração de código, gerenciamento de bancos de dados relacionais e a estruturação de pipelines CI/CD com Docker para garantir entregas contínuas, estabilidade e segurança.`;
+  
+  const content = text || defaultText;
+  const paragraphs = content.split('\n').filter(p => p.trim() !== '');
+
   return (
     <section id="sobre" className="py-24 scroll-mt-20">
       <div className="flex items-center gap-6 mb-12">
@@ -13,12 +22,9 @@ export function About() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-12 items-center">
         <div className="text-neutral-400 text-lg leading-relaxed space-y-6">
-          <p>
-            Sou um Desenvolvedor Full Stack com foco em arquitetura de software, construindo aplicações web escaláveis e orientadas a resultados de negócios. Com experiência prática no ecossistema JavaScript e TypeScript, atuo diariamente com Node.js, React.js e Next.js.
-          </p>
-          <p>
-            Minha experiência inclui a aplicação de Clean Architecture, refatoração de código, gerenciamento de bancos de dados relacionais e a estruturação de pipelines CI/CD com Docker para garantir entregas contínuas, estabilidade e segurança.
-          </p>
+          {paragraphs.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
         </div>
 
         <div className="flex justify-center md:justify-end">
