@@ -47,6 +47,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://portfolio-lucas-almeida.vercel.app/",
   },
+  verification: {
+    google: "1-1aH2AXuhWArDF6--Zcsu0nke7BQ7Vc9i3UbKeRtYs",
+  }
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
