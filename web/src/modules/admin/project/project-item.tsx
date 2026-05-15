@@ -1,6 +1,7 @@
 "use client"
 
 
+import Image from "next/image"
 import { useState, useTransition } from "react"
 import { Trash2, Edit2, Loader2, ChevronUp, ChevronDown, FolderGit2 } from "lucide-react"
 import { deleteProjectAction, reorderProjectAction } from "@/app/actions/project"
@@ -37,7 +38,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
       <div className="flex flex-1 min-w-0 pr-4 items-center">
         <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900 flex items-center justify-center mr-4">
           {project.imagesUrl && project.imagesUrl.length > 0 ? (
-            <img src={project.imagesUrl[0]} alt={project.title} className="w-full h-full object-cover" />
+            <Image src={project.imagesUrl[0]} alt={project.title} fill className="object-cover" sizes="48px" />
           ) : (
             <FolderGit2 className="w-6 h-6 text-neutral-500" />
           )}

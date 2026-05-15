@@ -1,6 +1,7 @@
 "use client"
 
 import { useActionState, useEffect, useRef, useState } from "react"
+import Image from "next/image"
 import { updateProjectAction } from "@/app/actions/project"
 import { Loader2, X, ImageIcon } from "lucide-react"
 import { toast } from "react-toastify"
@@ -95,7 +96,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
             {keptImages.map((url, i) => (
               <div key={url} className="relative group aspect-video rounded-lg overflow-hidden border border-neutral-800">
-                <img src={url} alt={`Imagem ${i + 1}`} className="w-full h-full object-cover" />
+                <Image src={url} alt={`Imagem ${i + 1}`} fill className="object-cover" sizes="(max-width: 640px) 33vw, 25vw" />
                 {i === 0 && (
                   <span className="absolute top-1 left-1 text-[10px] font-semibold bg-blue-900/80 text-blue-200 px-1.5 py-0.5 rounded">Capa</span>
                 )}
