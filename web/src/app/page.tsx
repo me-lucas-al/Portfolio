@@ -30,8 +30,32 @@ export default async function HomePage() {
   const skillsBackend = systemSettings["skills_backend"]
   const skillsTools = systemSettings["skills_tools"]
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Lucas Almeida",
+    "url": "https://portfolio-lucas-almeida.vercel.app/",
+    "jobTitle": "Desenvolvedor Full Stack",
+    "description": "Desenvolvedor Full Stack de 19 anos focado em Next.js, Node.js, Java e soluções IoT. Estudante de ADS no IFSP.",
+    "alumniOf": {
+      "@type": "EducationalOrganization",
+      "name": "IFSP - Instituto Federal de São Paulo"
+    },
+    "knowsAbout": [
+      "Next.js", "React", "TypeScript", "Node.js", "Prisma", "Java", "Spring Boot", "IoT", "MQTT", "Docker"
+    ],
+    "sameAs": [
+      "https://github.com/me-lucas-al",
+      "https://linkedin.com/in/lucas-almeida-development"
+    ]
+  }
+
   return (
     <main className="min-h-screen bg-black selection:bg-blue-900/30 selection:text-blue-200">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
       <Header />
       <div className="max-w-6xl mx-auto px-6 md:px-12 pt-20">
         <Hero cvUrlPt={cvUrlPt} cvUrlEn={cvUrlEn} />
