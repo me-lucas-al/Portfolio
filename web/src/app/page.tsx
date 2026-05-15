@@ -23,8 +23,8 @@ export default async function HomePage() {
     getAllSystemSettingsAction()
   ])
 
-  const cvUrlPt = systemSettings["cvUrlPt"]
-  const cvUrlEn = systemSettings["cvUrlEn"]
+  const cvUrlPt = systemSettings["cvUrlPt"] || "https://drive.google.com/file/d/1qWlAyq4ZBnSw0q_iuMWRIGcO7tezJ0w8/view"
+  const cvUrlEn = systemSettings["cvUrlEn"] || "https://drive.google.com/file/d/186wXOZukhbBw6P13pB850Mqgb-NCKtaA/view"
   const aboutMe = systemSettings["about_me"]
   const skillsFrontend = systemSettings["skills_frontend"]
   const skillsBackend = systemSettings["skills_backend"]
@@ -34,7 +34,7 @@ export default async function HomePage() {
     <main className="min-h-screen bg-black selection:bg-blue-900/30 selection:text-blue-200">
       <Header />
       <div className="max-w-6xl mx-auto px-6 md:px-12 pt-20">
-        <Hero cvUrlPt={cvUrlPt ?? undefined} cvUrlEn={cvUrlEn ?? undefined} />
+        <Hero cvUrlPt={cvUrlPt} cvUrlEn={cvUrlEn} />
         <About text={aboutMe} />
         <Skills frontend={skillsFrontend} backend={skillsBackend} tools={skillsTools} />
         <div id="projetos" className="scroll-mt-20">

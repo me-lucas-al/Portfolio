@@ -1,5 +1,11 @@
 import Link from "next/link"
-import { Github, Linkedin, Download } from "lucide-react"
+import { Github, Linkedin, FileText, ChevronDown } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface HeroProps {
   cvUrlPt?: string
@@ -7,6 +13,8 @@ interface HeroProps {
 }
 
 export function Hero({ cvUrlPt, cvUrlEn }: HeroProps) {
+  const hasCv = cvUrlPt || cvUrlEn
+
   return (
     <section className="min-h-[85vh] flex flex-col justify-center items-start pt-20">
       <div className="space-y-6 max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -19,7 +27,7 @@ export function Hero({ cvUrlPt, cvUrlEn }: HeroProps) {
         <h3 className="text-3xl md:text-5xl font-semibold text-neutral-400">
           Desenvolvedor Full Stack
         </h3>
-        
+
         <p className="text-neutral-400 text-lg leading-relaxed pt-4 max-w-2xl">
           Especialista na construção de aplicações web escaláveis e arquiteturas robustas utilizando o ecossistema React, Next.js e Node.js.
         </p>
@@ -33,6 +41,7 @@ export function Hero({ cvUrlPt, cvUrlEn }: HeroProps) {
             <Github className="w-5 h-5" />
             GitHub
           </Link>
+
           <Link
             href="https://linkedin.com/in/lucas-almeida-development"
             target="_blank"
@@ -41,31 +50,48 @@ export function Hero({ cvUrlPt, cvUrlEn }: HeroProps) {
             <Linkedin className="w-5 h-5" />
             LinkedIn
           </Link>
-          
-          {(cvUrlPt || cvUrlEn) && (
-            <div className="flex flex-col max-w-sm sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto sm:ml-auto bg-neutral-950/50 p-1.5 rounded-xl border border-neutral-900">
-              {cvUrlPt && (
-                <Link
-                  href={cvUrlPt}
-                  target="_blank"
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-sm font-medium"
-                >
-                  <Download className="w-4 h-4" />
-                  CV (PT)
-                </Link>
-              )}
-              {cvUrlPt && cvUrlEn && <div className="hidden sm:block w-px h-4 bg-neutral-800" />}
-              {cvUrlEn && (
-                <Link
-                  href={cvUrlEn}
-                  target="_blank"
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-sm font-medium"
-                >
-                  <Download className="w-4 h-4" />
-                  CV (EN)
-                </Link>
-              )}
-            </div>
+
+          {hasCv && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-neutral-950 border border-neutral-800 hover:border-blue-700 hover:bg-neutral-900 hover:shadow-[0_0_25px_-8px_rgba(59,130,246,0.4)] transition-all duration-300 text-white font-medium outline-none">
+                  <FileText className="w-5 h-5 text-blue-400 group-hover:text-blue-300 transition-colors" />
+                  Currículo
+                  <ChevronDown className="w-4 h-4 text-neutral-500 group-hover:text-neutral-300 transition-all duration-200 group-data-[state=open]:rotate-180" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                className="min-w-[180px] bg-neutral-950 border border-neutral-800 rounded-xl p-1 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.8)]"
+              >
+                {cvUrlPt && (
+                  <DropdownMenuItem asChild>
+                    <a
+                      href={cvUrlPt}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-800 transition-all cursor-pointer"
+                    >
+                      <span className="text-base leading-none">🇧🇷</span>
+                      <span className="text-sm font-medium">Português</span>
+                    </a>
+                  </DropdownMenuItem>
+                )}
+                {cvUrlEn && (
+                  <DropdownMenuItem asChild>
+                    <a
+                      href={cvUrlEn}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-800 transition-all cursor-pointer"
+                    >
+                      <span className="text-base leading-none">🇺🇸</span>
+                      <span className="text-sm font-medium">English</span>
+                    </a>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
