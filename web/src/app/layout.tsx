@@ -48,17 +48,16 @@ export const metadata: Metadata = {
     canonical: "https://portfolio-lucas-almeida.vercel.app/",
   },
   verification: {
-    google: "1-1aH2AXuhWArDF6--Zcsu0nke7BQ7Vc9i3UbKeRtYs",
+    google: "DTgRb85ttC-CcIP96nxGgUgh2I2NgN6mR48OTYkgK_g",
   }
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className={inter.variable}>
-      <meta name="google-site-verification" content="DTgRb85ttC-CcIP96nxGgUgh2I2NgN6mR48OTYkgK_g" />
-      <body>
+      <body>  
         <Provider>{children}</Provider>
-        <ToastContainer position="bottom-right" autoClose={2500} theme="colored" />
+        <ToastContainer position="bottom-right" autoClose={2500} theme="colored" aria-label="Toast container" />
       </body>
     </html>
   )
