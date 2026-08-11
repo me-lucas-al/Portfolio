@@ -36,7 +36,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
   return (
     <div className="flex items-center justify-between p-5 rounded-xl border border-neutral-900 bg-neutral-950/50 group transition-all duration-300 hover:bg-neutral-900/50 hover:border-neutral-800">
       <div className="flex flex-1 min-w-0 pr-4 items-center">
-        <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900 flex items-center justify-center mr-4">
+        <div className="relative flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900 flex items-center justify-center mr-4">
           {project.imagesUrl && project.imagesUrl.length > 0 ? (
             <Image src={project.imagesUrl[0]} alt={project.title} fill className="object-cover" sizes="48px" />
           ) : (
