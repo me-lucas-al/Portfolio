@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Lucas Almeida | Desenvolvedor Full Stack & Software Engineer",
-  description: "Portfólio de Lucas Almeida. Desenvolvedor Full Stack especializado no ecossistema JavaScript (Next.js, Node.js), Java (Spring Boot). Experiência real em performance e sistemas B2B.",
+  description: "Portfólio de Lucas Almeida. Desenvolvedor Full Stack especialFizado no ecossistema JavaScript (Next.js, Node.js), Java (Spring Boot). Experiência real em performance e sistemas B2B.",
   keywords: [
     "Lucas Almeida",
     "Lucas Almeida de Souza",
@@ -55,6 +55,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className={inter.variable}>
+      <meta name="google-site-verification" content="DTgRb85ttC-CcIP96nxGgUgh2I2NgN6mR48OTYkgK_g" />
       <body>
         <Provider>{children}</Provider>
         <ToastContainer position="bottom-right" autoClose={2500} theme="colored" />
