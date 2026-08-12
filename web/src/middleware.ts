@@ -7,7 +7,7 @@ const { auth } = NextAuth(authConfig)
 export default auth((req) => {
   const isLoggedIn = !!req.auth
   const isAuthRoute = req.nextUrl.pathname.startsWith('/api/auth')
-  const publicRoutes = ['/login', '/']
+  const publicRoutes = ['/login', '/', '/unauthorized', '/sitemap.xml', '/robots.txt']
   const isPublicRoute = publicRoutes.includes(req.nextUrl.pathname)
 
   if (isAuthRoute) return NextResponse.next();
@@ -20,5 +20,7 @@ export default auth((req) => {
 })
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|icon.svg).*)"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|icon.svg|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|txt)$).*)",
+  ],
 }
