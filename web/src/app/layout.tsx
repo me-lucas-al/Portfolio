@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Lucas Almeida | Desenvolvedor Full Stack & Software Engineer",
-  description: "Portfólio de Lucas Almeida. Desenvolvedor Full Stack especialFizado no ecossistema JavaScript (Next.js, Node.js), Java (Spring Boot). Experiência real em performance e sistemas B2B.",
+  description: "Portfólio de Lucas Almeida. Desenvolvedor Full Stack especializado no ecossistema JavaScript (Next.js, Node.js), Java (Spring Boot). Experiência real em performance e sistemas B2B.",
   keywords: [
     "Lucas Almeida",
     "Lucas Almeida de Souza",
@@ -36,6 +36,17 @@ export const metadata: Metadata = {
     "Instituto Federal Bragança Paulista",
   ],
   authors: [{ name: "Lucas Almeida" }],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     title: "Lucas Almeida | Software Engineer",
     description: "Construção de sistemas B2B escaláveis, soluções IoT e aplicações de alta performance. Conheça meus projetos e trajetória.",
