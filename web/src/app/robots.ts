@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/control-painel", "/api/"],
     },
-    sitemap: "https://portfolio-lucas-almeida.vercel.app/sitemap.xml",
+    sitemap: "https://www.lucasalmeidasouza.com/sitemap.xml",
   };
 }

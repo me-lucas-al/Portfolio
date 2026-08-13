@@ -11,6 +11,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.lucasalmeidasouza.com"),
   title: "Lucas Almeida | Desenvolvedor Full Stack & Software Engineer",
   description: "Portfólio de Lucas Almeida. Desenvolvedor Full Stack especializado no ecossistema JavaScript (Next.js, Node.js), Java (Spring Boot). Experiência real em performance e sistemas B2B.",
   keywords: [
@@ -50,13 +51,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Lucas Almeida | Software Engineer",
     description: "Construção de sistemas B2B escaláveis, soluções IoT e aplicações de alta performance. Conheça meus projetos e trajetória.",
-    url: "https://portfolio-lucas-almeida.vercel.app/",
+    url: "https://www.lucasalmeidasouza.com/",
     siteName: "Lucas Almeida Portfolio",
     type: "website",
     locale: "pt_BR",
   },
   alternates: {
-    canonical: "https://portfolio-lucas-almeida.vercel.app/",
+    canonical: "https://www.lucasalmeidasouza.com/",
   },
   verification: {
     google: "LpBoXhM1B2rujPMRatGl3DuQvxfswfWKKRtwWJ7J0PQ",
