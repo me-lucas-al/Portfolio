@@ -1,6 +1,8 @@
+import type { ElementType } from "react";
 import { 
   SiReact, 
   SiTypescript, 
+  SiJavascript,
   SiTailwindcss, 
   SiNextdotjs, 
   SiJest,
@@ -15,29 +17,76 @@ import {
   SiAngular,
   SiExpress,
   SiMysql,
-  SiAmazonwebservices
+  SiAmazonwebservices,
+  SiSpring,
+  SiSpringboot,
+  SiSpringsecurity,
+  SiHibernate,
+  SiGit,
+  SiRedis,
+  SiHtml5,
+  SiCss3,
+  SiGraphql,
+  SiNestjs
 } from "react-icons/si";
+import { FaJava } from "react-icons/fa6";
 import { Layers, TerminalSquare } from "lucide-react";
 
 // Mapping of common skill names to their icons and hover colors
-const skillIconMap: Record<string, { icon: any, hoverColor: string }> = {
+const skillIconMap: Record<string, { icon: ElementType, hoverColor: string }> = {
+  // Frontend
   "react": { icon: SiReact, hoverColor: "group-hover:text-[#61DAFB]" },
   "react.js": { icon: SiReact, hoverColor: "group-hover:text-[#61DAFB]" },
+  "reactjs": { icon: SiReact, hoverColor: "group-hover:text-[#61DAFB]" },
   "next.js": { icon: SiNextdotjs, hoverColor: "group-hover:text-white" },
   "nextjs": { icon: SiNextdotjs, hoverColor: "group-hover:text-white" },
   "next": { icon: SiNextdotjs, hoverColor: "group-hover:text-white" },
+  "angular": { icon: SiAngular, hoverColor: "group-hover:text-[#DD0031]" },
+  "angular.js": { icon: SiAngular, hoverColor: "group-hover:text-[#DD0031]" },
+  "angularjs": { icon: SiAngular, hoverColor: "group-hover:text-[#DD0031]" },
+  "angular 2+": { icon: SiAngular, hoverColor: "group-hover:text-[#DD0031]" },
+  "vue": { icon: SiVuedotjs, hoverColor: "group-hover:text-[#4FC08D]" },
+  "vue.js": { icon: SiVuedotjs, hoverColor: "group-hover:text-[#4FC08D]" },
+  "vuejs": { icon: SiVuedotjs, hoverColor: "group-hover:text-[#4FC08D]" },
   "typescript": { icon: SiTypescript, hoverColor: "group-hover:text-[#3178C6]" },
   "ts": { icon: SiTypescript, hoverColor: "group-hover:text-[#3178C6]" },
+  "javascript": { icon: SiJavascript, hoverColor: "group-hover:text-[#F7DF1E]" },
+  "js": { icon: SiJavascript, hoverColor: "group-hover:text-[#F7DF1E]" },
+  "html": { icon: SiHtml5, hoverColor: "group-hover:text-[#E34F26]" },
+  "html5": { icon: SiHtml5, hoverColor: "group-hover:text-[#E34F26]" },
+  "css": { icon: SiCss3, hoverColor: "group-hover:text-[#1572B6]" },
+  "css3": { icon: SiCss3, hoverColor: "group-hover:text-[#1572B6]" },
   "tailwind css": { icon: SiTailwindcss, hoverColor: "group-hover:text-[#06B6D4]" },
   "tailwindcss": { icon: SiTailwindcss, hoverColor: "group-hover:text-[#06B6D4]" },
   "tailwind": { icon: SiTailwindcss, hoverColor: "group-hover:text-[#06B6D4]" },
   "jest": { icon: SiJest, hoverColor: "group-hover:text-[#C21325]" },
+
+  // Java & Spring ecosystem
+  "java": { icon: FaJava, hoverColor: "group-hover:text-[#ED8B00]" },
+  "java 17": { icon: FaJava, hoverColor: "group-hover:text-[#ED8B00]" },
+  "java 21": { icon: FaJava, hoverColor: "group-hover:text-[#ED8B00]" },
+  "java 8": { icon: FaJava, hoverColor: "group-hover:text-[#ED8B00]" },
+  "java spring boot": { icon: SiSpringboot, hoverColor: "group-hover:text-[#6DB33F]" },
+  "spring": { icon: SiSpring, hoverColor: "group-hover:text-[#6DB33F]" },
+  "spring boot": { icon: SiSpringboot, hoverColor: "group-hover:text-[#6DB33F]" },
+  "springboot": { icon: SiSpringboot, hoverColor: "group-hover:text-[#6DB33F]" },
+  "spring-boot": { icon: SiSpringboot, hoverColor: "group-hover:text-[#6DB33F]" },
+  "spring framework": { icon: SiSpring, hoverColor: "group-hover:text-[#6DB33F]" },
+  "spring security": { icon: SiSpringsecurity, hoverColor: "group-hover:text-[#6DB33F]" },
+  "hibernate": { icon: SiHibernate, hoverColor: "group-hover:text-[#59666C]" },
+
+  // Node & Backend
   "node.js": { icon: SiNodedotjs, hoverColor: "group-hover:text-[#339933]" },
   "nodejs": { icon: SiNodedotjs, hoverColor: "group-hover:text-[#339933]" },
   "node": { icon: SiNodedotjs, hoverColor: "group-hover:text-[#339933]" },
   "express": { icon: SiExpress, hoverColor: "group-hover:text-white" },
+  "express.js": { icon: SiExpress, hoverColor: "group-hover:text-white" },
   "fastify": { icon: SiFastify, hoverColor: "group-hover:text-white" },
+  "nestjs": { icon: SiNestjs, hoverColor: "group-hover:text-[#E0234E]" },
   "clean architecture": { icon: Layers, hoverColor: "group-hover:text-white" },
+  "graphql": { icon: SiGraphql, hoverColor: "group-hover:text-[#E10098]" },
+
+  // Databases & ORMs
   "prisma orm": { icon: SiPrisma, hoverColor: "group-hover:text-white" },
   "prisma": { icon: SiPrisma, hoverColor: "group-hover:text-white" },
   "postgresql": { icon: SiPostgresql, hoverColor: "group-hover:text-[#4169E1]" },
@@ -45,13 +94,14 @@ const skillIconMap: Record<string, { icon: any, hoverColor: string }> = {
   "mysql": { icon: SiMysql, hoverColor: "group-hover:text-[#4479A1]" },
   "mongodb": { icon: SiMongodb, hoverColor: "group-hover:text-[#47A248]" },
   "mongo": { icon: SiMongodb, hoverColor: "group-hover:text-[#47A248]" },
+  "redis": { icon: SiRedis, hoverColor: "group-hover:text-[#DC382D]" },
+
+  // DevOps & Tools
   "docker": { icon: SiDocker, hoverColor: "group-hover:text-[#2496ED]" },
+  "git": { icon: SiGit, hoverColor: "group-hover:text-[#F05032]" },
   "ci/cd": { icon: SiGithubactions, hoverColor: "group-hover:text-[#2088FF]" },
   "github actions": { icon: SiGithubactions, hoverColor: "group-hover:text-[#2088FF]" },
-  "aws": { icon: SiAmazonwebservices, hoverColor: "group-hover:text-[#FF9900]" },
-  "vue": { icon: SiVuedotjs, hoverColor: "group-hover:text-[#4FC08D]" },
-  "vue.js": { icon: SiVuedotjs, hoverColor: "group-hover:text-[#4FC08D]" },
-  "angular": { icon: SiAngular, hoverColor: "group-hover:text-[#DD0031]" }
+  "aws": { icon: SiAmazonwebservices, hoverColor: "group-hover:text-[#FF9900]" }
 };
 
 interface SkillsProps {

@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     canonical: "https://portfolio-lucas-almeida.vercel.app/",
   },
   verification: {
-    google: "DTgRb85ttC-CcIP96nxGgUgh2I2NgN6mR48OTYkgK_g",
+    google: "LpBoXhM1B2rujPMRatGl3DuQvxfswfWKKRtwWJ7J0PQ",
   }
 }
 

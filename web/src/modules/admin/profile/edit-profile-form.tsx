@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useActionState, useEffect } from "react"
 import { updateMultipleSystemSettingsAction } from "@/app/actions/system-setting"
@@ -68,7 +68,7 @@ export function EditProfileForm({ systemSettings }: EditProfileFormProps) {
               defaultValue={defaultFrontend}
               disabled={isPending}
               className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50"
-              placeholder="Ex: React, Next.js, Vue..."
+              placeholder="Ex: React, Next.js, Angular, TypeScript..."
             />
           </div>
 
@@ -80,7 +80,7 @@ export function EditProfileForm({ systemSettings }: EditProfileFormProps) {
               defaultValue={defaultBackend}
               disabled={isPending}
               className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50"
-              placeholder="Ex: Node.js, Express, PostgreSQL..."
+              placeholder="Ex: Node.js, Java, Spring Boot, PostgreSQL..."
             />
           </div>
 
