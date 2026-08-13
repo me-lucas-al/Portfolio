@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   keywords: [
     "Lucas Almeida",
     "Lucas Almeida de Souza",
+    "Lucas Almeida de Soza",
     "Lucas Almeida dev",
     "Lucas Almeida desenvolvedor full stack",
     "Portfolio Lucas Almeida",
