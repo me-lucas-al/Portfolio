@@ -36,14 +36,14 @@ export default async function HomePage() {
     "name": "Lucas Almeida",
     "alternateName": "Lucas Almeida de Souza",
     "url": "https://www.lucasalmeidasouza.com",
-    "jobTitle": "Desenvolvedor Full Stack",
-    "description": "Desenvolvedor Full Stack de 19 anos focado em Next.js, Node.js, Java e soluções IoT. Estudante de ADS no IFSP.",
+    "jobTitle": "Desenvolvedor Full Stack | Programador Next.js, Node.js e React",
+    "description": "Programador Next.js, Programador Node.js e Programador React. Desenvolvedor Full Stack focado no ecossistema JavaScript, Java e soluções IoT. Estudante de ADS no IFSP.",
     "alumniOf": {
       "@type": "EducationalOrganization",
       "name": "IFSP - Instituto Federal de São Paulo"
     },
     "knowsAbout": [
-      "Next.js", "React", "TypeScript", "Node.js", "Prisma", "Java", "Spring Boot", "IoT", "MQTT", "Docker"
+      "Programador Next.js", "Programador Node.js", "Programador React", "Next.js", "React", "TypeScript", "Node.js", "Prisma", "Java", "Spring Boot", "IoT", "MQTT", "Docker"
     ],
     "sameAs": [
       "https://github.com/me-lucas-al",

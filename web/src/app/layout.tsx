@@ -12,11 +12,16 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.lucasalmeidasouza.com"),
-  title: "Lucas Almeida | Desenvolvedor Full Stack & Software Engineer",
-  description: "Portfólio de Lucas Almeida. Desenvolvedor Full Stack especializado no ecossistema JavaScript (Next.js, Node.js), Java (Spring Boot). Experiência real em performance e sistemas B2B.",
+  title: "Lucas Almeida | Programador Next.js, Node.js e React",
+  description: "Portfólio de Lucas Almeida. Programador Next.js, Programador Node.js e Programador React. Desenvolvedor Full Stack especializado no ecossistema JavaScript e Java (Spring Boot). Experiência real em performance e sistemas B2B.",
   keywords: [
     "Lucas Almeida",
     "Lucas Almeida de Souza",
+    "programador next",
+    "programador node",
+    "programador react",
+    "programador next.js",
+    "programador node.js",
     "Lucas Almeida dev",
     "Lucas Almeida desenvolvedor full stack",
     "Portfolio Lucas Almeida",
@@ -49,8 +54,8 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Lucas Almeida | Software Engineer",
-    description: "Construção de sistemas B2B escaláveis, soluções IoT e aplicações de alta performance. Conheça meus projetos e trajetória.",
+    title: "Lucas Almeida | Programador Next.js, Node.js e React",
+    description: "Programador Next.js, Programador Node.js e Programador React. Construção de sistemas B2B escaláveis e aplicações web de alta performance.",
     url: "https://www.lucasalmeidasouza.com",
     siteName: "Lucas Almeida Portfolio",
     type: "website",
