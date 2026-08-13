@@ -66,7 +66,16 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "LpBoXhM1B2rujPMRatGl3DuQvxfswfWKKRtwWJ7J0PQ",
-  }
+  },
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' }
+    ],
+    shortcut: ['/icon.svg'],
+    apple: [
+      { url: '/icon.svg', type: 'image/svg+xml' }
+    ],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
