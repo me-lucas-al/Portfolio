@@ -34,7 +34,7 @@ export default async function HomePage() {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Lucas Almeida",
-    "url": "https://www.lucasalmeidasouza.com/",
+    "url": "https://www.lucasalmeidasouza.com",
     "jobTitle": "Desenvolvedor Full Stack",
     "description": "Desenvolvedor Full Stack de 19 anos focado em Next.js, Node.js, Java e soluções IoT. Estudante de ADS no IFSP.",
     "alumniOf": {
