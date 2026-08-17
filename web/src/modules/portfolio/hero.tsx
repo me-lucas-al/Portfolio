@@ -19,7 +19,7 @@ export function Hero({ cvUrlPt, cvUrlEn }: HeroProps) {
     <section className="min-h-[85vh] flex flex-col justify-center items-start pt-20">
       <div className="space-y-6 max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <h2 className="text-blue-500 font-medium tracking-wider text-sm uppercase">
-          Lucas Almeida Dev | Software Engineer
+          Software Engineer
         </h2>
         <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight">
           Lucas Almeida
@@ -29,7 +29,7 @@ export function Hero({ cvUrlPt, cvUrlEn }: HeroProps) {
         </h3>
 
         <p className="text-neutral-400 text-lg leading-relaxed pt-4 max-w-2xl">
-          Olá! Sou Lucas Almeida (Lucas Almeida Dev), desenvolvedor full stack especialista na construção de aplicações web escaláveis e sistemas de alta performance com Next.js, React e Node.js.
+          Olá! Sou Lucas Almeida, desenvolvedor full stack especialista na construção de aplicações web escaláveis e sistemas de alta performance com Next.js, React e Node.js.
         </p>
 
         <div className="flex flex-wrap items-center gap-4 pt-8">

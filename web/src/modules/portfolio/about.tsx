@@ -6,7 +6,7 @@ interface AboutProps {
 }
 
 export function About({ text }: AboutProps) {
-  const defaultText = `Como Lucas Almeida (Lucas Almeida Dev), atuo como desenvolvedor full stack e programador focado em arquitetura de software, construindo aplicações web escaláveis e orientadas a resultados. Como programador Next.js, React e Node.js, tenho experiência sólida na criação de ecossistemas JavaScript e TypeScript de alta performance.\n\nMinha trajetória como desenvolvedor inclui a aplicação de Clean Architecture, otimização de performance, bancos de dados relacionais e a estruturação de pipelines CI/CD com Docker para garantir entregas contínuas, estabilidade e segurança.`;
+  const defaultText = `Como Lucas Almeida, atuo como desenvolvedor full stack focado em arquitetura de software, construindo aplicações web escaláveis e orientadas a resultados. Com experiência sólida no ecossistema JavaScript e TypeScript, trabalho diariamente com Next.js, React e Node.js de alta performance.\n\nMinha trajetória como desenvolvedor inclui a aplicação de Clean Architecture, otimização de performance, bancos de dados relacionais e a estruturação de pipelines CI/CD com Docker para garantir entregas contínuas, estabilidade e segurança.`;
   
   const content = text || defaultText;
   const paragraphs = content.split('\n').filter(p => p.trim() !== '');
@@ -31,7 +31,7 @@ export function About({ text }: AboutProps) {
           <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full border-4 border-white overflow-hidden shadow-xl shadow-white/10">
             <Image
               src={profilePicture}
-              alt="Lucas Almeida - Lucas Almeida Dev, Programador e Desenvolvedor Next.js, React e Node.js"
+              alt="Lucas Almeida - Desenvolvedor Next.js, React e Node.js"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 256px, 288px"
