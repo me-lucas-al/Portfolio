@@ -32,22 +32,76 @@ export default async function HomePage() {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Lucas Almeida",
-    "alternateName": "Lucas Almeida de Souza",
-    "url": "https://www.lucasalmeidasouza.com",
-    "jobTitle": "Desenvolvedor Full Stack | Programador Next.js, Node.js e React",
-    "description": "Programador Next.js, Programador Node.js e Programador React. Desenvolvedor Full Stack focado no ecossistema JavaScript, Java e soluções IoT. Estudante de ADS no IFSP.",
-    "alumniOf": {
-      "@type": "EducationalOrganization",
-      "name": "IFSP - Instituto Federal de São Paulo"
-    },
-    "knowsAbout": [
-      "Programador Next.js", "Programador Node.js", "Programador React", "Next.js", "React", "TypeScript", "Node.js", "Prisma", "Java", "Spring Boot", "IoT", "MQTT", "Docker"
-    ],
-    "sameAs": [
-      "https://github.com/me-lucas-al",
-      "https://linkedin.com/in/lucas-almeida-development"
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://www.lucasalmeidasouza.com/#person",
+        "name": "Lucas Almeida",
+        "alternateName": [
+          "Lucas Almeida Dev",
+          "Lucas Almeida Desenvolvedor",
+          "Lucas Almeida Programador",
+          "Lucas Almeida Next",
+          "Lucas Almeida React",
+          "Lucas Almeida Node",
+          "Lucas Almeida de Souza"
+        ],
+        "url": "https://www.lucasalmeidasouza.com",
+        "jobTitle": "Desenvolvedor Full Stack & Programador Next.js, React e Node.js",
+        "description": "Lucas Almeida é um desenvolvedor de software e programador especialista em Next.js, React e Node.js, construindo aplicações web escaláveis e de alta performance.",
+        "alumniOf": {
+          "@type": "EducationalOrganization",
+          "name": "IFSP - Instituto Federal de São Paulo"
+        },
+        "knowsAbout": [
+          "Lucas Almeida",
+          "Lucas Almeida Dev",
+          "Lucas Almeida Desenvolvedor",
+          "Lucas Almeida Programador",
+          "Lucas Almeida Next",
+          "Lucas Almeida React",
+          "Lucas Almeida Node",
+          "Programador Next.js",
+          "Programador React",
+          "Programador Node.js",
+          "Desenvolvedor Next.js",
+          "Desenvolvedor React",
+          "Desenvolvedor Node.js",
+          "Next.js",
+          "React",
+          "Node.js",
+          "TypeScript",
+          "JavaScript",
+          "Java",
+          "Spring Boot",
+          "Docker",
+          "Prisma ORM"
+        ],
+        "sameAs": [
+          "https://github.com/me-lucas-al",
+          "https://linkedin.com/in/lucas-almeida-development"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.lucasalmeidasouza.com/#website",
+        "url": "https://www.lucasalmeidasouza.com",
+        "name": "Lucas Almeida Dev",
+        "alternateName": "Lucas Almeida | Programador & Desenvolvedor Next.js, React e Node.js",
+        "publisher": {
+          "@id": "https://www.lucasalmeidasouza.com/#person"
+        },
+        "inLanguage": "pt-BR"
+      },
+      {
+        "@type": "ProfilePage",
+        "@id": "https://www.lucasalmeidasouza.com/#webpage",
+        "url": "https://www.lucasalmeidasouza.com",
+        "name": "Lucas Almeida | Lucas Almeida Dev - Portfólio Oficial",
+        "mainEntity": {
+          "@id": "https://www.lucasalmeidasouza.com/#person"
+        }
+      }
     ]
   }
 
@@ -69,6 +123,12 @@ export default async function HomePage() {
         <Education educations={educations} />
         <Contact links={links} />
       </div>
+      <footer className="border-t border-neutral-900 py-8 text-center text-xs text-neutral-500 mt-12">
+        <div className="max-w-6xl mx-auto px-6 space-y-1">
+          <p>© {new Date().getFullYear()} Lucas Almeida (Lucas Almeida Dev). Todos os direitos reservados.</p>
+          <p className="text-neutral-600">Lucas Almeida | Desenvolvedor Full Stack & Programador Next.js, React e Node.js</p>
+        </div>
+      </footer>
     </main>
   )
 }
