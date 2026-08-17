@@ -17,12 +17,17 @@ export async function createExperienceAction(
     const experiences = await makeExperienceService().getAllExperiences();
     const nextOrder = experiences.length > 0 ? Math.max(...experiences.map(e => e.order ?? 0)) + 1 : 0;
 
+    const endDateRaw = formData.get("endDate") as string;
+    const endDate = endDateRaw ? new Date(endDateRaw) : null;
+
     await makeExperienceService().createExperience({
       role: formData.get("role") as string,
+      roleEn: (formData.get("roleEn") as string) || undefined,
       company: formData.get("company") as string,
       startDate: new Date(formData.get("startDate") as string),
-      endDate: new Date(formData.get("endDate") as string),
+      endDate: endDate as any,
       description: formData.get("description") as string,
+      descriptionEn: (formData.get("descriptionEn") as string) || undefined,
       techs: techs
         ? techs
             .split(",")
@@ -85,13 +90,18 @@ export async function updateExperienceAction(
     const id = Number(formData.get("id"));
     const techs = formData.get("techs") as string;
 
+    const endDateRaw = formData.get("endDate") as string;
+    const endDate = endDateRaw ? new Date(endDateRaw) : null;
+
     await makeExperienceService().updateExperienceById({
       id,
       role: formData.get("role") as string,
+      roleEn: (formData.get("roleEn") as string) || undefined,
       company: formData.get("company") as string,
       startDate: new Date(formData.get("startDate") as string),
-      endDate: new Date(formData.get("endDate") as string),
+      endDate: endDate as any,
       description: formData.get("description") as string,
+      descriptionEn: (formData.get("descriptionEn") as string) || undefined,
       techs: techs
         ? techs
             .split(",")

@@ -48,7 +48,9 @@ export async function createProjectAction(prevState: any, formData: FormData) {
 
     await makeProjectService().createProject({
       title: formData.get("title") as string,
+      titleEn: (formData.get("titleEn") as string) || undefined,
       description: formData.get("description") as string,
+      descriptionEn: (formData.get("descriptionEn") as string) || undefined,
       technologies: techs
         ? techs
             .split(",")
@@ -127,7 +129,9 @@ export async function updateProjectAction(prevState: any, formData: FormData) {
     await makeProjectService().updateProjectById({
       id,
       title: formData.get("title") as string,
+      titleEn: (formData.get("titleEn") as string) || undefined,
       description: formData.get("description") as string,
+      descriptionEn: (formData.get("descriptionEn") as string) || undefined,
       technologies: techs
         ? techs
             .split(",")

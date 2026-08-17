@@ -16,14 +16,19 @@ export async function createEducationAction(
     const educations = await makeEducationService().getAllEducations();
     const nextOrder = educations.length > 0 ? Math.max(...educations.map(e => e.order ?? 0)) + 1 : 0;
 
+    const endDateRaw = formData.get("endDate") as string;
+    const endDate = endDateRaw ? new Date(endDateRaw) : null;
+
     await makeEducationService().createEducation({
       course: formData.get("course") as string,
+      courseEn: (formData.get("courseEn") as string) || undefined,
       institution: formData.get("institution") as string,
       startDate: new Date(formData.get("startDate") as string),
-      endDate: new Date(formData.get("endDate") as string),
+      endDate: endDate as any,
       type: formData.get("type") as string,
       order: nextOrder
     });
+
 
     revalidatePath("/");
     revalidatePath("/control-painel");
@@ -76,13 +81,16 @@ export async function updateEducationAction(
     if (!admin) return { error: "Não autorizado" };
 
     const id = Number(formData.get("id"));
+    const endDateRaw = formData.get("endDate") as string;
+    const endDate = endDateRaw ? new Date(endDateRaw) : null;
 
     await makeEducationService().updateEducationById({
       id,
       course: formData.get("course") as string,
+      courseEn: (formData.get("courseEn") as string) || undefined,
       institution: formData.get("institution") as string,
       startDate: new Date(formData.get("startDate") as string),
-      endDate: new Date(formData.get("endDate") as string),
+      endDate: endDate as any,
       type: formData.get("type") as string,
     });
 
