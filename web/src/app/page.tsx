@@ -126,7 +126,7 @@ export default async function HomePage() {
       <footer className="border-t border-neutral-900 py-8 text-center text-xs text-neutral-500 mt-12">
         <div className="max-w-6xl mx-auto px-6 space-y-1">
           <p>© {new Date().getFullYear()} Lucas Almeida (Lucas Almeida Dev). Todos os direitos reservados.</p>
-          <p className="text-neutral-600">Lucas Almeida | Desenvolvedor Full Stack & Programador Next.js, React e Node.js</p>
+          <p className="text-neutral-600">Lucas Almeida | Desenvolvedor Full Stack & Desenvolvedor Next.js, React e Node.js</p>
         </div>
       </footer>
     </main>

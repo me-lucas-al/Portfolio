@@ -12,8 +12,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.lucasalmeidasouza.com"),
-  title: "Lucas Almeida | Lucas Almeida Dev - Programador e Desenvolvedor Next.js, React e Node.js",
-  description: "Portfólio oficial de Lucas Almeida (Lucas Almeida Dev). Desenvolvedor de software e programador especialista em Next.js, React e Node.js. Soluções web de alta performance e arquiteturas escaláveis.",
+  title: "Lucas Almeida | Lucas Almeida Dev - Desenvolvedor Next.js, React e Node.js",
+  description: "Portfólio oficial de Lucas Almeida (Lucas Almeida Dev). Desenvolvedor de software especialista em Next.js, React e Node.js. Soluções web de alta performance e arquiteturas escaláveis.",
   keywords: [
     "Lucas Almeida",
     "lucas almeida",
@@ -70,8 +70,8 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Lucas Almeida | Lucas Almeida Dev - Programador e Desenvolvedor Next.js, React e Node.js",
-    description: "Portfólio oficial de Lucas Almeida (Lucas Almeida Dev). Desenvolvedor e programador Next.js, React e Node.js. Sistemas B2B escaláveis e aplicações web de alta performance.",
+    title: "Lucas Almeida | Lucas Almeida Dev - Desenvolvedor Next.js, React e Node.js",
+    description: "Portfólio oficial de Lucas Almeida (Lucas Almeida Dev). Desenvolvedor Next.js, React e Node.js. Sistemas B2B escaláveis e aplicações web de alta performance.",
     url: "https://www.lucasalmeidasouza.com",
     siteName: "Lucas Almeida Dev - Portfólio Oficial",
     type: "website",
@@ -79,8 +79,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lucas Almeida | Lucas Almeida Dev - Programador Next.js, React e Node.js",
-    description: "Portfólio oficial de Lucas Almeida. Desenvolvedor e programador especialista em Next.js, React e Node.js.",
+    title: "Lucas Almeida | Lucas Almeida Dev - Desenvolvedor Next.js, React e Node.js",
+    description: "Portfólio oficial de Lucas Almeida. Desenvolvedor especialista em Next.js, React e Node.js.",
     creator: "@lucas_almeida",
   },
   alternates: {

@@ -25,11 +25,11 @@ export function Hero({ cvUrlPt, cvUrlEn }: HeroProps) {
           Lucas Almeida
         </h1>
         <h3 className="text-2xl md:text-4xl font-semibold text-neutral-400">
-          Desenvolvedor & Programador Next.js, React e Node.js
+          Desenvolvedor Full Stack Next.js, React e Node.js
         </h3>
 
         <p className="text-neutral-400 text-lg leading-relaxed pt-4 max-w-2xl">
-          Olá! Sou Lucas Almeida (Lucas Almeida Dev), desenvolvedor full stack e programador especialista na construção de aplicações web escaláveis e sistemas de alta performance com Next.js, React e Node.js.
+          Olá! Sou Lucas Almeida (Lucas Almeida Dev), desenvolvedor full stack especialista na construção de aplicações web escaláveis e sistemas de alta performance com Next.js, React e Node.js.
         </p>
 
         <div className="flex flex-wrap items-center gap-4 pt-8">
