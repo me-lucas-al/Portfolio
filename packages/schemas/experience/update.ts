@@ -4,7 +4,9 @@ import { ExperienceSchema } from "./base";
 export const UpdateExperienceSchema = ExperienceSchema.pick({
     id: true,
     role: true,
+    roleEn: true,
     description: true,
+    descriptionEn: true,
     company: true,
     startDate: true,
     endDate: true,
@@ -13,4 +15,4 @@ export const UpdateExperienceSchema = ExperienceSchema.pick({
     order: z.number().optional()
 })
 
-export type UpdateExperienceType = z.infer<typeof UpdateExperienceSchema>
+export type UpdateExperienceType = z.infer<typeof UpdateExperienceSchema>

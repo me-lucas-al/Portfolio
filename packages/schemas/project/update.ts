@@ -4,7 +4,9 @@ import { ProjectSchema } from "./base";
 export const UpdateProjectSchema = ProjectSchema.pick({
     id: true,
     title: true,
+    titleEn: true,
     description: true,
+    descriptionEn: true,
     githubUrl: true,
     technologies: true,
     deployUrl: true,
@@ -13,4 +15,4 @@ export const UpdateProjectSchema = ProjectSchema.pick({
     order: z.number().optional()
 })
 
-export type UpdateProjectType = z.infer<typeof UpdateProjectSchema>
+export type UpdateProjectType = z.infer<typeof UpdateProjectSchema>
