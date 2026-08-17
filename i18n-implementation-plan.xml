@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation_plan>
+  <persona>
+    <role>Tech Lead / Arquiteto Sênior Full-Stack</role>
+    <mindset>
+      Prevenção de quebras de layout, garantia de tipagem restrita end-to-end em monorepo, 
+      responsividade "mobile-first" imperceptível ao usuário, e UX fluida para painéis administrativos. 
+      Evita overengineering mas garante escalabilidade do modelo de dados.
+    </mindset>
+  </persona>
+
+  <objective>
+    Introduzir sistema bilíngue (Português/Inglês) na aplicação Next.js, atualizando o painel de 
+    controle para gerenciar essas novas strings e implementando um Toggle Responsivo sem Layout Shift.
+  </objective>
+
+  <risks_and_mitigations>
+    <risk id="1">
+      <title>Desalinhamento de Tipos no Monorepo (Web vs Core vs Database)</title>
+      <what_can_go_wrong>
+        Adicionar os campos "En" no Prisma (`database`) e tentar chamá-los na Server Action de `web` 
+        antes de compilar o pacote `core`. O TypeScript no app web começará a disparar erros 
+        "Property 'titleEn' does not exist on type 'Project'".
+      </what_can_go_wrong>
+      <mitigation>
+        Seguir estritamente a ordem de propagação. 1. Prisma Migrate e Generate. 2. Atualizar repositórios e serviços em `core/src`. 3. Exportar as tipagens/DTOs atualizadas do `core`. 4. Só então tocar no formulário web em `web/src/app/(authenticated)/control-painel`.
+      </mitigation>
+    </risk>
+    <risk id="2">
+      <title>Problemas de Hidratação com o Idioma (FOUC)</title>
+      <what_can_go_wrong>
+        Se a escolha do idioma ficar apenas no `localStorage`, as páginas (Server Components) 
+        carregarão em português por padrão e piscarão para inglês apenas no client-side após hidratação.
+      </what_can_go_wrong>
+      <mitigation>
+        Armazenar a preferência de idioma (`en` ou `pt`) em Cookies do navegador. Server Components no Next.js (`layout.tsx` e `page.tsx`) farão a leitura usando `cookies().get('NEXT_LOCALE')` e injetarão a string correta na primeira renderização (SSR).
+      </mitigation>
+    </risk>
+    <risk id="3">
+      <title>Quebra de Layout (Layout Shift) no Toggle Responsivo</title>
+      <what_can_go_wrong>
+        Ao colocar um "Switch" no meio da navbar (em `/web/src/app/layout.tsx`), em telas Mobile (ex: 375px de largura), o header vai superpopular, empurrando o logo ou o menu hamburguer para uma nova linha e estragando o visual.
+      </what_can_go_wrong>
+      <mitigation>
+        O componente `<LanguageToggle />` deve utilizar classes do Tailwind de forma condicional, 
+        por exemplo, se estiver dentro da navbar primária: `hidden md:flex`. Para o mobile, o 
+        mesmo toggle deve ser embutido **dentro** do Dropdown/Sheet Menu hamburguer existente.
+      </mitigation>
+    </risk>
+    <risk id="4">
+      <title>Poluição Cognitiva no Painel de Admin</title>
+      <what_can_go_wrong>
+        Se você simplesmente dobrar o número de inputs do form (Título PT, Título EN, Descrição PT, 
+        Descrição EN), o CMS ficará exaustivo, vertical demais, e a UX do editor será frustrante.
+      </what_can_go_wrong>
+      <mitigation>
+        No componente de form de Projetos e Experiências em `/web/src/app/(authenticated)/control-painel/`, implementar `<Tabs>` do `shadcn/ui`. Separar em "Aba Português" e "Aba Inglês". A mesma página mantém a mesma lógica visual, apenas transacionando os dados a preencher.
+      </mitigation>
+    </risk>
+  </risks_and_mitigations>
+
+  <execution_phases>
+    <phase id="1" title="Data Layer - Prisma &amp; Migration">
+      <action>Alterar database/prisma/schema.prisma</action>
+      <instruction>
+        Para `Project`, `Experience`, `Education` e `Link`, adicione campos correlatos com o sufixo "En"
+        (ex: `titleEn String?`, `descriptionEn String? @db.Text`). Eles devem ser opcionais (`?`) para
+        não quebrar os dados legados existentes na tabela.
+      </instruction>
+      <command>cd database &amp;&amp; npx prisma migrate dev --name add_i18n_fields &amp;&amp; npx prisma generate</command>
+    </phase>
+
+    <phase id="2" title="Business Logic - Core Package">
+      <action>Atualizar DTOs e Repositórios</action>
+      <instruction>
+        Acesse `core/src/repositories/` e os respectivos DTOs de mutação de dados (Zod Schemas ou interfaces). 
+        Adicione a validação e aceitação dos novos campos. Certifique-se de buildar/transpilar o pacote core 
+        para que o `web` receba a tipagem.
+      </instruction>
+    </phase>
+
+    <phase id="3" title="Interface do Painel - Admin Web">
+      <action>Envolver formulários em Tabs (Shadcn/UI)</action>
+      <instruction>
+        Em `/web/src/app/(authenticated)/control-painel/...` utilize o React Hook Form.
+        Crie as abas "PT-BR" e "EN-US". Mapeie `register('title')` na aba PT e `register('titleEn')` na aba EN. 
+        As Server Actions (`/web/src/app/actions/...`) devem repassar esses dados atualizados ao `@portfolio/core`.
+      </instruction>
+    </phase>
+
+    <phase id="4" title="Internacionalização e Estado - Web Client &amp; Server">
+      <action>Configurar persistência de Idioma e Dicionário (SSR Safe)</action>
+      <instruction>
+        1. Crie uma função (action ou util) que salva a preferência do usuário em um Cookie `NEXT_LOCALE`.
+        2. Crie Dicionários Estáticos `pt.json` e `en.json` (ou TS) na pasta `/web/src/i18n/`.
+        3. No `layout.tsx` e `page.tsx` base (que são Server Components), leia o Cookie para injetar 
+        os dados estáticos iniciais corretamente.
+      </instruction>
+    </phase>
+
+    <phase id="5" title="Interface Pública - Toggle e Consumo">
+      <action>Criar o `<LanguageToggle />` Responsivo</action>
+      <instruction>
+        Implemente o toggle usando client-side hooks para despachar o idioma para os Cookies e forçar
+        um refresh inteligente da view (`router.refresh()`). 
+        
+        Exemplo de Tailwind para Navbar Desktop e Menu Mobile:
+        - Na Navbar: `&lt;div className="hidden sm:flex items-center"&gt;&lt;LanguageToggle /&gt;&lt;/div&gt;`
+        - No Sheet/Hamburguer Mobile: `&lt;div className="flex sm:hidden mt-4"&gt;&lt;LanguageToggle /&gt;&lt;/div&gt;`
+        
+        Nos Map loops da página (ex: Projetos), renderize usando fallback inteligente:
+        `const title = locale === 'en' ? (project.titleEn || project.title) : project.title;`
+      </instruction>
+    </phase>
+  </execution_phases>
+</implementation_plan>
