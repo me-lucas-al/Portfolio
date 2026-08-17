@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState } from "react"
 import { createProjectAction } from "@/app/actions/project"
 import { toast } from "react-toastify"
 import { Loader2, X, ImageIcon } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function CreateProjectForm() {
   const [state, formAction, isPending] = useActionState(createProjectAction, null)
@@ -42,7 +43,6 @@ export function CreateProjectForm() {
   }
 
   const handleSubmit = async (formData: FormData) => {
-    // Adiciona os arquivos de imagem manualmente ao FormData
     newFiles.forEach(file => formData.append("images", file))
     return formAction(formData)
   }
@@ -51,26 +51,59 @@ export function CreateProjectForm() {
 
   return (
     <form action={handleSubmit} className="space-y-6">
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-neutral-400 ml-1">Título do Projeto</label>
-        <input 
-          name="title" 
-          required 
-          disabled={isPending}
-          className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50" 
-        />
-      </div>
+      <Tabs defaultValue="pt" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-neutral-900 border border-neutral-800">
+          <TabsTrigger value="pt" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+            🇧🇷 PT-BR
+          </TabsTrigger>
+          <TabsTrigger value="en" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+            🇺🇸 EN-US
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-neutral-400 ml-1">Descrição</label>
-        <textarea 
-          name="description" 
-          required 
-          rows={4} 
-          disabled={isPending}
-          className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all resize-none disabled:opacity-50" 
-        />
-      </div>
+        <TabsContent value="pt" className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1">Título do Projeto</label>
+            <input 
+              name="title" 
+              required 
+              disabled={isPending}
+              className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50" 
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1">Descrição</label>
+            <textarea 
+              name="description" 
+              rows={4} 
+              disabled={isPending}
+              className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all resize-none disabled:opacity-50" 
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="en" className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1">Project Title <span className="text-neutral-600">(English)</span></label>
+            <input 
+              name="titleEn" 
+              disabled={isPending}
+              placeholder="English title (optional)"
+              className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50" 
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1">Description <span className="text-neutral-600">(English)</span></label>
+            <textarea 
+              name="descriptionEn" 
+              rows={4} 
+              disabled={isPending}
+              placeholder="English description (optional)"
+              className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all resize-none disabled:opacity-50" 
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
@@ -164,4 +197,4 @@ export function CreateProjectForm() {
       </button>
     </form>
   )
-}
+}

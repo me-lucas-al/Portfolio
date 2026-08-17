@@ -5,6 +5,7 @@ import { updateExperienceAction } from "@/app/actions/experience"
 import { ExperienceType } from "@portfolio/packages"
 import { Loader2 } from "lucide-react"
 import { toast } from "react-toastify"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Função para converter o Date do banco para formato "YYYY-MM" do input type="month"
 const formatMonthForInput = (date: Date | string | null | undefined) => {
@@ -31,17 +32,12 @@ export function EditExperienceForm({ experience, onSuccess }: { experience: Expe
 
   return (
     <form action={handleSubmit} className="space-y-6">
+      <div className="space-y-2">
+        <label className="text-sm text-neutral-400">Empresa</label>
+        <input required name="company" defaultValue={experience.company} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm text-neutral-400">Cargo</label>
-          <input required name="role" defaultValue={experience.role} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm text-neutral-400">Empresa</label>
-          <input required name="company" defaultValue={experience.company} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
-        </div>
-        
-        {/* Novos inputs de Data */}
         <div className="space-y-2">
           <label className="text-sm text-neutral-400">Data de Início</label>
           <input required type="month" name="startDate" defaultValue={formatMonthForInput(experience.startDate)} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
@@ -55,10 +51,36 @@ export function EditExperienceForm({ experience, onSuccess }: { experience: Expe
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-sm text-neutral-400">Descrição</label>
-        <textarea required name="description" defaultValue={experience.description} rows={4} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500 resize-none" />
-      </div>
+      <Tabs defaultValue="pt" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-neutral-900 border border-neutral-800">
+          <TabsTrigger value="pt" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+            🇧🇷 PT-BR
+          </TabsTrigger>
+          <TabsTrigger value="en" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+            🇺🇸 EN-US
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="pt" className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <label className="text-sm text-neutral-400">Cargo</label>
+            <input required name="role" defaultValue={experience.role} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm text-neutral-400">Descrição</label>
+            <textarea required name="description" defaultValue={experience.description} rows={4} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500 resize-none" />
+          </div>
+        </TabsContent>
+        <TabsContent value="en" className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <label className="text-sm text-neutral-400">Role <span className="text-neutral-600">(English)</span></label>
+            <input name="roleEn" defaultValue={experience.roleEn ?? ""} placeholder="English role (optional)" className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm text-neutral-400">Description <span className="text-neutral-600">(English)</span></label>
+            <textarea name="descriptionEn" defaultValue={experience.descriptionEn ?? ""} rows={4} placeholder="English description (optional)" className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500 resize-none" />
+          </div>
+        </TabsContent>
+      </Tabs>
       <div className="space-y-2">
         <label className="text-sm text-neutral-400">Tecnologias</label>
         <input name="techs" defaultValue={experience.techs?.join(", ")} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
@@ -68,4 +90,4 @@ export function EditExperienceForm({ experience, onSuccess }: { experience: Expe
       </button>
     </form>
   )
-}
+}

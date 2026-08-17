@@ -7,6 +7,7 @@ import { Loader2, X, ImageIcon } from "lucide-react"
 import { toast } from "react-toastify"
 import { ProjectType } from "@portfolio/packages"
 import { useGetUserRole } from "@/lib/use-get-user-role"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function EditProjectForm({ project, onCancel }: { project: ProjectType, onCancel: () => void }) {
   const [state, formAction, isPending] = useActionState(updateProjectAction, null)
@@ -62,15 +63,38 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
     <form action={handleSubmit} className="space-y-5 p-4">
       <input type="hidden" name="id" value={project.id} />
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-neutral-400 ml-1">Título do Projeto</label>
-        <input name="title" defaultValue={project.title} required disabled={user} className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 transition-all disabled:opacity-50" />
-      </div>
+      <Tabs defaultValue="pt" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-neutral-900 border border-neutral-800">
+          <TabsTrigger value="pt" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+            🇧🇷 PT-BR
+          </TabsTrigger>
+          <TabsTrigger value="en" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+            🇺🇸 EN-US
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-neutral-400 ml-1">Descrição</label>
-        <textarea name="description" defaultValue={project.description ?? ""} rows={5} disabled={user} className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 transition-all resize-none disabled:opacity-50" />
-      </div>
+        <TabsContent value="pt" className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1">Título do Projeto</label>
+            <input name="title" defaultValue={project.title} required disabled={user} className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 transition-all disabled:opacity-50" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1">Descrição</label>
+            <textarea name="description" defaultValue={project.description ?? ""} rows={5} disabled={user} className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 transition-all resize-none disabled:opacity-50" />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="en" className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1">Project Title <span className="text-neutral-600">(English)</span></label>
+            <input name="titleEn" defaultValue={project.titleEn ?? ""} disabled={user} placeholder="English title (optional)" className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 transition-all disabled:opacity-50" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-400 ml-1">Description <span className="text-neutral-600">(English)</span></label>
+            <textarea name="descriptionEn" defaultValue={project.descriptionEn ?? ""} rows={5} disabled={user} placeholder="English description (optional)" className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 transition-all resize-none disabled:opacity-50" />
+          </div>
+        </TabsContent>
+      </Tabs>
 
       <div className="space-y-2">
         <label className="text-sm font-medium text-neutral-400 ml-1">Tecnologias (separadas por vírgula)</label>

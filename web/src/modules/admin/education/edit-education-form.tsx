@@ -5,6 +5,7 @@ import { updateEducationAction } from "@/app/actions/education"
 import { EducationType } from "@portfolio/packages"
 import { Loader2 } from "lucide-react"
 import { toast } from "react-toastify"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Função para converter o Date do banco para formato "YYYY-MM" do input type="month"
 const formatMonthForInput = (date: Date | string | null | undefined) => {
@@ -31,17 +32,34 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
 
   return (
     <form action={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm text-neutral-400">Curso</label>
-          <input required name="course" defaultValue={education.course} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm text-neutral-400">Instituição</label>
-          <input required name="institution" defaultValue={education.institution} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
-        </div>
-        
-        {/* Novos inputs de Data */}
+      <Tabs defaultValue="pt" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-neutral-900 border border-neutral-800">
+          <TabsTrigger value="pt" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+            🇧🇷 PT-BR
+          </TabsTrigger>
+          <TabsTrigger value="en" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+            🇺🇸 EN-US
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="pt" className="mt-4">
+          <div className="space-y-2">
+            <label className="text-sm text-neutral-400">Curso</label>
+            <input required name="course" defaultValue={education.course} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+          </div>
+        </TabsContent>
+        <TabsContent value="en" className="mt-4">
+          <div className="space-y-2">
+            <label className="text-sm text-neutral-400">Course <span className="text-neutral-600">(English)</span></label>
+            <input name="courseEn" defaultValue={education.courseEn ?? ""} placeholder="English course name (optional)" className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <div className="space-y-2">
+        <label className="text-sm text-neutral-400">Instituição</label>
+        <input required name="institution" defaultValue={education.institution} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+      </div>
+
         <div className="space-y-2">
           <label className="text-sm text-neutral-400">Data de Início</label>
           <input required type="month" name="startDate" defaultValue={formatMonthForInput(education.startDate)} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
@@ -54,7 +72,7 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
           <input type="month" name="endDate" defaultValue={formatMonthForInput(education.endDate)} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
         </div>
 
-      </div>
+
       <div className="space-y-2">
         <label className="text-sm text-neutral-400">Tipo</label>
         <input required name="type" defaultValue={education.type} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
