@@ -108,9 +108,10 @@ interface SkillsProps {
   frontend?: string;
   backend?: string;
   tools?: string;
+  locale?: string;
 }
 
-export function Skills({ frontend, backend, tools }: SkillsProps) {
+export function Skills({ frontend, backend, tools, locale }: SkillsProps) {
   const parseSkills = (str: string | undefined, defaultList: string[]) => {
     if (!str) return defaultList;
     return str.split(',').map(s => s.trim()).filter(s => s.length > 0);
@@ -126,12 +127,14 @@ export function Skills({ frontend, backend, tools }: SkillsProps) {
     { title: "Tools", skills: toolsSkills }
   ];
 
+  const sectionTitle = locale === "en" ? "Skills" : "Tecnologias";
+
   return (
     <section id="tecnologias" className="py-24 scroll-mt-20">
       <div className="flex items-center gap-6 mb-12">
         <h3 className="text-2xl font-bold text-white flex items-center gap-3">
           <span className="text-blue-500 font-mono text-lg font-normal">02.</span> 
-          Tecnologias
+          {sectionTitle}
         </h3>
         <div className="h-px bg-neutral-900 flex-1" />
       </div>

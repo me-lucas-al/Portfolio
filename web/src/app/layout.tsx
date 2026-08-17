@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { ToastContainer } from "react-toastify"
 import Provider from "@/components/auth/session-provider"
+import { getLocale } from "@/lib/locale"
 import "./globals.css"
 
 const inter = Inter({
@@ -100,9 +101,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale()
   return (
-    <html lang="pt-BR" className={inter.variable}>
+    <html lang={locale === "en" ? "en" : "pt-BR"} className={inter.variable}>
       <body>  
         <Provider>{children}</Provider>
         <ToastContainer position="bottom-right" autoClose={2500} theme="colored" aria-label="Toast container" />
