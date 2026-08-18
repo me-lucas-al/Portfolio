@@ -1,21 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { MessageCircle, Send } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet"
+import { MessageCircle, Send, X } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
@@ -29,127 +15,153 @@ interface AssistantWidgetProps {
   locale: Locale
 }
 
-const DESKTOP_QUERY = "(min-width: 1024px)"
+const CTA_SEEN_KEY = "assistant_cta_seen"
+const CTA_DELAY_MS = 1500
 
 export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
   const [open, setOpen] = useState(false)
-  const [isDesktop, setIsDesktop] = useState(false)
+  const [showCta, setShowCta] = useState(false)
   const { messages, input, setInput, loading, error, bottomRef, handleSend, handleKeyDown } = useAssistantChat(
     dict,
     locale,
   )
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia(DESKTOP_QUERY)
-    setIsDesktop(mediaQuery.matches)
-    const handleChange = (event: MediaQueryListEvent) => setIsDesktop(event.matches)
-    mediaQuery.addEventListener("change", handleChange)
-    return () => mediaQuery.removeEventListener("change", handleChange)
+    if (window.localStorage.getItem(CTA_SEEN_KEY)) return
+    const timeout = window.setTimeout(() => setShowCta(true), CTA_DELAY_MS)
+    return () => window.clearTimeout(timeout)
   }, [])
 
-  const body = (
-    <div className="flex flex-col h-full min-h-0">
-      <ScrollArea className="flex-1 min-h-0 pr-2">
-        <div className="flex flex-col gap-3 py-2" aria-live="polite">
-          {messages.length === 0 && (
-            <div className="flex flex-col gap-2">
-              <p className="text-sm text-neutral-500">{dict.subtitle}</p>
-              <div className="flex flex-col gap-2 mt-2">
-                {dict.suggestions.map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    onClick={() => void handleSend(suggestion)}
-                    className="text-left text-sm px-3 py-2 rounded-lg bg-neutral-900/80 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition-colors"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+  useEffect(() => {
+    if (!open) return
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false)
+    }
+    window.addEventListener("keydown", handleKey)
+    return () => window.removeEventListener("keydown", handleKey)
+  }, [open])
 
-          {messages.map((message) => (
-            <AssistantMessage key={message.id} role={message.role} content={message.content} />
-          ))}
+  function dismissCta() {
+    setShowCta(false)
+    window.localStorage.setItem(CTA_SEEN_KEY, "1")
+  }
 
-          {loading && (
-            <div className="flex flex-col gap-2 max-w-[85%]">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-4 w-48" />
-            </div>
-          )}
-
-          {error && <p className="text-sm text-red-400">{error}</p>}
-
-          <div ref={bottomRef} />
-        </div>
-      </ScrollArea>
-
-      <div className="pt-3 border-t border-neutral-900 flex flex-col gap-2">
-        <div className="flex items-end gap-2">
-          <Textarea
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={dict.placeholder}
-            maxLength={600}
-            className="min-h-10 max-h-32 resize-none bg-neutral-900/60 border-neutral-800 text-sm text-white placeholder:text-neutral-600"
-          />
-          <Button
-            size="icon"
-            onClick={() => void handleSend()}
-            disabled={loading || !input.trim()}
-            aria-label={dict.send}
-          >
-            <Send className="size-4" />
-          </Button>
-        </div>
-        <p className="text-[11px] text-neutral-600">{dict.disclaimer}</p>
-      </div>
-    </div>
-  )
-
-  const trigger = (
-    <button
-      type="button"
-      onClick={() => setOpen(true)}
-      aria-label={dict.trigger}
-      className="fixed bottom-6 right-6 z-40 flex items-center justify-center size-14 rounded-full bg-blue-600 text-white shadow-lg shadow-blue-950/50 hover:bg-blue-500 transition-all active:scale-95"
-    >
-      <MessageCircle className="size-6" />
-    </button>
-  )
-
-  if (isDesktop) {
-    return (
-      <>
-        {trigger}
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="sm:max-w-lg h-[600px] flex flex-col bg-neutral-950 border-neutral-800 text-white">
-            <DialogHeader>
-              <DialogTitle className="text-white">{dict.title}</DialogTitle>
-              <DialogDescription className="sr-only">{dict.subtitle}</DialogDescription>
-            </DialogHeader>
-            {body}
-          </DialogContent>
-        </Dialog>
-      </>
-    )
+  function openPanel() {
+    setOpen(true)
+    dismissCta()
   }
 
   return (
     <>
-      {trigger}
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="bottom" className="h-[85vh] flex flex-col bg-neutral-950 border-neutral-800 text-white p-4">
-          <SheetHeader className="p-0">
-            <SheetTitle className="text-white">{dict.title}</SheetTitle>
-            <SheetDescription className="sr-only">{dict.subtitle}</SheetDescription>
-          </SheetHeader>
-          <div className="flex-1 min-h-0">{body}</div>
-        </SheetContent>
-      </Sheet>
+      <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
+        {showCta && !open && (
+          <div className="flex items-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-900/95 px-4 py-2 text-sm text-neutral-200 shadow-lg shadow-black/30 animate-in fade-in slide-in-from-bottom-2">
+            <span>{dict.ctaBubble}</span>
+            <button
+              type="button"
+              onClick={dismissCta}
+              aria-label={dict.close}
+              className="text-neutral-500 transition-colors hover:text-neutral-300"
+            >
+              <X className="size-3.5" />
+            </button>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={() => (open ? setOpen(false) : openPanel())}
+          aria-label={dict.trigger}
+          aria-expanded={open}
+          className="flex size-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-950/50 transition-all hover:bg-blue-500 active:scale-95"
+        >
+          {open ? <X className="size-6" /> : <MessageCircle className="size-6" />}
+        </button>
+      </div>
+
+      <aside
+        role="complementary"
+        aria-label={dict.title}
+        inert={!open}
+        className={`fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-neutral-800 bg-neutral-950 text-white shadow-2xl shadow-black/40 transition-transform duration-300 ease-in-out sm:w-[420px] ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-neutral-900 px-4 py-3">
+          <div>
+            <p className="text-sm font-semibold text-white">{dict.title}</p>
+            <p className="text-xs text-neutral-500">{dict.subtitle}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label={dict.close}
+            className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+
+        <div className="flex flex-1 flex-col min-h-0 p-4">
+          <ScrollArea className="flex-1 min-h-0 pr-2">
+            <div className="flex flex-col gap-3 py-2" aria-live="polite">
+              {messages.length === 0 && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 mt-2">
+                    {dict.suggestions.map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => void handleSend(suggestion)}
+                        className="text-left text-sm px-3 py-2 rounded-lg bg-neutral-900/80 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition-colors"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {messages.map((message) => (
+                <AssistantMessage key={message.id} role={message.role} content={message.content} />
+              ))}
+
+              {loading && (
+                <div className="flex flex-col gap-2 max-w-[85%]">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+              )}
+
+              {error && <p className="text-sm text-red-400">{error}</p>}
+
+              <div ref={bottomRef} />
+            </div>
+          </ScrollArea>
+
+          <div className="pt-3 border-t border-neutral-900 flex flex-col gap-2">
+            <div className="flex items-end gap-2">
+              <Textarea
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={dict.placeholder}
+                maxLength={600}
+                className="min-h-10 max-h-32 resize-none bg-neutral-900/60 border-neutral-800 text-sm text-white placeholder:text-neutral-600"
+              />
+              <Button
+                size="icon"
+                onClick={() => void handleSend()}
+                disabled={loading || !input.trim()}
+                aria-label={dict.send}
+              >
+                <Send className="size-4" />
+              </Button>
+            </div>
+            <p className="text-[11px] text-neutral-600">{dict.disclaimer}</p>
+          </div>
+        </div>
+      </aside>
     </>
   )
 }

@@ -36,6 +36,8 @@ export interface Dictionary {
   }
   assistant: {
     trigger: string
+    ctaBubble: string
+    close: string
     title: string
     subtitle: string
     placeholder: string
@@ -89,6 +91,8 @@ export const pt: Dictionary = {
   },
   assistant: {
     trigger: "Assistente de IA",
+    ctaBubble: "Tire suas dúvidas com a IA",
+    close: "Fechar",
     title: "Assistente do Lucas",
     subtitle: "Pergunte sobre a trajetória, os projetos e a arquitetura do portfólio",
     placeholder: "Digite sua pergunta...",
