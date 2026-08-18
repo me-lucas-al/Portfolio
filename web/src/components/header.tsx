@@ -12,7 +12,7 @@ export async function Header() {
 
   return (
     <header className="fixed top-0 w-full bg-black/70 backdrop-blur-md z-50 border-b border-neutral-900">
-      <div className="max-w-6xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between gap-6">
         <Link
           href="/"
           className="shrink-0 whitespace-nowrap text-white font-bold text-lg sm:text-xl tracking-tighter hover:text-blue-400 transition-colors"
@@ -21,7 +21,7 @@ export async function Header() {
         </Link>
 
         {/* Desktop Navigation & Controls */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-6">
           <nav className="flex items-center gap-6 lg:gap-8">
             <Link
               href="#sobre"

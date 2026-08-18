@@ -36,7 +36,7 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
   }
 
   return (
-    <div className="flex md:hidden items-center shrink-0">
+    <div className="flex lg:hidden items-center shrink-0">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <button
