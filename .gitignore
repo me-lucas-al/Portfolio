@@ -44,3 +44,7 @@ next-env.d.ts
 dist/
 dist
 **/dist/
+
+# Assistant ingest cache (cloned repos for code indexing)
+.cache/
+assistant/.cache/
