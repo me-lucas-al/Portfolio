@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, after } from "next/server";
 import { ApiError } from "@google/genai";
 import { ChatRequestSchema } from "@portfolio/packages/schemas/assistant";
 import { makeAssistantAnswerService } from "@portfolio/core/src/factories/_index";
@@ -81,6 +81,10 @@ export async function POST(request: NextRequest) {
 
   const answerCache = makeAssistantAnswerService();
 
+  // Checked before the daily generation budget on purpose: a cache hit costs one cheap
+  // embedding call, not a generation call, so previously-answered questions should keep
+  // working even once the budget for new generations is exhausted. The embedding cost
+  // itself is still bounded only by the per-IP rate limit above, not by the daily budget.
   try {
     const cachedAnswer = await answerCache.findCachedAnswer(parsed.data.message, parsed.data.locale);
     if (cachedAnswer) {
@@ -120,9 +124,13 @@ export async function POST(request: NextRequest) {
       durationMs: Date.now() - startedAt,
     });
 
-    answerCache
-      .saveAnswer(parsed.data.message, text, parsed.data.locale)
-      .catch((error) => console.error("[assistant] failed to persist answer:", error));
+    // Runs after the response is sent, but Next keeps the serverless function alive
+    // for it (unlike a bare fire-and-forget promise, which Vercel may cut off early).
+    after(() =>
+      answerCache
+        .saveAnswer(parsed.data.message, text, parsed.data.locale)
+        .catch((error) => console.error("[assistant] failed to persist answer:", error)),
+    );
 
     return Response.json({ text });
   } catch (error) {
