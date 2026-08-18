@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { MessageCircle, Send, X } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
@@ -18,6 +18,22 @@ interface AssistantWidgetProps {
 const CTA_SEEN_KEY = "assistant_cta_seen"
 const CTA_DELAY_MS = 1500
 
+function hasSeenCta(): boolean {
+  try {
+    return window.localStorage.getItem(CTA_SEEN_KEY) !== null
+  } catch {
+    return false
+  }
+}
+
+function markCtaSeen() {
+  try {
+    window.localStorage.setItem(CTA_SEEN_KEY, "1")
+  } catch {
+    // localStorage unavailable (private browsing, quota) - the bubble may reappear next visit
+  }
+}
+
 export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
   const [open, setOpen] = useState(false)
   const [showCta, setShowCta] = useState(false)
@@ -25,9 +41,12 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
     dict,
     locale,
   )
+  const panelRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const wasOpenRef = useRef(false)
 
   useEffect(() => {
-    if (window.localStorage.getItem(CTA_SEEN_KEY)) return
+    if (hasSeenCta()) return
     const timeout = window.setTimeout(() => setShowCta(true), CTA_DELAY_MS)
     return () => window.clearTimeout(timeout)
   }, [])
@@ -41,9 +60,21 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
     return () => window.removeEventListener("keydown", handleKey)
   }, [open])
 
+  // Non-modal, so no focus trap: only move focus in/out on open/close, mirroring
+  // what Dialog/Sheet gave us for free before this became a custom panel.
+  useEffect(() => {
+    if (open) {
+      panelRef.current?.focus()
+      wasOpenRef.current = true
+    } else if (wasOpenRef.current) {
+      triggerRef.current?.focus()
+      wasOpenRef.current = false
+    }
+  }, [open])
+
   function dismissCta() {
     setShowCta(false)
-    window.localStorage.setItem(CTA_SEEN_KEY, "1")
+    markCtaSeen()
   }
 
   function openPanel() {
@@ -69,6 +100,7 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
         )}
 
         <button
+          ref={triggerRef}
           type="button"
           onClick={() => (open ? setOpen(false) : openPanel())}
           aria-label={dict.trigger}
@@ -80,10 +112,12 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
       </div>
 
       <aside
+        ref={panelRef}
         role="complementary"
         aria-label={dict.title}
+        tabIndex={-1}
         inert={!open}
-        className={`fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-neutral-800 bg-neutral-950 text-white shadow-2xl shadow-black/40 transition-transform duration-300 ease-in-out sm:w-[420px] ${
+        className={`fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-neutral-800 bg-neutral-950 text-white shadow-2xl shadow-black/40 outline-none transition-transform duration-300 ease-in-out sm:w-[420px] ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
