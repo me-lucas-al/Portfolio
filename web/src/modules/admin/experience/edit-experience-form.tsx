@@ -60,7 +60,7 @@ export function EditExperienceForm({ experience, onSuccess }: { experience: Expe
             🇺🇸 EN-US
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="pt" className="space-y-4 mt-4">
+        <TabsContent value="pt" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm text-neutral-400">Cargo</label>
             <input required name="role" defaultValue={experience.role} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
@@ -70,7 +70,7 @@ export function EditExperienceForm({ experience, onSuccess }: { experience: Expe
             <textarea required name="description" defaultValue={experience.description} rows={4} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500 resize-none" />
           </div>
         </TabsContent>
-        <TabsContent value="en" className="space-y-4 mt-4">
+        <TabsContent value="en" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm text-neutral-400">Role <span className="text-neutral-600">(English)</span></label>
             <input name="roleEn" defaultValue={experience.roleEn ?? ""} placeholder="English role (optional)" className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />

@@ -61,7 +61,7 @@ export function CreateProjectForm() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="pt" className="space-y-4 mt-4">
+        <TabsContent value="pt" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-400 ml-1">Título do Projeto</label>
             <input 
@@ -82,7 +82,7 @@ export function CreateProjectForm() {
           </div>
         </TabsContent>
 
-        <TabsContent value="en" className="space-y-4 mt-4">
+        <TabsContent value="en" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-400 ml-1">Project Title <span className="text-neutral-600">(English)</span></label>
             <input 

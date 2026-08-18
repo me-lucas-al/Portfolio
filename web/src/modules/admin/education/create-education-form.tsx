@@ -33,13 +33,13 @@ export function CreateEducationForm() {
             🇺🇸 EN-US
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="pt" className="mt-4">
+        <TabsContent value="pt" className="mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-300">Curso</label>
             <input required name="course" placeholder="Ex: Engenharia de Software" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
         </TabsContent>
-        <TabsContent value="en" className="mt-4">
+        <TabsContent value="en" className="mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-300">Course <span className="text-neutral-600">(English)</span></label>
             <input name="courseEn" placeholder="Ex: Software Engineering (optional)" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />

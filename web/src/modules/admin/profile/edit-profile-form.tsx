@@ -52,7 +52,7 @@ export function EditProfileForm({ systemSettings }: EditProfileFormProps) {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="pt" className="space-y-2 mt-4">
+          <TabsContent value="pt" className="space-y-2 mt-4 data-[state=inactive]:hidden" forceMount>
             <textarea
               name="about_me"
               rows={5}
@@ -63,7 +63,7 @@ export function EditProfileForm({ systemSettings }: EditProfileFormProps) {
             />
           </TabsContent>
 
-          <TabsContent value="en" className="space-y-2 mt-4">
+          <TabsContent value="en" className="space-y-2 mt-4 data-[state=inactive]:hidden" forceMount>
             <textarea
               name="about_me_en"
               rows={5}
