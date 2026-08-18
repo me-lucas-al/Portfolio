@@ -21,60 +21,60 @@ export async function Header() {
         </Link>
 
         {/* Desktop Navigation & Controls */}
-        <div className="hidden lg:flex items-center gap-6">
-          <nav className="flex items-center gap-6 lg:gap-8">
+        <div className="hidden lg:flex items-center gap-4 xl:gap-6">
+          <nav className="flex items-center gap-3 xl:gap-6">
             <Link
               href="#sobre"
-              className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="text-xs xl:text-sm font-medium text-neutral-400 hover:text-white transition-colors whitespace-nowrap"
             >
               <span className="text-blue-500 font-mono mr-1">01.</span>
               {dict.nav.about}
             </Link>
             <Link
               href="#tecnologias"
-              className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="text-xs xl:text-sm font-medium text-neutral-400 hover:text-white transition-colors whitespace-nowrap"
             >
               <span className="text-blue-500 font-mono mr-1">02.</span>
               {dict.nav.skills}
             </Link>
             <Link
               href="#projetos"
-              className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="text-xs xl:text-sm font-medium text-neutral-400 hover:text-white transition-colors whitespace-nowrap"
             >
               <span className="text-blue-500 font-mono mr-1">03.</span>
               {dict.nav.projects}
             </Link>
             <Link
               href="#experiencia"
-              className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="text-xs xl:text-sm font-medium text-neutral-400 hover:text-white transition-colors whitespace-nowrap"
             >
               <span className="text-blue-500 font-mono mr-1">04.</span>
               {dict.nav.experience}
             </Link>
             <Link
               href="#formacao"
-              className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="text-xs xl:text-sm font-medium text-neutral-400 hover:text-white transition-colors whitespace-nowrap"
             >
               <span className="text-blue-500 font-mono mr-1">05.</span>
               {dict.nav.education}
             </Link>
             <Link
               href="#contatos"
-              className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="text-xs xl:text-sm font-medium text-neutral-400 hover:text-white transition-colors whitespace-nowrap"
             >
               <span className="text-blue-500 font-mono mr-1">06.</span>
               {dict.nav.contact}
             </Link>
           </nav>
 
-          <div className="h-4 w-px bg-neutral-800" />
+          <div className="h-4 w-px bg-neutral-800 shrink-0" />
 
           <LanguageToggle currentLocale={locale} />
 
           {session && (
             <Link
               href="/control-painel"
-              className="px-4 py-2 rounded-lg bg-blue-950/30 text-blue-400 border border-blue-900/50 text-xs font-medium hover:bg-blue-900 hover:text-white transition-all whitespace-nowrap"
+              className="px-3 py-1.5 rounded-lg bg-blue-950/30 text-blue-400 border border-blue-900/50 text-xs font-medium hover:bg-blue-900 hover:text-white transition-all whitespace-nowrap"
             >
               {dict.header.controlPanel}
             </Link>
