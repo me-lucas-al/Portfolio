@@ -1,3 +1,4 @@
+export * from "./assistant-answer-service.factory";
 export * from "./auth-service.factory";
 export * from "./education-service.factory";
 export * from "./experience-service.factory";
