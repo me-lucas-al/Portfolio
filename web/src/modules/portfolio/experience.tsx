@@ -1,5 +1,5 @@
 import { ExperienceType } from "@portfolio/packages";
-import type { Locale } from "@/i18n";
+import { getDictionary, type Locale } from "@/i18n";
 
 function formatPeriod(
   startDate: Date | string,
@@ -20,7 +20,7 @@ function formatPeriod(
   };
 
   const start = format(startDate);
-  const end = endDate ? format(endDate) : (locale === "en" ? "Present" : "Atual");
+  const end = endDate ? format(endDate) : getDictionary(locale).experience.current;
 
   return `${start} — ${end}`;
 }
@@ -33,7 +33,7 @@ interface ExperienceProps {
 export function Experience({ experiences, locale }: ExperienceProps) {
   if (!experiences?.length) return null;
 
-  const title = locale === "en" ? "Experience" : "Experiências";
+  const title = getDictionary(locale).experience.title;
 
   return (
     <section id="experiencia" className="py-24 scroll-mt-20">

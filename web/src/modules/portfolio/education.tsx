@@ -1,5 +1,5 @@
 import { EducationType } from "@portfolio/packages";
-import type { Locale } from "@/i18n";
+import { getDictionary, type Locale } from "@/i18n";
 
 function formatPeriod(
   startDate: Date | string,
@@ -20,7 +20,7 @@ function formatPeriod(
   };
 
   const start = format(startDate);
-  const end = endDate ? format(endDate) : (locale === "en" ? "Present" : "Atual");
+  const end = endDate ? format(endDate) : getDictionary(locale).education.current;
 
   return `${start} — ${end}`;
 }
@@ -33,7 +33,7 @@ interface EducationProps {
 export function Education({ educations, locale }: EducationProps) {
   if (!educations?.length) return null;
 
-  const title = locale === "en" ? "Academic Background" : "Formação Acadêmica";
+  const title = getDictionary(locale).education.title;
 
   return (
     <section id="formacao" className="py-24 scroll-mt-20">
