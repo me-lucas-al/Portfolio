@@ -47,6 +47,7 @@ export const en: Dictionary = {
     thinking: 'Thinking...',
     error: "Couldn't get a response right now. Please try again shortly.",
     rateLimited: 'Too many messages in a short time. Please wait a moment and try again.',
+    quotaExceeded: 'Daily limit reached, please try again tomorrow.',
     disclaimer: "AI-generated answers based on the portfolio's real data. May contain inaccuracies.",
     suggestions: [
       'Where does Lucas work today?',

@@ -43,6 +43,7 @@ export interface Dictionary {
     thinking: string
     error: string
     rateLimited: string
+    quotaExceeded: string
     disclaimer: string
     suggestions: string[]
   }
@@ -95,6 +96,7 @@ export const pt: Dictionary = {
     thinking: "Pensando...",
     error: "Não foi possível responder agora. Tente novamente em instantes.",
     rateLimited: "Muitas mensagens em pouco tempo. Aguarde um instante e tente de novo.",
+    quotaExceeded: "Limite máximo atingido, tente novamente amanhã.",
     disclaimer: "Respostas geradas por IA com base nos dados reais do portfólio. Podem conter imprecisões.",
     suggestions: [
       "Onde o Lucas trabalha hoje?",

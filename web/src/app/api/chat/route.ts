@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { ApiError } from "@google/genai";
 import { ChatRequestSchema } from "@portfolio/packages/schemas/assistant";
 import { checkRateLimit, hashIp, isDailyBudgetExceeded } from "@/lib/assistant/rate-limit";
 import { runAssistant } from "@/lib/assistant/agent";
@@ -102,6 +103,14 @@ export async function POST(request: NextRequest) {
     return Response.json({ text });
   } catch (error) {
     console.error("[assistant] generation failed:", error);
+
+    // Gemini's own daily/per-minute quota exhausted (RESOURCE_EXHAUSTED) — distinct
+    // from our own rate limit and daily budget, but the same "try again later" shape.
+    if (error instanceof ApiError && error.status === 429) {
+      logMetric({ ip: ipHashPrefix, status: 503, reason: "upstream_quota", durationMs: Date.now() - startedAt });
+      return Response.json({ error: "Upstream quota exceeded", reason: "upstream_quota" }, { status: 503 });
+    }
+
     logMetric({ ip: ipHashPrefix, status: 502, durationMs: Date.now() - startedAt });
     return Response.json({ error: "Failed to generate a response" }, { status: 502 });
   }

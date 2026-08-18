@@ -48,7 +48,8 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
         return
       }
       if (!response.ok) {
-        setError(dict.error)
+        const errorBody = (await response.json().catch(() => null)) as { reason?: string } | null
+        setError(errorBody?.reason === "upstream_quota" ? dict.quotaExceeded : dict.error)
         return
       }
 
