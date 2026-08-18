@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client"
-  output   = "./generated"
+  provider        = "prisma-client"
+  output          = "./generated"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider   = "postgresql"
+  extensions = [vector]
 }
 
 model User {
@@ -33,31 +35,31 @@ model Project {
 }
 
 model Experience {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   role          String
   roleEn        String?
   company       String
   startDate     DateTime
   endDate       DateTime?
-  description   String   @db.Text
-  descriptionEn String?  @db.Text
-  techs         String[] 
-  order         Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  description   String    @db.Text
+  descriptionEn String?   @db.Text
+  techs         String[]
+  order         Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Education {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   course      String
   courseEn    String?
   institution String
   startDate   DateTime
   endDate     DateTime?
   type        String
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 enum Roles {
@@ -79,10 +81,29 @@ model Link {
   id        Int      @id @default(autoincrement())
   title     String
   url       String
-  icon      String 
+  icon      String
   order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("links")
+}
+
+model Chunk {
+  id          String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  source      String
+  sourceType  String
+  chunkIndex  Int                          @default(0)
+  locale      String?
+  title       String?
+  content     String                       @db.Text
+  contentHash String
+  embedding   Unsupported("vector(1536)")?
+  lastSeenAt  DateTime                     @default(now())
+  createdAt   DateTime                     @default(now())
+  updatedAt   DateTime                     @updatedAt
+
+  @@unique([source, chunkIndex])
+  @@index([sourceType])
+  @@map("chunks")
 }
