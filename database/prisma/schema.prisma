@@ -107,3 +107,12 @@ model Chunk {
   @@index([sourceType])
   @@map("chunks")
 }
+
+model ChatUsage {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ipHash    String
+  createdAt DateTime @default(now())
+
+  @@index([ipHash, createdAt])
+  @@map("chat_usage")
+}
