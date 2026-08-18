@@ -36,13 +36,11 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
   }
 
   return (
-    <div className="flex md:hidden items-center gap-2">
-      <LanguageToggle currentLocale={locale} />
-
+    <div className="flex md:hidden items-center shrink-0">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <button
-            aria-label="Abrir menu de navegação"
+            aria-label={locale === "en" ? "Open navigation menu" : "Abrir menu de navegação"}
             className="p-2.5 rounded-xl bg-neutral-900/80 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition-all active:scale-95"
           >
             <Menu className="w-5 h-5" />
@@ -59,9 +57,11 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
                 Lucas Almeida
               </SheetTitle>
               <p className="text-xs text-neutral-500 font-mono">
-                {locale === "en" ? "Navigation" : "Navegação"}
+                {dict.header.navigation}
               </p>
             </SheetHeader>
+
+            <LanguageToggle currentLocale={locale} />
 
             <nav className="flex flex-col gap-1 pt-2">
               {navItems.map((item) => (
@@ -88,7 +88,7 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
                 className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-blue-950/60 text-blue-300 border border-blue-900/60 text-xs font-medium hover:bg-blue-900 hover:text-white transition-all shadow-sm"
               >
                 <LayoutDashboard className="w-4 h-4" />
-                Painel de Controle
+                {dict.header.controlPanel}
               </Link>
             )}
           </div>

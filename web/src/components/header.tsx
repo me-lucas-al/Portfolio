@@ -15,7 +15,7 @@ export async function Header() {
       <div className="max-w-6xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
         <Link
           href="/"
-          className="text-white font-bold text-xl tracking-tighter hover:text-blue-400 transition-colors"
+          className="shrink-0 whitespace-nowrap text-white font-bold text-lg sm:text-xl tracking-tighter hover:text-blue-400 transition-colors"
         >
           Lucas Almeida
         </Link>
@@ -76,7 +76,7 @@ export async function Header() {
               href="/control-painel"
               className="px-4 py-2 rounded-lg bg-blue-950/30 text-blue-400 border border-blue-900/50 text-xs font-medium hover:bg-blue-900 hover:text-white transition-all whitespace-nowrap"
             >
-              Painel de Controle
+              {dict.header.controlPanel}
             </Link>
           )}
         </div>
