@@ -52,8 +52,12 @@ export class DbSource implements ChunkSource {
       const periodPt = formatPeriod(experience.startDate, experience.endDate, "Atual");
       const periodEn = formatPeriod(experience.startDate, experience.endDate, "Present");
 
+      const isCurrent = experience.endDate === null;
+      const statusPt = isCurrent ? "Emprego atual" : "Experiência anterior";
+      const statusEn = isCurrent ? "Current job" : "Past experience";
+
       const contentPt = [
-        `Experiência profissional: ${experience.role} na ${experience.company} (${periodPt}).`,
+        `${statusPt}: onde o Lucas trabalha${isCurrent ? " hoje" : ""} — ${experience.role} na ${experience.company} (${periodPt}).`,
         experience.techs.length > 0 ? `Tecnologias: ${experience.techs.join(", ")}.` : "",
         experience.description,
       ]
@@ -64,7 +68,7 @@ export class DbSource implements ChunkSource {
 
       if (experience.roleEn || experience.descriptionEn) {
         const contentEn = [
-          `Professional experience: ${experience.roleEn ?? experience.role} at ${experience.company} (${periodEn}).`,
+          `${statusEn}: where Lucas ${isCurrent ? "currently works" : "used to work"} — ${experience.roleEn ?? experience.role} at ${experience.company} (${periodEn}).`,
           experience.techs.length > 0 ? `Technologies: ${experience.techs.join(", ")}.` : "",
           experience.descriptionEn ?? experience.description,
         ]
