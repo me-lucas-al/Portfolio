@@ -8,6 +8,48 @@ export interface ChatMessage {
 }
 
 const MAX_HISTORY_TURNS = 6
+const STORAGE_KEY = "assistant_chat_v1"
+const STORAGE_TTL_MS = 24 * 60 * 60 * 1000
+
+interface PersistedChat {
+  messages: ChatMessage[]
+  savedAt: number
+}
+
+function loadPersistedMessages(): ChatMessage[] {
+  if (typeof window === "undefined") return []
+
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (!raw) return []
+
+    const parsed = JSON.parse(raw) as PersistedChat
+    if (!parsed.savedAt || Date.now() - parsed.savedAt > STORAGE_TTL_MS) {
+      window.localStorage.removeItem(STORAGE_KEY)
+      return []
+    }
+
+    return parsed.messages ?? []
+  } catch {
+    return []
+  }
+}
+
+function persistMessages(messages: ChatMessage[]) {
+  if (typeof window === "undefined") return
+
+  try {
+    if (messages.length === 0) {
+      window.localStorage.removeItem(STORAGE_KEY)
+      return
+    }
+
+    const payload: PersistedChat = { messages, savedAt: Date.now() }
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
+  } catch {
+    // localStorage unavailable (private browsing, quota) - degrade to in-memory only
+  }
+}
 
 export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -16,6 +58,18 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
   const [error, setError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const nextId = useRef(0)
+
+  useEffect(() => {
+    const restored = loadPersistedMessages()
+    if (restored.length === 0) return
+
+    setMessages(restored)
+    nextId.current = restored.reduce((max, message) => Math.max(max, message.id), 0) + 1
+  }, [])
+
+  useEffect(() => {
+    persistMessages(messages)
+  }, [messages])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
