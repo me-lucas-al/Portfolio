@@ -73,7 +73,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="pt" className="space-y-4 mt-4">
+        <TabsContent value="pt" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-400 ml-1">Título do Projeto</label>
             <input name="title" defaultValue={project.title} required disabled={user} className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 transition-all disabled:opacity-50" />
@@ -84,7 +84,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
           </div>
         </TabsContent>
 
-        <TabsContent value="en" className="space-y-4 mt-4">
+        <TabsContent value="en" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-400 ml-1">Project Title <span className="text-neutral-600">(English)</span></label>
             <input name="titleEn" defaultValue={project.titleEn ?? ""} disabled={user} placeholder="English title (optional)" className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 transition-all disabled:opacity-50" />

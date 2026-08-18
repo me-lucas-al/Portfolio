@@ -52,7 +52,7 @@ export function CreateExperienceForm() {
             🇺🇸 EN-US
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="pt" className="space-y-4 mt-4">
+        <TabsContent value="pt" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-300">Cargo</label>
             <input required name="role" placeholder="Ex: Desenvolvedor Front-end" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />
@@ -62,7 +62,7 @@ export function CreateExperienceForm() {
             <textarea required name="description" rows={4} placeholder="Descreva suas responsabilidades..." className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors resize-none" />
           </div>
         </TabsContent>
-        <TabsContent value="en" className="space-y-4 mt-4">
+        <TabsContent value="en" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-300">Role <span className="text-neutral-600">(English)</span></label>
             <input name="roleEn" placeholder="Ex: Front-end Developer (optional)" className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors" />

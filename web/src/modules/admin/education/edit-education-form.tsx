@@ -41,13 +41,13 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
             🇺🇸 EN-US
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="pt" className="mt-4">
+        <TabsContent value="pt" className="mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm text-neutral-400">Curso</label>
             <input required name="course" defaultValue={education.course} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
           </div>
         </TabsContent>
-        <TabsContent value="en" className="mt-4">
+        <TabsContent value="en" className="mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm text-neutral-400">Course <span className="text-neutral-600">(English)</span></label>
             <input name="courseEn" defaultValue={education.courseEn ?? ""} placeholder="English course name (optional)" className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
