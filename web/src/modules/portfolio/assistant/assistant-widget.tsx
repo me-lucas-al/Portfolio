@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { MessageCircle, Send } from "lucide-react"
 import {
   Dialog,
@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { AssistantMessage } from "./assistant-message"
+import { useAssistantChat } from "./use-assistant-chat"
 import type { Dictionary, Locale } from "@/i18n"
 
 interface AssistantWidgetProps {
@@ -28,22 +29,15 @@ interface AssistantWidgetProps {
   locale: Locale
 }
 
-interface ChatMessage {
-  role: "user" | "model"
-  content: string
-}
-
 const DESKTOP_QUERY = "(min-width: 1024px)"
-const MAX_HISTORY_TURNS = 6
 
 export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
   const [open, setOpen] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [input, setInput] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const { messages, input, setInput, loading, error, bottomRef, handleSend, handleKeyDown } = useAssistantChat(
+    dict,
+    locale,
+  )
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(DESKTOP_QUERY)
@@ -52,52 +46,6 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
     mediaQuery.addEventListener("change", handleChange)
     return () => mediaQuery.removeEventListener("change", handleChange)
   }, [])
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages, loading])
-
-  async function handleSend(text?: string) {
-    const message = (text ?? input).trim()
-    if (!message || loading) return
-
-    const history = messages.slice(-MAX_HISTORY_TURNS)
-    setMessages((prev) => [...prev, { role: "user", content: message }])
-    setInput("")
-    setLoading(true)
-    setError(null)
-
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, history, locale }),
-      })
-
-      if (response.status === 429) {
-        setError(dict.rateLimited)
-        return
-      }
-      if (!response.ok) {
-        setError(dict.error)
-        return
-      }
-
-      const data = (await response.json()) as { text: string }
-      setMessages((prev) => [...prev, { role: "model", content: data.text }])
-    } catch {
-      setError(dict.error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault()
-      void handleSend()
-    }
-  }
 
   const body = (
     <div className="flex flex-col h-full min-h-0">
@@ -121,8 +69,8 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
             </div>
           )}
 
-          {messages.map((message, index) => (
-            <AssistantMessage key={index} role={message.role} content={message.content} />
+          {messages.map((message) => (
+            <AssistantMessage key={message.id} role={message.role} content={message.content} />
           ))}
 
           {loading && (
