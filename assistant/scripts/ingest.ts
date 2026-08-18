@@ -7,16 +7,21 @@ import { fileURLToPath } from "node:url";
 config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.env") });
 
 const { DbSource } = await import("../src/sources/db-source");
+const { MarkdownSource } = await import("../src/sources/markdown-source");
+const { CodeSource } = await import("../src/sources/code-source");
 const { runIngestPipeline } = await import("../src/ingest/pipeline");
 
 const arg = process.argv.slice(2).find((value) => value.startsWith("--source="));
 const sourceName = arg?.split("=")[1] ?? "all";
 
-type SourceFactory = () => InstanceType<typeof DbSource>[];
+type AnySource = InstanceType<typeof DbSource> | InstanceType<typeof MarkdownSource> | InstanceType<typeof CodeSource>;
+type SourceFactory = () => AnySource[];
 
 const sourcesByName: Record<string, SourceFactory> = {
   db: () => [new DbSource()],
-  all: () => [new DbSource()],
+  md: () => [new MarkdownSource()],
+  code: () => [new CodeSource()],
+  all: () => [new DbSource(), new MarkdownSource(), new CodeSource()],
 };
 
 const factory = sourcesByName[sourceName];
