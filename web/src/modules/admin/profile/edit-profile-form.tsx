@@ -3,6 +3,7 @@
 import { useActionState, useEffect } from "react"
 import { updateMultipleSystemSettingsAction } from "@/app/actions/system-setting"
 import { Save } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface EditProfileFormProps {
   systemSettings: Record<string, string>
@@ -21,6 +22,7 @@ export function EditProfileForm({ systemSettings }: EditProfileFormProps) {
   const [state, formAction, isPending] = useActionState(updateMultipleSystemSettingsAction, null)
 
   const defaultAboutMe = systemSettings["about_me"] ?? DEFAULT_ABOUT
+  const defaultAboutMeEn = systemSettings["about_me_en"] ?? ""
   const defaultFrontend = systemSettings["skills_frontend"] ?? DEFAULT_SKILLS.frontend
   const defaultBackend = systemSettings["skills_backend"] ?? DEFAULT_SKILLS.backend
   const defaultTools = systemSettings["skills_tools"] ?? DEFAULT_SKILLS.tools
@@ -40,16 +42,38 @@ export function EditProfileForm({ systemSettings }: EditProfileFormProps) {
           <p className="text-sm text-neutral-500">Texto exibido na seção "Quem Sou". Use quebras de linha para separar parágrafos.</p>
         </div>
 
-        <div className="space-y-2">
-          <textarea
-            name="about_me"
-            rows={5}
-            defaultValue={defaultAboutMe}
-            disabled={isPending}
-            className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50"
-            placeholder="Fale sobre você..."
-          />
-        </div>
+        <Tabs defaultValue="pt" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-neutral-900 border border-neutral-800">
+            <TabsTrigger value="pt" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+              🇧🇷 PT-BR
+            </TabsTrigger>
+            <TabsTrigger value="en" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+              🇺🇸 EN-US
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="pt" className="space-y-2 mt-4">
+            <textarea
+              name="about_me"
+              rows={5}
+              defaultValue={defaultAboutMe}
+              disabled={isPending}
+              className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50"
+              placeholder="Fale sobre você..."
+            />
+          </TabsContent>
+
+          <TabsContent value="en" className="space-y-2 mt-4">
+            <textarea
+              name="about_me_en"
+              rows={5}
+              defaultValue={defaultAboutMeEn}
+              disabled={isPending}
+              className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50"
+              placeholder="Talk about yourself... (optional, falls back to Portuguese)"
+            />
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Tecnologias */}

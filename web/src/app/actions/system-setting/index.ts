@@ -45,7 +45,7 @@ export async function updateMultipleSystemSettingsAction(prevState: any, formDat
     const service = makeSystemSettingService();
     
     // As chaves que esperamos salvar
-    const keys = ["about_me", "skills_frontend", "skills_backend", "skills_tools"];
+    const keys = ["about_me", "about_me_en", "skills_frontend", "skills_backend", "skills_tools"];
     
     for (const key of keys) {
       const value = formData.get(key) as string;

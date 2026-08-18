@@ -1,20 +1,22 @@
 import Image from "next/image"
 import profilePicture from "@/public/portfolio_profile.jpg"
+import { getDictionary, type Locale } from "@/i18n"
 
 interface AboutProps {
-  text?: string;
-  locale?: string;
+  textPt?: string;
+  textEn?: string;
+  locale?: Locale;
 }
 
-export function About({ text, locale }: AboutProps) {
+export function About({ textPt, textEn, locale = "pt" }: AboutProps) {
   const isEn = locale === "en";
   const defaultTextPt = `Como Lucas Almeida, atuo como desenvolvedor full stack focado em arquitetura de software, construindo aplicações web escaláveis e orientadas a resultados. Com experiência sólida no ecossistema JavaScript e TypeScript, trabalho diariamente com Next.js, React e Node.js de alta performance.\n\nMinha trajetória como desenvolvedor inclui a aplicação de Clean Architecture, otimização de performance, bancos de dados relacionais e a estruturação de pipelines CI/CD com Docker para garantir entregas contínuas, estabilidade e segurança.`;
-  
+
   const defaultTextEn = `As Lucas Almeida, I work as a full stack developer focused on software architecture, building scalable and result-oriented web applications. With strong experience in the JavaScript and TypeScript ecosystem, I work daily with high-performance Next.js, React, and Node.js.\n\nMy journey as a developer includes applying Clean Architecture, performance optimization, relational databases, and structuring CI/CD pipelines with Docker to ensure continuous delivery, stability, and security.`;
 
-  const content = text || (isEn ? defaultTextEn : defaultTextPt);
+  const content = isEn ? (textEn || textPt || defaultTextEn) : (textPt || defaultTextPt);
   const paragraphs = content.split('\n').filter(p => p.trim() !== '');
-  const title = isEn ? "About Me" : "Quem Sou";
+  const title = getDictionary(locale).about.title;
 
   return (
     <section id="sobre" className="py-24 scroll-mt-20">
