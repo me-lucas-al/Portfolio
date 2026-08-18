@@ -32,6 +32,7 @@ export default async function HomePage() {
   const cvUrlPt = systemSettings["cvUrlPt"] || "https://drive.google.com/file/d/1qWlAyq4ZBnSw0q_iuMWRIGcO7tezJ0w8/view"
   const cvUrlEn = systemSettings["cvUrlEn"] || "https://drive.google.com/file/d/186wXOZukhbBw6P13pB850Mqgb-NCKtaA/view"
   const aboutMe = systemSettings["about_me"]
+  const aboutMeEn = systemSettings["about_me_en"]
   const skillsFrontend = systemSettings["skills_frontend"]
   const skillsBackend = systemSettings["skills_backend"]
   const skillsTools = systemSettings["skills_tools"]
@@ -120,14 +121,14 @@ export default async function HomePage() {
       <Header />
       <div className="max-w-6xl mx-auto px-6 md:px-12 pt-20">
         <Hero cvUrlPt={cvUrlPt} cvUrlEn={cvUrlEn} locale={locale} />
-        <About text={aboutMe} locale={locale} />
+        <About textPt={aboutMe} textEn={aboutMeEn} locale={locale} />
         <Skills frontend={skillsFrontend} backend={skillsBackend} tools={skillsTools} locale={locale} />
         <div id="projetos" className="scroll-mt-20">
           <ProjectGrid projects={projects} locale={locale} />
         </div>
         <Experience experiences={experiences} locale={locale} />
         <Education educations={educations} locale={locale} />
-        <Contact links={links} />
+        <Contact links={links} locale={locale} />
       </div>
       <footer className="border-t border-neutral-900 py-8 text-center text-xs text-neutral-500 mt-12">
         <div className="max-w-6xl mx-auto px-6 space-y-1">
