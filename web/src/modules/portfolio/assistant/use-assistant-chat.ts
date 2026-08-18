@@ -16,26 +16,31 @@ interface PersistedChat {
   savedAt: number
 }
 
-function loadPersistedMessages(): ChatMessage[] {
-  if (typeof window === "undefined") return []
+function loadPersistedChat(): PersistedChat | null {
+  if (typeof window === "undefined") return null
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
+    if (!raw) return null
 
     const parsed = JSON.parse(raw) as PersistedChat
-    if (!parsed.savedAt || Date.now() - parsed.savedAt > STORAGE_TTL_MS) {
+    if (!Array.isArray(parsed.messages) || !parsed.savedAt) return null
+
+    if (Date.now() - parsed.savedAt > STORAGE_TTL_MS) {
       window.localStorage.removeItem(STORAGE_KEY)
-      return []
+      return null
     }
 
-    return parsed.messages ?? []
+    return parsed
   } catch {
-    return []
+    return null
   }
 }
 
-function persistMessages(messages: ChatMessage[]) {
+// Only called from pushMessage (on real activity) so that reopening/reloading the
+// tab never rewrites `savedAt` on its own - otherwise the 24h TTL would never expire
+// as long as the user occasionally revisits the page without sending anything.
+function persistChat(messages: ChatMessage[], savedAt: number) {
   if (typeof window === "undefined") return
 
   try {
@@ -44,7 +49,7 @@ function persistMessages(messages: ChatMessage[]) {
       return
     }
 
-    const payload: PersistedChat = { messages, savedAt: Date.now() }
+    const payload: PersistedChat = { messages, savedAt }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
   } catch {
     // localStorage unavailable (private browsing, quota) - degrade to in-memory only
@@ -58,18 +63,16 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
   const [error, setError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const nextId = useRef(0)
+  const savedAtRef = useRef(Date.now())
 
   useEffect(() => {
-    const restored = loadPersistedMessages()
-    if (restored.length === 0) return
+    const restored = loadPersistedChat()
+    if (!restored) return
 
-    setMessages(restored)
-    nextId.current = restored.reduce((max, message) => Math.max(max, message.id), 0) + 1
+    setMessages(restored.messages)
+    savedAtRef.current = restored.savedAt
+    nextId.current = restored.messages.reduce((max, message) => Math.max(max, message.id), 0) + 1
   }, [])
-
-  useEffect(() => {
-    persistMessages(messages)
-  }, [messages])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -77,7 +80,12 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
 
   function pushMessage(role: ChatMessage["role"], content: string) {
     nextId.current += 1
-    setMessages((prev) => [...prev, { id: nextId.current, role, content }])
+    savedAtRef.current = Date.now()
+    setMessages((prev) => {
+      const next = [...prev, { id: nextId.current, role, content }]
+      persistChat(next, savedAtRef.current)
+      return next
+    })
   }
 
   async function handleSend(text?: string) {
