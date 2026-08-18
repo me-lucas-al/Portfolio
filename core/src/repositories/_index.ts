@@ -1,3 +1,4 @@
+export * from "./chunk-repository.interface";
 export * from "./education-repository.interface";
 export * from "./experience-repository.interface";
 export * from "./link-repository.interface";
