@@ -7,12 +7,20 @@
   "scripts": {
     "build": "tsc",
     "ingest": "tsx scripts/ingest.ts",
-    "search": "tsx scripts/search.ts"
+    "search": "tsx scripts/search.ts",
+    "mcp:dev": "tsx src/mcp/search-context/index.ts",
+    "mcp:build": "tsup"
   },
   "dependencies": {
     "@portfolio/core": "workspace:*",
     "@portfolio/database": "workspace:*",
-    "@portfolio/packages": "workspace:*"
+    "@portfolio/packages": "workspace:*",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "@google/genai": "^2.17.1",
+    "@prisma/adapter-pg": "^7.4.0",
+    "@prisma/client": "^7.3.0",
+    "pg": "^8.20.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
