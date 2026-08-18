@@ -1,4 +1,4 @@
-import { CreateUserSchema, CreateUserType } from "@portfolio/packages/schemas/user";
+import { CreateUserSchema, CreateUserType } from "@portfolio/packages/schemas/user/index";
 import bcrypt from "bcryptjs";
 import { BadRequestError, ConflictError } from "./errors/status";
 import { TokenService } from "./token";

@@ -1,0 +1,24 @@
+{
+  "name": "@portfolio/assistant",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "ingest": "tsx scripts/ingest.ts",
+    "search": "tsx scripts/search.ts"
+  },
+  "dependencies": {
+    "@portfolio/core": "workspace:*",
+    "@portfolio/database": "workspace:*",
+    "@portfolio/packages": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "dotenv": "^16.0.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.0.0"
+  }
+}
