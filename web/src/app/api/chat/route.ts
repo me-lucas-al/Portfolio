@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { ApiError } from "@google/genai";
 import { ChatRequestSchema } from "@portfolio/packages/schemas/assistant";
+import { makeAssistantAnswerService } from "@portfolio/core/src/factories/_index";
 import { checkRateLimit, hashIp, isDailyBudgetExceeded } from "@/lib/assistant/rate-limit";
 import { runAssistant } from "@/lib/assistant/agent";
 
@@ -78,6 +79,24 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Rate limit exceeded", reason: rateLimit.reason }, { status: 429 });
   }
 
+  const answerCache = makeAssistantAnswerService();
+
+  try {
+    const cachedAnswer = await answerCache.findCachedAnswer(parsed.data.message, parsed.data.locale);
+    if (cachedAnswer) {
+      logMetric({
+        ip: ipHashPrefix,
+        locale: parsed.data.locale,
+        status: 200,
+        cacheHit: 1,
+        durationMs: Date.now() - startedAt,
+      });
+      return Response.json({ text: cachedAnswer });
+    }
+  } catch (error) {
+    console.error("[assistant] cache lookup failed:", error);
+  }
+
   if (await isDailyBudgetExceeded()) {
     logMetric({ ip: ipHashPrefix, status: 503, reason: "daily_budget" });
     return Response.json({ error: "Assistant daily budget exceeded, please try again tomorrow" }, { status: 503 });
@@ -96,9 +115,14 @@ export async function POST(request: NextRequest) {
       ip: ipHashPrefix,
       locale: parsed.data.locale,
       status: 200,
+      cacheHit: 0,
       toolCallRounds,
       durationMs: Date.now() - startedAt,
     });
+
+    answerCache
+      .saveAnswer(parsed.data.message, text, parsed.data.locale)
+      .catch((error) => console.error("[assistant] failed to persist answer:", error));
 
     return Response.json({ text });
   } catch (error) {
