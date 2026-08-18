@@ -31,6 +31,7 @@ import {
 } from "react-icons/si";
 import { FaJava } from "react-icons/fa6";
 import { Layers, TerminalSquare } from "lucide-react";
+import { getDictionary, type Locale } from "@/i18n";
 
 // Mapping of common skill names to their icons and hover colors
 const skillIconMap: Record<string, { icon: ElementType, hoverColor: string }> = {
@@ -108,10 +109,12 @@ interface SkillsProps {
   frontend?: string;
   backend?: string;
   tools?: string;
-  locale?: string;
+  locale?: Locale;
 }
 
-export function Skills({ frontend, backend, tools, locale }: SkillsProps) {
+export function Skills({ frontend, backend, tools, locale = "pt" }: SkillsProps) {
+  const dict = getDictionary(locale);
+
   const parseSkills = (str: string | undefined, defaultList: string[]) => {
     if (!str) return defaultList;
     return str.split(',').map(s => s.trim()).filter(s => s.length > 0);
@@ -124,10 +127,10 @@ export function Skills({ frontend, backend, tools, locale }: SkillsProps) {
   const displayCategories = [
     { title: "Frontend", skills: frontendSkills },
     { title: "Backend", skills: backendSkills },
-    { title: "Tools", skills: toolsSkills }
+    { title: dict.skills.tools, skills: toolsSkills }
   ];
 
-  const sectionTitle = locale === "en" ? "Skills" : "Tecnologias";
+  const sectionTitle = dict.skills.title;
 
   return (
     <section id="tecnologias" className="py-24 scroll-mt-20">
