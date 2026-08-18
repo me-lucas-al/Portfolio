@@ -8,6 +8,18 @@ import {
 import { hashContent } from "../ingest/hash";
 import { ChunkSource, RawChunk } from "./chunk-source.interface";
 
+// Explicit allowlist rather than "index every key": SystemSetting is a
+// free-form key/value store edited from the admin panel, and any future key
+// added there (a webhook, an internal flag) must opt in to being embedded
+// and made retrievable by anonymous visitors instead of being indexed by default.
+const INDEXABLE_SYSTEM_SETTING_KEYS = new Set([
+  "about_me",
+  "about_me_en",
+  "skills_frontend",
+  "skills_backend",
+  "skills_tools",
+]);
+
 function formatPeriod(startDate: Date, endDate: Date | null, currentLabel: string): string {
   const startYear = startDate.getFullYear();
   const endLabel = endDate ? String(endDate.getFullYear()) : currentLabel;
@@ -137,6 +149,7 @@ export class DbSource implements ChunkSource {
 
     for (const setting of settings) {
       if (!setting.value?.trim()) continue;
+      if (!INDEXABLE_SYSTEM_SETTING_KEYS.has(setting.key)) continue;
 
       const source = `db:systemSetting/${setting.key}`;
       const locale = setting.key.endsWith("_en") ? "en" : null;
