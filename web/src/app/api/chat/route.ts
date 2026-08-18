@@ -7,18 +7,24 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 export const preferredRegion = "gru1";
 
+// Vercel's edge network sets `x-real-ip` to the actual client IP and cannot
+// have that value spoofed by the client; `x-forwarded-for` is used only as a
+// fallback for local dev, where neither header may be trustworthy anyway.
 function getClientIp(request: NextRequest): string {
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp;
+
   const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    const first = forwardedFor.split(",")[0]?.trim();
-    if (first) return first;
-  }
-  return request.headers.get("x-real-ip") ?? "unknown";
+  const first = forwardedFor?.split(",")[0]?.trim();
+  return first || "unknown";
 }
 
+// Defense-in-depth against browser-based CSRF, not an anti-abuse control:
+// a non-browser client can simply omit Origin or forge it, which the actual
+// cost controls (rate limit + daily budget) are responsible for stopping.
 function isSameOrigin(request: NextRequest): boolean {
   const origin = request.headers.get("origin");
-  if (!origin) return true;
+  if (!origin) return false;
   return origin === new URL(request.url).origin;
 }
 
@@ -50,6 +56,18 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Assistant is not configured" }, { status: 503 });
   }
 
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const parsed = ChatRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return Response.json({ error: "Invalid request", details: parsed.error.flatten() }, { status: 400 });
+  }
+
   const ip = getClientIp(request);
   const ipHashPrefix = hashIp(ip).slice(0, 8);
 
@@ -62,18 +80,6 @@ export async function POST(request: NextRequest) {
   if (await isDailyBudgetExceeded()) {
     logMetric({ ip: ipHashPrefix, status: 503, reason: "daily_budget" });
     return Response.json({ error: "Assistant daily budget exceeded, please try again tomorrow" }, { status: 503 });
-  }
-
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  const parsed = ChatRequestSchema.safeParse(body);
-  if (!parsed.success) {
-    return Response.json({ error: "Invalid request", details: parsed.error.flatten() }, { status: 400 });
   }
 
   try {

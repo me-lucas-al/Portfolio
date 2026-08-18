@@ -1,10 +1,13 @@
-import { createHash } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { makeRateLimitService } from "@portfolio/core/src/factories/_index";
 import type { RateLimitResult } from "@portfolio/core/src/services/rate-limit";
 
 export function hashIp(ip: string): string {
-  const salt = process.env.IP_HASH_SALT ?? "";
-  return createHash("sha256").update(`${ip}${salt}`).digest("hex");
+  const salt = process.env.IP_HASH_SALT;
+  if (!salt) {
+    throw new Error("IP_HASH_SALT is not set");
+  }
+  return createHmac("sha256", salt).update(ip).digest("hex");
 }
 
 export async function checkRateLimit(ip: string): Promise<RateLimitResult> {
