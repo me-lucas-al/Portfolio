@@ -8,6 +8,8 @@ const MAX_CONCURRENT_BATCHES = 2;
 const MAX_RETRIES = 5;
 const RETRYABLE_STATUS_CODES = new Set([429, 503]);
 
+type EmbeddingTaskType = "RETRIEVAL_DOCUMENT" | "RETRIEVAL_QUERY";
+
 function chunk<T>(items: T[], size: number): T[][] {
   const batches: T[][] = [];
   for (let i = 0; i < items.length; i += size) {
@@ -62,7 +64,7 @@ export class GeminiEmbeddingProvider implements IEmbeddingProvider {
     return embedding;
   }
 
-  private async embedBatchWithRetry(texts: string[], taskType: string): Promise<number[][]> {
+  private async embedBatchWithRetry(texts: string[], taskType: EmbeddingTaskType): Promise<number[][]> {
     let attempt = 0;
     for (;;) {
       try {
