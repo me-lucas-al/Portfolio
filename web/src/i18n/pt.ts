@@ -34,6 +34,18 @@ export interface Dictionary {
     rights: string
     description: string
   }
+  assistant: {
+    trigger: string
+    title: string
+    subtitle: string
+    placeholder: string
+    send: string
+    thinking: string
+    error: string
+    rateLimited: string
+    disclaimer: string
+    suggestions: string[]
+  }
 }
 
 export const pt: Dictionary = {
@@ -73,6 +85,22 @@ export const pt: Dictionary = {
   footer: {
     rights: "Todos os direitos reservados.",
     description: "Desenvolvedor Full Stack & Desenvolvedor Next.js, React e Node.js",
+  },
+  assistant: {
+    trigger: "Assistente de IA",
+    title: "Assistente do Lucas",
+    subtitle: "Pergunte sobre a trajetória, os projetos e a arquitetura do portfólio",
+    placeholder: "Digite sua pergunta...",
+    send: "Enviar",
+    thinking: "Pensando...",
+    error: "Não foi possível responder agora. Tente novamente em instantes.",
+    rateLimited: "Muitas mensagens em pouco tempo. Aguarde um instante e tente de novo.",
+    disclaimer: "Respostas geradas por IA com base nos dados reais do portfólio. Podem conter imprecisões.",
+    suggestions: [
+      "Onde o Lucas trabalha hoje?",
+      "Como o portfólio foi construído?",
+      "Quais tecnologias o Lucas domina melhor?",
+    ],
   },
 }
 

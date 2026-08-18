@@ -38,4 +38,20 @@ export const en: Dictionary = {
     rights: 'All rights reserved.',
     description: 'Full Stack Developer & Next.js, React and Node.js Developer',
   },
+  assistant: {
+    trigger: 'AI Assistant',
+    title: "Lucas's Assistant",
+    subtitle: "Ask about Lucas's background, projects and the portfolio's architecture",
+    placeholder: 'Type your question...',
+    send: 'Send',
+    thinking: 'Thinking...',
+    error: "Couldn't get a response right now. Please try again shortly.",
+    rateLimited: 'Too many messages in a short time. Please wait a moment and try again.',
+    disclaimer: "AI-generated answers based on the portfolio's real data. May contain inaccuracies.",
+    suggestions: [
+      'Where does Lucas work today?',
+      'How was this portfolio built?',
+      'Which technologies does Lucas know best?',
+    ],
+  },
 }
