@@ -1,6 +1,6 @@
 import { ProjectType } from "@portfolio/packages"
 import { ProjectCard } from "./project-card"
-import type { Locale } from "@/i18n"
+import { getDictionary, type Locale } from "@/i18n"
 
 interface ProjectGridProps {
   projects: ProjectType[]
@@ -10,7 +10,7 @@ interface ProjectGridProps {
 export function ProjectGrid({ projects, locale }: ProjectGridProps) {
   if (!projects?.length) return null
 
-  const title = locale === "en" ? "Projects" : "Projetos Desenvolvidos"
+  const title = getDictionary(locale).projects.title
 
   return (
     <section className="py-24">
@@ -32,6 +32,7 @@ export function ProjectGrid({ projects, locale }: ProjectGridProps) {
               {...project}
               title={displayTitle}
               description={displayDescription}
+              locale={locale}
             />
           )
         })}

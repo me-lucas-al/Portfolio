@@ -3,8 +3,9 @@
 import { ProjectType } from "@portfolio/packages"
 import { ProjectGallery } from "./project-gallery"
 import { ProjectLinks } from "./project-links"
+import type { Locale } from "@/i18n"
 
-export function ProjectCard({ title, description, technologies, deployUrl, githubUrl, imagesUrl }: ProjectType) {
+export function ProjectCard({ title, description, technologies, deployUrl, githubUrl, imagesUrl, locale }: ProjectType & { locale?: Locale }) {
   return (
     <div className="group relative flex flex-col justify-between p-6 md:p-8 rounded-2xl bg-neutral-950 border border-neutral-900 hover:border-blue-900/50 transition-all duration-300 hover:shadow-[0_0_40px_-15px_rgba(23,37,84,0.6)] hover:-translate-y-1">
       <div>
@@ -25,7 +26,7 @@ export function ProjectCard({ title, description, technologies, deployUrl, githu
         )}
       </div>
 
-      <ProjectLinks githubUrl={githubUrl} deployUrl={deployUrl} />
+      <ProjectLinks githubUrl={githubUrl} deployUrl={deployUrl} locale={locale} />
     </div>
   )
 }
