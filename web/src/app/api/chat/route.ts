@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { ChatRequestSchema } from "@portfolio/packages/schemas/assistant";
-import { checkRateLimit } from "@/lib/assistant/rate-limit";
+import { checkRateLimit, hashIp, isDailyBudgetExceeded } from "@/lib/assistant/rate-limit";
 import { runAssistant } from "@/lib/assistant/agent";
 
 export const runtime = "nodejs";
@@ -22,7 +22,16 @@ function isSameOrigin(request: NextRequest): boolean {
   return origin === new URL(request.url).origin;
 }
 
+function logMetric(fields: Record<string, string | number>): void {
+  const line = Object.entries(fields)
+    .map(([key, value]) => `${key}=${value}`)
+    .join(" ");
+  console.log(`[assistant][metrics] ${line}`);
+}
+
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now();
+
   if (process.env.ASSISTANT_ENABLED === "false") {
     return Response.json({ error: "Assistant is temporarily disabled" }, { status: 503 });
   }
@@ -42,9 +51,17 @@ export async function POST(request: NextRequest) {
   }
 
   const ip = getClientIp(request);
+  const ipHashPrefix = hashIp(ip).slice(0, 8);
+
   const rateLimit = await checkRateLimit(ip);
   if (!rateLimit.allowed) {
+    logMetric({ ip: ipHashPrefix, status: 429, reason: rateLimit.reason ?? "unknown" });
     return Response.json({ error: "Rate limit exceeded", reason: rateLimit.reason }, { status: 429 });
+  }
+
+  if (await isDailyBudgetExceeded()) {
+    logMetric({ ip: ipHashPrefix, status: 503, reason: "daily_budget" });
+    return Response.json({ error: "Assistant daily budget exceeded, please try again tomorrow" }, { status: 503 });
   }
 
   let body: unknown;
@@ -60,7 +77,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const text = await runAssistant({
+    const { text, toolCallRounds } = await runAssistant({
       apiKey,
       message: parsed.data.message,
       history: parsed.data.history,
@@ -68,9 +85,18 @@ export async function POST(request: NextRequest) {
       abortSignal: request.signal,
     });
 
+    logMetric({
+      ip: ipHashPrefix,
+      locale: parsed.data.locale,
+      status: 200,
+      toolCallRounds,
+      durationMs: Date.now() - startedAt,
+    });
+
     return Response.json({ text });
   } catch (error) {
     console.error("[assistant] generation failed:", error);
+    logMetric({ ip: ipHashPrefix, status: 502, durationMs: Date.now() - startedAt });
     return Response.json({ error: "Failed to generate a response" }, { status: 502 });
   }
 }

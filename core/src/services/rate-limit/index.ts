@@ -27,4 +27,12 @@ export class RateLimitService {
     await this.chatUsageRepository.record(ipHash);
     return { allowed: true };
   }
+
+  async isDailyBudgetExceeded(dailyBudget: number): Promise<boolean> {
+    if (!Number.isFinite(dailyBudget) || dailyBudget <= 0) return false;
+
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60_000);
+    const count = await this.chatUsageRepository.countAllSince(oneDayAgo);
+    return count >= dailyBudget;
+  }
 }

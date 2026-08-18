@@ -11,4 +11,8 @@ export class PrismaChatUsageRepository implements IChatUsageRepository {
   async countSince(ipHash: string, since: Date): Promise<number> {
     return this.prisma.chatUsage.count({ where: { ipHash, createdAt: { gte: since } } });
   }
+
+  async countAllSince(since: Date): Promise<number> {
+    return this.prisma.chatUsage.count({ where: { createdAt: { gte: since } } });
+  }
 }

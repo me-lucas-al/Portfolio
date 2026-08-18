@@ -45,7 +45,12 @@ function toInitialContents(history: AssistantHistoryMessage[], message: string):
   return contents;
 }
 
-export async function runAssistant(options: RunAssistantOptions): Promise<string> {
+export interface RunAssistantResult {
+  text: string;
+  toolCallRounds: number;
+}
+
+export async function runAssistant(options: RunAssistantOptions): Promise<RunAssistantResult> {
   const ai = new GoogleGenAI({ apiKey: options.apiKey });
   const contents = toInitialContents(options.history, options.message);
   const systemInstruction = buildSystemInstruction(options.locale);
@@ -65,7 +70,7 @@ export async function runAssistant(options: RunAssistantOptions): Promise<string
 
     const functionCalls = response.functionCalls ?? [];
     if (functionCalls.length === 0) {
-      return response.text?.trim() || FALLBACK_MESSAGE[options.locale];
+      return { text: response.text?.trim() || FALLBACK_MESSAGE[options.locale], toolCallRounds: round };
     }
 
     const modelParts: Part[] = response.candidates?.[0]?.content?.parts ?? functionCalls.map((call) => ({ functionCall: call }));
@@ -92,5 +97,8 @@ export async function runAssistant(options: RunAssistantOptions): Promise<string
     },
   });
 
-  return finalResponse.text?.trim() || FALLBACK_MESSAGE[options.locale];
+  return {
+    text: finalResponse.text?.trim() || FALLBACK_MESSAGE[options.locale],
+    toolCallRounds: MAX_TOOL_ROUNDS,
+  };
 }

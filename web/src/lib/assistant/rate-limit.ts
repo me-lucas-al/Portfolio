@@ -11,3 +11,8 @@ export async function checkRateLimit(ip: string): Promise<RateLimitResult> {
   const ipHash = hashIp(ip);
   return makeRateLimitService().checkAndRecord(ipHash);
 }
+
+export async function isDailyBudgetExceeded(): Promise<boolean> {
+  const dailyBudget = Number(process.env.ASSISTANT_DAILY_BUDGET ?? "0");
+  return makeRateLimitService().isDailyBudgetExceeded(dailyBudget);
+}
