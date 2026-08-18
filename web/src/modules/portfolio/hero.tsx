@@ -18,8 +18,8 @@ export function Hero({ cvUrlPt, cvUrlEn, locale }: HeroProps) {
   const isEn = locale === "en"
 
   const role = isEn
-    ? "Full Stack Developer — Next.js, React and Node.js"
-    : "Desenvolvedor Full Stack Next.js, React e Node.js"
+    ? "Full Stack Developer - Next.js, React and Node.js"
+    : "Desenvolvedor Full Stack - Next.js, React e Node.js"
 
   const greeting = isEn
     ? "Hi! I am Lucas Almeida, a full stack developer specialized in building scalable web applications and high-performance systems with Next.js, React and Node.js."
@@ -109,4 +109,4 @@ export function Hero({ cvUrlPt, cvUrlEn, locale }: HeroProps) {
       </div>
     </section>
   )
-}
+}

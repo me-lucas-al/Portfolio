@@ -13,10 +13,15 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.lucasalmeidasouza.com"),
-  title: "Lucas Almeida | Lucas Almeida Dev - Desenvolvedor Next.js, React e Node.js",
-  description: "Portfólio oficial de Lucas Almeida (Lucas Almeida Dev). Desenvolvedor de software especialista em Next.js, React e Node.js. Soluções web de alta performance e arquiteturas escaláveis.",
+  title: "Lucas Almeida | Portfolio - Desenvolvedor Next.js, React e Node.js",
+  description: "Portfólio oficial do Lucas Almeida. Desenvolvedor de software com forte expêriencia em Next.js, React e Node.js. Soluções web de alta performance e arquiteturas escaláveis.",
   keywords: [
     "Lucas Almeida",
+    "lucas almeida de souza",
+    "lucas almeida souza",
+    "Lucas Almeida de Souza",
+    "Lucas Almeida Souza",
+    "lucas souza",
     "lucas almeida",
     "Lucas Almeida Dev",
     "lucas almeida dev",
