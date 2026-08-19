@@ -1,6 +1,4 @@
-const SOFT_SPLIT_CHARS = 6000;
-const HARD_CAP_CHARS = 8192; // ~2048 tokens at ~4 chars/token
-const OVERLAP_RATIO = 0.15;
+import { windowText } from "./text-windower";
 
 export interface MarkdownChunk {
   title: string;
@@ -54,52 +52,6 @@ function splitIntoSections(content: string): RawSection[] {
   return sections;
 }
 
-function windowSection(breadcrumbLine: string, body: string): string[] {
-  const full = `${breadcrumbLine}\n\n${body}`;
-  if (full.length <= SOFT_SPLIT_CHARS) {
-    return [full];
-  }
-
-  const paragraphs = body
-    .split(/\n\s*\n/)
-    .map((paragraph) => paragraph.trim())
-    .filter((paragraph) => paragraph.length > 0);
-
-  const overlapChars = Math.floor(SOFT_SPLIT_CHARS * OVERLAP_RATIO);
-  const windows: string[] = [];
-  let current: string[] = [];
-  let currentLength = breadcrumbLine.length;
-
-  const pushWindow = () => {
-    if (current.length === 0) return;
-    windows.push(`${breadcrumbLine}\n\n${current.join("\n\n")}`);
-  };
-
-  for (const paragraph of paragraphs) {
-    if (current.length > 0 && currentLength + paragraph.length > SOFT_SPLIT_CHARS) {
-      pushWindow();
-
-      const carry: string[] = [];
-      let carryLength = 0;
-      for (let i = current.length - 1; i >= 0 && carryLength < overlapChars; i -= 1) {
-        const previous = current[i];
-        if (!previous) continue;
-        carry.unshift(previous);
-        carryLength += previous.length;
-      }
-      current = carry;
-      currentLength = breadcrumbLine.length + carryLength;
-    }
-
-    current.push(paragraph);
-    currentLength += paragraph.length;
-  }
-
-  pushWindow();
-
-  return windows.map((window) => (window.length > HARD_CAP_CHARS ? window.slice(0, HARD_CAP_CHARS) : window));
-}
-
 export function chunkMarkdown(fileTitle: string, content: string): MarkdownChunk[] {
   const sections = splitIntoSections(content);
   const chunks: MarkdownChunk[] = [];
@@ -109,8 +61,8 @@ export function chunkMarkdown(fileTitle: string, content: string): MarkdownChunk
     const breadcrumbLine = breadcrumb.join(" > ");
     const title = breadcrumb[breadcrumb.length - 1] ?? fileTitle;
 
-    for (const windowText of windowSection(breadcrumbLine, section.body)) {
-      chunks.push({ title, content: windowText });
+    for (const window of windowText(breadcrumbLine, section.body)) {
+      chunks.push({ title, content: window });
     }
   }
 
