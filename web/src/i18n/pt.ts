@@ -46,6 +46,9 @@ export interface Dictionary {
     error: string
     rateLimited: string
     quotaExceeded: string
+    overloaded: string
+    timeout: string
+    retry: string
     disclaimer: string
     suggestions: string[]
   }
@@ -101,6 +104,9 @@ export const pt: Dictionary = {
     error: "Não foi possível responder agora. Tente novamente em instantes.",
     rateLimited: "Muitas mensagens em pouco tempo. Aguarde um instante e tente de novo.",
     quotaExceeded: "Limite máximo atingido, tente novamente amanhã.",
+    overloaded: "O modelo de IA está sobrecarregado neste momento. Tente novamente em alguns segundos.",
+    timeout: "A resposta demorou mais do que o esperado. Tente novamente.",
+    retry: "Tentar novamente",
     disclaimer: "Respostas geradas por IA com base nos dados reais do portfólio. Podem conter imprecisões.",
     suggestions: [
       "Onde o Lucas trabalha hoje?",

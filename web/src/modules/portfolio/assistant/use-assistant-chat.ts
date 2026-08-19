@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { Dictionary, Locale } from "@/i18n"
+import { resolveChatErrorMessage } from "./chat-error-message"
 
 export interface ChatMessage {
   id: number
@@ -8,8 +9,12 @@ export interface ChatMessage {
 }
 
 const MAX_HISTORY_TURNS = 6
+const MAX_HISTORY_CONTENT_CHARS = 6000
 const STORAGE_KEY = "assistant_chat_v1"
 const STORAGE_TTL_MS = 24 * 60 * 60 * 1000
+// Above the server's own 60s maxDuration so a slow-but-real response is never
+// cut off client-side first, leaving the visitor stuck on a spinner forever.
+const REQUEST_TIMEOUT_MS = 65_000
 
 interface PersistedChat {
   messages: ChatMessage[]
@@ -56,14 +61,22 @@ function persistChat(messages: ChatMessage[], savedAt: number) {
   }
 }
 
+// Defensive against payloads already sitting in a visitor's localStorage from
+// before the server-side history limit was raised alongside MAX_OUTPUT_TOKENS.
+function truncateHistoryContent(content: string): string {
+  return content.length > MAX_HISTORY_CONTENT_CHARS ? content.slice(0, MAX_HISTORY_CONTENT_CHARS) : content
+}
+
 export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [failedMessage, setFailedMessage] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const nextId = useRef(0)
   const savedAtRef = useRef(Date.now())
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     const restored = loadPersistedChat()
@@ -78,6 +91,10 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, loading])
 
+  const cancelPending = useCallback(() => {
+    abortControllerRef.current?.abort()
+  }, [])
+
   function pushMessage(role: ChatMessage["role"], content: string) {
     nextId.current += 1
     savedAtRef.current = Date.now()
@@ -88,13 +105,22 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
     })
   }
 
-  async function handleSend(text?: string) {
-    const message = (text ?? input).trim()
-    if (!message || loading) return
+  async function sendToApi(message: string) {
+    cancelPending()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+    const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(REQUEST_TIMEOUT_MS)])
 
-    const history = messages.slice(-MAX_HISTORY_TURNS).map(({ role, content }) => ({ role, content }))
-    pushMessage("user", message)
-    setInput("")
+    // On a fresh send `messages` (from this closure) doesn't include the just-pushed
+    // user turn yet, so it's naturally excluded here. On retry it's already committed,
+    // so drop it explicitly - otherwise the message being (re)sent would also show up
+    // as the last history entry, duplicated.
+    const lastMessage = messages[messages.length - 1]
+    const priorMessages = lastMessage?.role === "user" && lastMessage.content === message ? messages.slice(0, -1) : messages
+    const history = priorMessages
+      .slice(-MAX_HISTORY_TURNS)
+      .map(({ role, content }) => ({ role, content: truncateHistoryContent(content) }))
+
     setLoading(true)
     setError(null)
 
@@ -103,25 +129,47 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message, history, locale }),
+        signal,
       })
 
-      if (response.status === 429) {
-        setError(dict.rateLimited)
-        return
-      }
       if (!response.ok) {
         const errorBody = (await response.json().catch(() => null)) as { reason?: string } | null
-        setError(errorBody?.reason === "upstream_quota" ? dict.quotaExceeded : dict.error)
+        setError(resolveChatErrorMessage(dict, errorBody?.reason))
+        setFailedMessage(message)
+        setInput(message)
         return
       }
 
       const data = (await response.json()) as { text: string }
       pushMessage("model", data.text)
-    } catch {
-      setError(dict.error)
+      setFailedMessage(null)
+      setInput("")
+    } catch (err) {
+      // A stale request being superseded (cancelPending) or the panel closing
+      // aborts in flight - not a user-facing failure, so no error/retry state.
+      if (err instanceof DOMException && err.name === "AbortError") return
+
+      console.error("[assistant] request failed:", err)
+      setError(err instanceof DOMException && err.name === "TimeoutError" ? dict.timeout : dict.error)
+      setFailedMessage(message)
+      setInput(message)
     } finally {
       setLoading(false)
     }
+  }
+
+  async function handleSend(text?: string) {
+    const message = (text ?? input).trim()
+    if (!message || loading) return
+
+    pushMessage("user", message)
+    setInput("")
+    await sendToApi(message)
+  }
+
+  function handleRetry() {
+    if (!failedMessage || loading) return
+    void sendToApi(failedMessage)
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -131,5 +179,17 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
     }
   }
 
-  return { messages, input, setInput, loading, error, bottomRef, handleSend, handleKeyDown }
+  return {
+    messages,
+    input,
+    setInput,
+    loading,
+    error,
+    canRetry: failedMessage !== null,
+    bottomRef,
+    handleSend,
+    handleRetry,
+    handleKeyDown,
+    cancelPending,
+  }
 }

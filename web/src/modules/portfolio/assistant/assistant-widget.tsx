@@ -37,13 +37,18 @@ function markCtaSeen() {
 export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
   const [open, setOpen] = useState(false)
   const [showCta, setShowCta] = useState(false)
-  const { messages, input, setInput, loading, error, bottomRef, handleSend, handleKeyDown } = useAssistantChat(
-    dict,
-    locale,
-  )
+  const { messages, input, setInput, loading, error, canRetry, bottomRef, handleSend, handleRetry, handleKeyDown, cancelPending } =
+    useAssistantChat(dict, locale)
   const panelRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const wasOpenRef = useRef(false)
+
+  // Closing the panel abandons the conversation for now, so an in-flight
+  // request no longer has anywhere to render its result - cancel it instead
+  // of leaving it to finish silently in the background.
+  useEffect(() => {
+    if (!open) cancelPending()
+  }, [open, cancelPending])
 
   useEffect(() => {
     if (hasSeenCta()) return
@@ -167,7 +172,20 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
                 </div>
               )}
 
-              {error && <p className="text-sm text-red-400">{error}</p>}
+              {error && (
+                <div className="flex flex-col gap-1.5">
+                  <p className="text-sm text-red-400">{error}</p>
+                  {canRetry && (
+                    <button
+                      type="button"
+                      onClick={handleRetry}
+                      className="self-start text-xs font-medium text-blue-400 transition-colors hover:text-blue-300"
+                    >
+                      {dict.retry}
+                    </button>
+                  )}
+                </div>
+              )}
 
               <div ref={bottomRef} />
             </div>

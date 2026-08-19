@@ -50,6 +50,9 @@ export const en: Dictionary = {
     error: "Couldn't get a response right now. Please try again shortly.",
     rateLimited: 'Too many messages in a short time. Please wait a moment and try again.',
     quotaExceeded: 'Daily limit reached, please try again tomorrow.',
+    overloaded: 'The AI model is overloaded right now. Please try again in a few seconds.',
+    timeout: 'The response took longer than expected. Please try again.',
+    retry: 'Try again',
     disclaimer: "AI-generated answers based on the portfolio's real data. May contain inaccuracies.",
     suggestions: [
       'Where does Lucas work today?',
