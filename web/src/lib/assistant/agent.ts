@@ -12,12 +12,15 @@ const TEMPERATURE = 0.3;
 
 // Sized so even the worst case (all 3 attempts time out) still leaves at
 // least MIN_MS_FOR_ANOTHER_MODEL of the 50s total request budget for a
-// second model: 3 * 8s + backoff ~= 26s, vs. 3 * 15s ~= 45s, which would
+// second model: 3 * 11s + backoff ~= 35s, vs. 3 * 15s ~= 45s, which would
 // have consumed almost the entire budget on a single model and defeated
 // the fallback chain before it ever got a chance to run.
+// perAttemptTimeoutMs must stay above 10s: the SDK rejects any lower value
+// with "Manually set deadline Ns is too short" before making a request at
+// all, which was failing every single generation call outright.
 const GENERATION_BUDGET = {
   attempts: 3,
-  perAttemptTimeoutMs: 8_000,
+  perAttemptTimeoutMs: 11_000,
   initialDelaySeconds: 0.4,
   maxDelaySeconds: 2,
 };
