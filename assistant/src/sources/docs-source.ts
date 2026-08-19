@@ -17,6 +17,9 @@ const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const MAX_EXTRACTED_CHARS = 400_000;
 const MAX_CHUNKS_PER_DOC = 60;
 const MAX_CSV_ROWS = 5_000;
+// Below this, a PDF has SOME text (so it's not no_text_layer) but likely lost
+// most of a scanned page's content — worth a human look, not worth blocking.
+const MIN_CHARS_PER_PAGE_DENSITY = 100;
 
 const ALLOWED_EXTENSIONS: Record<string, "pdf" | "docx" | "csv"> = { ".pdf": "pdf", ".docx": "docx", ".csv": "csv" };
 
@@ -163,6 +166,9 @@ export class DocsSource implements ChunkSource {
           if (extracted.possibleMultiColumn) {
             issues.push({ kind: "possible_multi_column", file: displayName });
           }
+          if (extracted.charsPerPage < MIN_CHARS_PER_PAGE_DENSITY) {
+            issues.push({ kind: "low_text_layer", file: displayName, charsPerPage: extracted.charsPerPage });
+          }
 
           let remainingBudget = MAX_EXTRACTED_CHARS;
           let didTruncate = false;
@@ -210,7 +216,7 @@ export class DocsSource implements ChunkSource {
 
           let rows = extracted.rows;
           if (rows.length > MAX_CSV_ROWS) {
-            console.warn(`[docs-source] ${displayName}: ${rows.length} linhas excede o limite de ${MAX_CSV_ROWS}, truncando.`);
+            issues.push({ kind: "rows_truncated", file: displayName, keptRows: MAX_CSV_ROWS, totalRows: rows.length });
             rows = rows.slice(0, MAX_CSV_ROWS);
           }
 
@@ -218,7 +224,7 @@ export class DocsSource implements ChunkSource {
         }
 
         if (chunks.length > MAX_CHUNKS_PER_DOC) {
-          console.warn(`[docs-source] ${displayName}: ${chunks.length} chunks excede o limite de ${MAX_CHUNKS_PER_DOC}, truncando.`);
+          issues.push({ kind: "chunks_truncated", file: displayName, keptChunks: MAX_CHUNKS_PER_DOC, totalChunks: chunks.length });
           chunks = chunks.slice(0, MAX_CHUNKS_PER_DOC);
         }
       } catch (error) {

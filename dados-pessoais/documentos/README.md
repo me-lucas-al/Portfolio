@@ -39,13 +39,22 @@ Apenas `.pdf`, `.docx` e `.csv` são lidos. `.doc` (formato legado) é rejeitado
 dedicada pedindo para salvar como `.docx` — nunca falha em silêncio. Qualquer outra extensão é
 ignorada.
 
+## Nomes de arquivo
+
+O identificador de fonte (`doc:...`) é derivado do caminho normalizado e sem acentos/maiúsculas
+do arquivo. Evite dois arquivos na mesma pasta cujo nome só difira por acentuação ou caixa (ex.:
+`Título.pdf` e `titulo.pdf`) — eles colidiriam no mesmo identificador e um sobrescreveria o outro
+silenciosamente no índice.
+
 ## Sidecar de anotação manual
 
 Para descrever à mão o que a extração automática não alcança (ex.: um certificado escaneado sem
 camada de texto), crie um arquivo `<nome-do-arquivo>.<ext>.md` ao lado do documento — por exemplo,
 `aws-cloud-practitioner.pdf.md` ao lado de `aws-cloud-practitioner.pdf`. O sidecar nunca é
 indexado como fonte própria (o indexador só coleta `.pdf`/`.docx`/`.csv`); ele é só uma anotação de
-apoio para quem estiver calibrando a extração.
+apoio para quem estiver calibrando a extração. Mantenha a extensão do sidecar com a MESMA caixa do
+arquivo original (`Certificado.PDF` precisa de `Certificado.PDF.md`, não `certificado.pdf.md`) —
+a busca funciona por acidente em Windows/macOS (case-insensitive) mas não em Linux.
 
 ## Limites
 

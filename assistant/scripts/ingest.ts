@@ -44,25 +44,43 @@ if (!factory) {
 let hadAnyErrors = false;
 let changedAnything = false;
 const failedNamespaces: string[] = [];
+// A source can throw outright (docs-source.ts does this on purpose for a
+// missing directory or a detected PII pattern, mirroring code-source.ts's
+// ENV_PATH_GUARD). That must still abort the run loudly, but it must NOT
+// skip the cache invalidation below for sources that already changed the
+// index earlier in this same loop - otherwise a successful md/code
+// reindex followed by a docs-source abort would leave stale cached answers
+// in place indefinitely (no TTL on that cache).
+let fatalError: unknown = null;
 
 for (const source of factory()) {
-  const report = await runIngestPipeline(source, { allowEmpty });
-  console.log(
-    `[ingest] namespace=${report.namespace} chunks=${report.chunks} skipped=${report.skipped} embedded=${report.embedded} deleted=${report.deleted} hadErrors=${report.hadErrors}`,
-  );
+  try {
+    const report = await runIngestPipeline(source, { allowEmpty });
+    console.log(
+      `[ingest] namespace=${report.namespace} chunks=${report.chunks} skipped=${report.skipped} embedded=${report.embedded} deleted=${report.deleted} hadErrors=${report.hadErrors}`,
+    );
 
-  if (report.hadErrors) {
-    hadAnyErrors = true;
-    failedNamespaces.push(report.namespace);
-  }
-  if (report.embedded > 0 || report.deleted > 0) {
-    changedAnything = true;
+    if (report.hadErrors) {
+      hadAnyErrors = true;
+      failedNamespaces.push(report.namespace);
+    }
+    if (report.embedded > 0 || report.deleted > 0) {
+      changedAnything = true;
+    }
+  } catch (error) {
+    fatalError = error;
+    break;
   }
 }
 
 if (changedAnything) {
   const cleared = await makeAssistantAnswerService().clearCache();
   console.log(`[ingest] cleared ${cleared} cached assistant answer(s) after index change`);
+}
+
+if (fatalError) {
+  console.error("[ingest] aborted:", fatalError instanceof Error ? fatalError.message : fatalError);
+  process.exit(1);
 }
 
 if (hadAnyErrors) {

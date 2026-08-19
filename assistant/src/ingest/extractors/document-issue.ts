@@ -1,6 +1,10 @@
 // A discriminated union so every quality problem the extractors can hit is
 // reported the same way, instead of each extractor inventing its own shape.
-// None of these mark the whole ingest run as errored — see docs-source.ts.
+// None of these mark the whole ingest run as errored — they're collected in
+// docs-source.ts and printed once at the end of collect(). The one exception
+// is PII detection, which deliberately throws instead of going through this
+// union (see PiiDetectedError in docs-source.ts): it must abort the whole
+// run loudly, not just get logged and skipped like everything else here.
 export type DocumentIssue =
   | { kind: "no_text_layer"; file: string }
   | { kind: "low_text_layer"; file: string; charsPerPage: number }
@@ -8,9 +12,10 @@ export type DocumentIssue =
   | { kind: "parse_failed"; file: string; reason: string }
   | { kind: "too_large"; file: string; bytes: number }
   | { kind: "truncated"; file: string; extractedChars: number }
+  | { kind: "rows_truncated"; file: string; keptRows: number; totalRows: number }
+  | { kind: "chunks_truncated"; file: string; keptChunks: number; totalChunks: number }
   | { kind: "covered_by_sidecar"; file: string }
-  | { kind: "unsupported_legacy_doc"; file: string }
-  | { kind: "pii_detected"; file: string; pattern: string };
+  | { kind: "unsupported_legacy_doc"; file: string };
 
 function describe(issue: DocumentIssue): string {
   switch (issue.kind) {
@@ -26,12 +31,14 @@ function describe(issue: DocumentIssue): string {
       return `${issue.file}: arquivo muito grande (${issue.bytes} bytes) — pulado.`;
     case "truncated":
       return `${issue.file}: conteúdo truncado em ${issue.extractedChars} caracteres pelo limite por documento.`;
+    case "rows_truncated":
+      return `${issue.file}: ${issue.totalRows} linhas excedem o limite de ${issue.keptRows} — apenas as primeiras ${issue.keptRows} foram indexadas.`;
+    case "chunks_truncated":
+      return `${issue.file}: ${issue.totalChunks} chunks excedem o limite de ${issue.keptChunks} — apenas os primeiros ${issue.keptChunks} foram indexados.`;
     case "covered_by_sidecar":
       return `${issue.file}: descrito por um sidecar manual (.md); extração automática ignorada.`;
     case "unsupported_legacy_doc":
       return `${issue.file}: formato legado .doc fora de escopo — salve como .docx.`;
-    case "pii_detected":
-      return `${issue.file}: BLOQUEADO — padrão de PII detectado (${issue.pattern}). Arquivo não indexado.`;
   }
 }
 
