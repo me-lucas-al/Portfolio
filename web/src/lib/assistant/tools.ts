@@ -1,5 +1,6 @@
 import { FunctionDeclaration } from "@google/genai";
 import { makeKnowledgeService } from "@portfolio/core/src/factories/_index";
+import { isAbortError, isUpstreamOverloaded, isUpstreamQuotaExceeded } from "@portfolio/core/src/providers/gemini-error";
 
 const SEARCH_CONTEXT_DECLARATION: FunctionDeclaration = {
   name: "search_context",
@@ -46,12 +47,23 @@ export const ASSISTANT_FUNCTION_DECLARATIONS: FunctionDeclaration[] = [
 
 const MAX_SEARCH_LIMIT = 8;
 
-export async function dispatchAssistantTool(
+// Memoized rather than hoisted to module scope: this module is imported as
+// part of route.ts's dependency graph, before the GEMINI_API_KEY runtime
+// check runs, so eagerly calling makeKnowledgeService() at import time would
+// throw before that check ever gets a chance to return its graceful 503.
+let knowledgeServiceInstance: ReturnType<typeof makeKnowledgeService> | undefined;
+function getKnowledgeService() {
+  knowledgeServiceInstance ??= makeKnowledgeService();
+  return knowledgeServiceInstance;
+}
+
+async function runTool(
   name: string,
   args: Record<string, unknown>,
   locale: "pt" | "en",
+  abortSignal?: AbortSignal,
 ): Promise<Record<string, unknown>> {
-  const knowledgeService = makeKnowledgeService();
+  const knowledgeService = getKnowledgeService();
 
   switch (name) {
     case "search_context": {
@@ -59,7 +71,7 @@ export async function dispatchAssistantTool(
       const limit = typeof args.limit === "number" ? Math.min(Math.max(1, args.limit), MAX_SEARCH_LIMIT) : MAX_SEARCH_LIMIT;
       if (!query.trim()) return { error: "Missing query" };
 
-      const results = await knowledgeService.search(query, limit, locale);
+      const results = await knowledgeService.search(query, limit, locale, abortSignal);
       return {
         results: results.map((result) => ({
           source: result.source,
@@ -86,5 +98,29 @@ export async function dispatchAssistantTool(
 
     default:
       return { error: `Unknown tool: ${name}` };
+  }
+}
+
+export async function dispatchAssistantTool(
+  name: string,
+  args: Record<string, unknown>,
+  locale: "pt" | "en",
+  abortSignal?: AbortSignal,
+): Promise<Record<string, unknown>> {
+  try {
+    return await runTool(name, args, locale, abortSignal);
+  } catch (error) {
+    // An abort means the shared request deadline fired (or the caller
+    // disconnected) - it must propagate so the caller can fail the whole
+    // request, not be swallowed into another model round.
+    if (isAbortError(error)) throw error;
+
+    // Degrading to a model-visible error (instead of failing the whole request)
+    // trades away the upstream_overloaded/upstream_quota classification in
+    // chat-error-response.ts, so log it explicitly here or a real capacity
+    // problem inside a tool call would be invisible in metrics.
+    const capacityIssue = isUpstreamOverloaded(error) ? "overloaded" : isUpstreamQuotaExceeded(error) ? "quota_exceeded" : "other";
+    console.error(`[assistant] tool "${name}" failed (${capacityIssue}):`, error);
+    return { error: `The "${name}" tool is temporarily unavailable. Answer without it if you can, or say you couldn't retrieve that information.` };
   }
 }
