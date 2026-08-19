@@ -1,13 +1,23 @@
 import { NextRequest, after } from "next/server";
-import { ApiError } from "@google/genai";
 import { ChatRequestSchema } from "@portfolio/packages/schemas/assistant";
+import type { ChatErrorBody, ChatErrorReason } from "@portfolio/packages/schemas/assistant/chat-error";
 import { makeAssistantAnswerService } from "@portfolio/core/src/factories/_index";
 import { checkRateLimit, hashIp, isDailyBudgetExceeded } from "@/lib/assistant/rate-limit";
 import { runAssistant } from "@/lib/assistant/agent";
+import { createDeadline } from "@/lib/assistant/deadline";
+import { toChatErrorResponse } from "@/lib/assistant/chat-error-response";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+// Not the full 300s Vercel allows: this is an unauthenticated public endpoint,
+// and pinning a visitor's function for 5 minutes is a cost/abuse vector on
+// its own. TOTAL_BUDGET_MS below leaves ~10s of headroom under this ceiling
+// for Response.json to run and for the after() callback to get a head start
+// (it isn't itself bounded by TOTAL_BUDGET_MS, so on a cache miss it can still
+// run past this ceiling - a lost cache write in that case is harmless).
+export const maxDuration = 60;
 export const preferredRegion = "gru1";
+
+const TOTAL_BUDGET_MS = 50_000;
 
 // Vercel's edge network sets `x-real-ip` to the actual client IP and cannot
 // have that value spoofed by the client; `x-forwarded-for` is used only as a
@@ -37,37 +47,41 @@ function logMetric(fields: Record<string, string | number>): void {
   console.log(`[assistant][metrics] ${line}`);
 }
 
+function errorBody(error: string, reason: ChatErrorReason): ChatErrorBody {
+  return { error, reason };
+}
+
 export async function POST(request: NextRequest) {
   const startedAt = Date.now();
 
   if (process.env.ASSISTANT_ENABLED === "false") {
-    return Response.json({ error: "Assistant is temporarily disabled" }, { status: 503 });
+    return Response.json(errorBody("Assistant is temporarily disabled", "disabled"), { status: 503 });
   }
 
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.split(";")[0]?.trim().toLowerCase().includes("application/json")) {
-    return Response.json({ error: "Unsupported content type" }, { status: 400 });
+    return Response.json(errorBody("Unsupported content type", "invalid_request"), { status: 400 });
   }
 
   if (!isSameOrigin(request)) {
-    return Response.json({ error: "Invalid origin" }, { status: 403 });
+    return Response.json(errorBody("Invalid origin", "invalid_origin"), { status: 403 });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return Response.json({ error: "Assistant is not configured" }, { status: 503 });
+    return Response.json(errorBody("Assistant is not configured", "not_configured"), { status: 503 });
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
+    return Response.json(errorBody("Invalid JSON body", "invalid_request"), { status: 400 });
   }
 
   const parsed = ChatRequestSchema.safeParse(body);
   if (!parsed.success) {
-    return Response.json({ error: "Invalid request", details: parsed.error.flatten() }, { status: 400 });
+    return Response.json({ ...errorBody("Invalid request", "invalid_request"), details: parsed.error.flatten() }, { status: 400 });
   }
 
   const ip = getClientIp(request);
@@ -76,18 +90,21 @@ export async function POST(request: NextRequest) {
   const rateLimit = await checkRateLimit(ip);
   if (!rateLimit.allowed) {
     logMetric({ ip: ipHashPrefix, status: 429, reason: rateLimit.reason ?? "unknown" });
-    return Response.json({ error: "Rate limit exceeded", reason: rateLimit.reason }, { status: 429 });
+    return Response.json(errorBody("Rate limit exceeded", "rate_limited"), { status: 429 });
   }
 
+  const deadline = createDeadline(TOTAL_BUDGET_MS, request.signal);
   const answerCache = makeAssistantAnswerService();
 
   // Checked before the daily generation budget on purpose: a cache hit costs one cheap
   // embedding call, not a generation call, so previously-answered questions should keep
   // working even once the budget for new generations is exhausted. The embedding cost
   // itself is still bounded only by the per-IP rate limit above, not by the daily budget.
+  let cacheLookupEmbedding: number[] | undefined;
   try {
-    const cachedAnswer = await answerCache.findCachedAnswer(parsed.data.message, parsed.data.locale);
-    if (cachedAnswer) {
+    const cached = await answerCache.findCachedAnswer(parsed.data.message, parsed.data.locale, deadline.signal);
+    cacheLookupEmbedding = cached.embedding;
+    if (cached.answer) {
       logMetric({
         ip: ipHashPrefix,
         locale: parsed.data.locale,
@@ -95,7 +112,7 @@ export async function POST(request: NextRequest) {
         cacheHit: 1,
         durationMs: Date.now() - startedAt,
       });
-      return Response.json({ text: cachedAnswer });
+      return Response.json({ text: cached.answer });
     }
   } catch (error) {
     console.error("[assistant] cache lookup failed:", error);
@@ -103,7 +120,7 @@ export async function POST(request: NextRequest) {
 
   if (await isDailyBudgetExceeded()) {
     logMetric({ ip: ipHashPrefix, status: 503, reason: "daily_budget" });
-    return Response.json({ error: "Assistant daily budget exceeded, please try again tomorrow" }, { status: 503 });
+    return Response.json(errorBody("Assistant daily budget exceeded, please try again tomorrow", "daily_budget"), { status: 503 });
   }
 
   try {
@@ -112,7 +129,7 @@ export async function POST(request: NextRequest) {
       message: parsed.data.message,
       history: parsed.data.history,
       locale: parsed.data.locale,
-      abortSignal: request.signal,
+      deadline,
     });
 
     logMetric({
@@ -128,22 +145,15 @@ export async function POST(request: NextRequest) {
     // for it (unlike a bare fire-and-forget promise, which Vercel may cut off early).
     after(() =>
       answerCache
-        .saveAnswer(parsed.data.message, text, parsed.data.locale)
+        .saveAnswer(parsed.data.message, text, parsed.data.locale, cacheLookupEmbedding)
         .catch((error) => console.error("[assistant] failed to persist answer:", error)),
     );
 
     return Response.json({ text });
   } catch (error) {
     console.error("[assistant] generation failed:", error);
-
-    // Gemini's own daily/per-minute quota exhausted (RESOURCE_EXHAUSTED) — distinct
-    // from our own rate limit and daily budget, but the same "try again later" shape.
-    if (error instanceof ApiError && error.status === 429) {
-      logMetric({ ip: ipHashPrefix, status: 503, reason: "upstream_quota", durationMs: Date.now() - startedAt });
-      return Response.json({ error: "Upstream quota exceeded", reason: "upstream_quota" }, { status: 503 });
-    }
-
-    logMetric({ ip: ipHashPrefix, status: 502, durationMs: Date.now() - startedAt });
-    return Response.json({ error: "Failed to generate a response" }, { status: 502 });
+    const response = toChatErrorResponse(error, deadline);
+    logMetric({ ip: ipHashPrefix, status: response.status, durationMs: Date.now() - startedAt });
+    return response;
   }
 }
