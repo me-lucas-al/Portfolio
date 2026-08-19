@@ -1,12 +1,18 @@
-import { GoogleGenAI, ApiError } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { IEmbeddingProvider } from "../@types/embedding-provider";
+import { buildGeminiHttpOptions, GeminiRequestBudget } from "./gemini-request-options";
 
 const EMBEDDING_MODEL = "gemini-embedding-001";
 const OUTPUT_DIMENSIONALITY = 1536;
 const BATCH_SIZE = 32;
 const MAX_CONCURRENT_BATCHES = 2;
-const MAX_RETRIES = 5;
-const RETRYABLE_STATUS_CODES = new Set([429, 503]);
+
+const DEFAULT_EMBEDDING_BUDGET: GeminiRequestBudget = {
+  attempts: 3,
+  perAttemptTimeoutMs: 6_000,
+  initialDelaySeconds: 0.3,
+  maxDelaySeconds: 1.5,
+};
 
 type EmbeddingTaskType = "RETRIEVAL_DOCUMENT" | "RETRIEVAL_QUERY";
 
@@ -24,19 +30,11 @@ function normalizeL2(vector: number[]): number[] {
   return vector.map((value) => value / norm);
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function isRetryable(error: unknown): boolean {
-  return error instanceof ApiError && RETRYABLE_STATUS_CODES.has(error.status);
-}
-
 export class GeminiEmbeddingProvider implements IEmbeddingProvider {
   private readonly client: GoogleGenAI;
 
-  constructor(apiKey: string) {
-    this.client = new GoogleGenAI({ apiKey });
+  constructor(apiKey: string, budget: GeminiRequestBudget = DEFAULT_EMBEDDING_BUDGET) {
+    this.client = new GoogleGenAI({ apiKey, httpOptions: buildGeminiHttpOptions(budget) });
   }
 
   async embedDocuments(texts: string[]): Promise<number[][]> {
@@ -46,7 +44,7 @@ export class GeminiEmbeddingProvider implements IEmbeddingProvider {
     for (let start = 0; start < batches.length; start += MAX_CONCURRENT_BATCHES) {
       const window = batches.slice(start, start + MAX_CONCURRENT_BATCHES);
       const windowResults = await Promise.all(
-        window.map((batch) => this.embedBatchWithRetry(batch, "RETRIEVAL_DOCUMENT")),
+        window.map((batch) => this.embedBatch(batch, "RETRIEVAL_DOCUMENT")),
       );
       windowResults.forEach((embeddings, index) => {
         results[start + index] = embeddings;
@@ -56,33 +54,19 @@ export class GeminiEmbeddingProvider implements IEmbeddingProvider {
     return results.flat();
   }
 
-  async embedQuery(text: string): Promise<number[]> {
-    const [embedding] = await this.embedBatchWithRetry([text], "RETRIEVAL_QUERY");
+  async embedQuery(text: string, abortSignal?: AbortSignal): Promise<number[]> {
+    const [embedding] = await this.embedBatch([text], "RETRIEVAL_QUERY", abortSignal);
     if (!embedding) {
       throw new Error("Gemini embedding response did not contain any embedding");
     }
     return embedding;
   }
 
-  private async embedBatchWithRetry(texts: string[], taskType: EmbeddingTaskType): Promise<number[][]> {
-    let attempt = 0;
-    for (;;) {
-      try {
-        return await this.embedBatch(texts, taskType);
-      } catch (error) {
-        attempt += 1;
-        if (attempt >= MAX_RETRIES || !isRetryable(error)) throw error;
-        const backoffMs = 2 ** attempt * 250 + Math.random() * 250;
-        await sleep(backoffMs);
-      }
-    }
-  }
-
-  private async embedBatch(texts: string[], taskType: string): Promise<number[][]> {
+  private async embedBatch(texts: string[], taskType: EmbeddingTaskType, abortSignal?: AbortSignal): Promise<number[][]> {
     const response = await this.client.models.embedContent({
       model: EMBEDDING_MODEL,
       contents: texts,
-      config: { taskType, outputDimensionality: OUTPUT_DIMENSIONALITY },
+      config: { taskType, outputDimensionality: OUTPUT_DIMENSIONALITY, abortSignal },
     });
 
     const embeddings = response.embeddings ?? [];
