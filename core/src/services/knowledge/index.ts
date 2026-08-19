@@ -47,13 +47,14 @@ export class KnowledgeService {
 
     const embeddings = await this.embeddingProvider.embedDocuments(inputs.map((input) => input.content));
 
-    for (let i = 0; i < inputs.length; i++) {
-      const input = inputs[i];
+    const withEmbeddings = inputs.map((input, i) => {
       const embedding = embeddings[i];
-      if (!input || !embedding) {
+      if (!embedding) {
         throw new Error(`Missing embedding for chunk at index ${i}`);
       }
-      await this.chunkRepository.upsertWithEmbedding({ ...input, embedding });
-    }
+      return { ...input, embedding };
+    });
+
+    await this.chunkRepository.upsertManyWithEmbedding(withEmbeddings);
   }
 }

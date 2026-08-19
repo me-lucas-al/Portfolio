@@ -16,4 +16,5 @@ export interface IAssistantAnswerRepository {
   findMostSimilar(embedding: number[], locale: string): Promise<AssistantAnswerMatch | null>;
   create(input: CreateAssistantAnswerInput): Promise<void>;
   incrementHitCount(id: string): Promise<void>;
+  deleteAll(): Promise<number>;
 }

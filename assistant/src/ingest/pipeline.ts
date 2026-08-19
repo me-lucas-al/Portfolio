@@ -12,7 +12,16 @@ export interface IngestReport {
   hadErrors: boolean;
 }
 
-export async function runIngestPipeline(source: ChunkSource): Promise<IngestReport> {
+export interface IngestOptions {
+  // Escape hatch for the legitimate case of clearing a namespace entirely
+  // (all files moved/removed). Without it, a source that collects zero
+  // chunks while the index still holds entries for it is treated as a
+  // probable misconfiguration (empty checkout, missing REPOS_TO_INDEX, etc.)
+  // rather than an intentional wipe.
+  allowEmpty?: boolean;
+}
+
+export async function runIngestPipeline(source: ChunkSource, options: IngestOptions = {}): Promise<IngestReport> {
   const knowledgeService = makeKnowledgeService();
   const runStartedAt = new Date();
 
@@ -56,8 +65,14 @@ export async function runIngestPipeline(source: ChunkSource): Promise<IngestRepo
   }
 
   let deleted = 0;
-  if (!hadErrors) {
+  const suspiciouslyEmpty = chunks === 0 && existingHashes.length > 0 && !options.allowEmpty;
+  if (!hadErrors && !suspiciouslyEmpty) {
     deleted = await knowledgeService.deleteStale(source.namespace, runStartedAt);
+  } else if (suspiciouslyEmpty) {
+    console.error(
+      `[ingest] refusing to delete ${existingHashes.length} indexed chunk(s) for namespace "${source.namespace}": the source produced 0 chunks this run, which usually means missing config or an empty folder rather than an intentional wipe. Pass --allow-empty to force the deletion.`,
+    );
+    hadErrors = true;
   }
 
   return { namespace: source.namespace, chunks, skipped, embedded, deleted, hadErrors };

@@ -10,6 +10,13 @@ function toVectorLiteral(embedding: number[]): string {
   return `[${embedding.join(",")}]`;
 }
 
+// A public, unauthenticated endpoint calls get_source; without a cap a large
+// source (e.g. a multi-chunk CSV) could balloon into ~1M+ tokens of tool
+// output, which the daily budget check does not see because it counts
+// messages, not tokens.
+const GET_BY_SOURCE_CHUNK_LIMIT = 60;
+const GET_BY_SOURCE_MAX_CHARS = 24_000;
+
 export class PrismaChunkRepository implements IChunkRepository {
   constructor(private prisma: PrismaClient) {}
 
@@ -30,6 +37,34 @@ export class PrismaChunkRepository implements IChunkRepository {
         "lastSeenAt" = now(),
         "updatedAt" = now()
     `;
+  }
+
+  // A batch failing partway through must not leave the source in a mixed
+  // state (some chunks on the new version, some on the old) — the whole
+  // batch commits or none of it does.
+  async upsertManyWithEmbedding(inputs: UpsertChunkInput[]): Promise<void> {
+    if (inputs.length === 0) return;
+
+    await this.prisma.$transaction(async (tx) => {
+      for (const input of inputs) {
+        const vector = toVectorLiteral(input.embedding);
+        await tx.$executeRaw`
+          INSERT INTO "chunks"
+            ("source", "sourceType", "chunkIndex", "locale", "title", "content", "contentHash", "embedding", "lastSeenAt", "updatedAt")
+          VALUES
+            (${input.source}, ${input.sourceType}, ${input.chunkIndex}, ${input.locale ?? null}, ${input.title ?? null}, ${input.content}, ${input.contentHash}, ${vector}::vector, now(), now())
+          ON CONFLICT ("source", "chunkIndex") DO UPDATE SET
+            "sourceType" = EXCLUDED."sourceType",
+            "locale" = EXCLUDED."locale",
+            "title" = EXCLUDED."title",
+            "content" = EXCLUDED."content",
+            "contentHash" = EXCLUDED."contentHash",
+            "embedding" = EXCLUDED."embedding",
+            "lastSeenAt" = now(),
+            "updatedAt" = now()
+        `;
+      }
+    });
   }
 
   async search(embedding: number[], limit: number, locale?: string | null): Promise<ChunkSearchResult[]> {
@@ -72,10 +107,13 @@ export class PrismaChunkRepository implements IChunkRepository {
 
   async getBySource(source: string): Promise<string> {
     const rows = await this.prisma.$queryRaw<{ content: string }[]>`
-      SELECT "content" FROM "chunks" WHERE "source" = ${source} ORDER BY "chunkIndex" ASC
+      SELECT "content" FROM "chunks" WHERE "source" = ${source} ORDER BY "chunkIndex" ASC LIMIT ${GET_BY_SOURCE_CHUNK_LIMIT}
     `;
 
-    return rows.map((row) => row.content).join("\n\n");
+    const joined = rows.map((row) => row.content).join("\n\n");
+    return joined.length > GET_BY_SOURCE_MAX_CHARS
+      ? `${joined.slice(0, GET_BY_SOURCE_MAX_CHARS)}\n\n[conteúdo truncado]`
+      : joined;
   }
 
   async listHashes(namespacePrefix: string): Promise<ChunkHash[]> {

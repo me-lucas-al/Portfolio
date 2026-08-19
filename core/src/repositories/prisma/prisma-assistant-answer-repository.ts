@@ -42,4 +42,8 @@ export class PrismaAssistantAnswerRepository implements IAssistantAnswerReposito
       UPDATE "assistant_answers" SET "hitCount" = "hitCount" + 1, "updatedAt" = now() WHERE "id" = ${id}::uuid
     `;
   }
+
+  async deleteAll(): Promise<number> {
+    return this.prisma.$executeRaw`DELETE FROM "assistant_answers"`;
+  }
 }

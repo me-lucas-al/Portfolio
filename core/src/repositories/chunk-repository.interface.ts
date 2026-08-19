@@ -28,6 +28,7 @@ export interface ChunkHash {
 
 export interface IChunkRepository {
   upsertWithEmbedding(input: UpsertChunkInput): Promise<void>;
+  upsertManyWithEmbedding(inputs: UpsertChunkInput[]): Promise<void>;
   search(embedding: number[], limit: number, locale?: string | null): Promise<ChunkSearchResult[]>;
   listSources(prefix?: string): Promise<string[]>;
   getBySource(source: string): Promise<string>;

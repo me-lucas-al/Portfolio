@@ -28,4 +28,11 @@ export class AssistantAnswerService {
     const questionEmbedding = embedding ?? (await this.embeddingProvider.embedQuery(question));
     await this.assistantAnswerRepository.create({ locale, question, answer, embedding: questionEmbedding });
   }
+
+  // Called after an ingest run changes the index: cached answers recorded
+  // before new content was indexed may be stale "I don't know that" answers
+  // that would otherwise be served forever (no TTL on this cache).
+  async clearCache(): Promise<number> {
+    return this.assistantAnswerRepository.deleteAll();
+  }
 }
