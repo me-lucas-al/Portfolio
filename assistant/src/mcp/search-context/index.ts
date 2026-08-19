@@ -15,7 +15,7 @@ function createServer() {
     "search_context",
     {
       description:
-        "Semantic search over Lucas Almeida's portfolio knowledge base: database records (experience, education, projects, links), personal notes, and indexed source code from his public repositories.",
+        "Semantic search over Lucas Almeida's portfolio knowledge base: database records (experience, education, projects, links), personal notes, documents (certificates, transcripts, spreadsheets), and indexed source code from his public repositories.",
       inputSchema: z.object({
         query: z.string().describe("Natural language search query."),
         limit: z

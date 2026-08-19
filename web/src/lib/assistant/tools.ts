@@ -5,7 +5,7 @@ import { isAbortError, isUpstreamOverloaded, isUpstreamQuotaExceeded } from "@po
 const SEARCH_CONTEXT_DECLARATION: FunctionDeclaration = {
   name: "search_context",
   description:
-    "Busca semântica sobre a base de conhecimento indexada (banco de dados, notas pessoais e código-fonte dos repositórios). Use para QUALQUER pergunta técnica, de arquitetura ou biográfica.",
+    "Busca semântica sobre a base de conhecimento indexada (banco de dados, notas pessoais, documentos como certificados/históricos/planilhas e código-fonte dos repositórios). Use para QUALQUER pergunta técnica, de arquitetura, biográfica ou sobre certificações e formação.",
   parametersJsonSchema: {
     type: "object",
     properties: {
@@ -57,6 +57,15 @@ function getKnowledgeService() {
   return knowledgeServiceInstance;
 }
 
+// The system prompt tells the model that everything between <contexto> tags
+// is data, not instruction (defense against prompt injection hidden in a PDF
+// or third-party document). That rule is only real if tool output actually
+// gets wrapped here, and if a chunk can't fake its own closing tag to escape
+// early.
+function wrapInContextGuard(content: string): string {
+  return `<contexto>\n${content.replaceAll("</contexto>", "")}\n</contexto>`;
+}
+
 async function runTool(
   name: string,
   args: Record<string, unknown>,
@@ -76,7 +85,7 @@ async function runTool(
         results: results.map((result) => ({
           source: result.source,
           title: result.title,
-          content: result.content,
+          content: wrapInContextGuard(result.content),
           similarity: result.similarity,
         })),
       };
@@ -93,7 +102,7 @@ async function runTool(
       if (!source.trim()) return { error: "Missing source" };
 
       const content = await knowledgeService.getSource(source);
-      return { content };
+      return { content: wrapInContextGuard(content) };
     }
 
     default:
