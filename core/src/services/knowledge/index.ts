@@ -17,8 +17,8 @@ export class KnowledgeService {
     private embeddingProvider: IEmbeddingProvider,
   ) {}
 
-  async search(query: string, limit = 8, locale?: string | null): Promise<ChunkSearchResult[]> {
-    const embedding = await this.embeddingProvider.embedQuery(query);
+  async search(query: string, limit = 8, locale?: string | null, abortSignal?: AbortSignal): Promise<ChunkSearchResult[]> {
+    const embedding = await this.embeddingProvider.embedQuery(query, abortSignal);
     return this.chunkRepository.search(embedding, limit, locale ?? null);
   }
 

@@ -11,17 +11,21 @@ export class AssistantAnswerService {
     private embeddingProvider: IEmbeddingProvider,
   ) {}
 
-  async findCachedAnswer(question: string, locale: string): Promise<string | null> {
-    const embedding = await this.embeddingProvider.embedQuery(question);
+  async findCachedAnswer(
+    question: string,
+    locale: string,
+    abortSignal?: AbortSignal,
+  ): Promise<{ answer: string | null; embedding: number[] }> {
+    const embedding = await this.embeddingProvider.embedQuery(question, abortSignal);
     const match = await this.assistantAnswerRepository.findMostSimilar(embedding, locale);
-    if (!match || match.similarity < SIMILARITY_THRESHOLD) return null;
+    if (!match || match.similarity < SIMILARITY_THRESHOLD) return { answer: null, embedding };
 
     await this.assistantAnswerRepository.incrementHitCount(match.id);
-    return match.answer;
+    return { answer: match.answer, embedding };
   }
 
-  async saveAnswer(question: string, answer: string, locale: string): Promise<void> {
-    const embedding = await this.embeddingProvider.embedQuery(question);
-    await this.assistantAnswerRepository.create({ locale, question, answer, embedding });
+  async saveAnswer(question: string, answer: string, locale: string, embedding?: number[]): Promise<void> {
+    const questionEmbedding = embedding ?? (await this.embeddingProvider.embedQuery(question));
+    await this.assistantAnswerRepository.create({ locale, question, answer, embedding: questionEmbedding });
   }
 }
