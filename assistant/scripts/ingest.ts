@@ -9,6 +9,7 @@ config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..
 const { DbSource } = await import("../src/sources/db-source");
 const { MarkdownSource } = await import("../src/sources/markdown-source");
 const { CodeSource } = await import("../src/sources/code-source");
+const { DocsSource } = await import("../src/sources/docs-source");
 const { runIngestPipeline } = await import("../src/ingest/pipeline");
 const { makeAssistantAnswerService } = await import("@portfolio/core/src/factories/_index");
 
@@ -17,14 +18,21 @@ const sourceArg = args.find((value) => value.startsWith("--source="));
 const sourceName = sourceArg?.split("=")[1] ?? "all";
 const allowEmpty = args.includes("--allow-empty");
 
-type AnySource = InstanceType<typeof DbSource> | InstanceType<typeof MarkdownSource> | InstanceType<typeof CodeSource>;
+type AnySource =
+  | InstanceType<typeof DbSource>
+  | InstanceType<typeof MarkdownSource>
+  | InstanceType<typeof CodeSource>
+  | InstanceType<typeof DocsSource>;
 type SourceFactory = () => AnySource[];
 
 const sourcesByName: Record<string, SourceFactory> = {
   db: () => [new DbSource()],
   md: () => [new MarkdownSource()],
   code: () => [new CodeSource()],
-  all: () => [new DbSource(), new MarkdownSource(), new CodeSource()],
+  docs: () => [new DocsSource()],
+  // DocsSource last: a throw from a missing documentos/ directory must not
+  // prevent db/md/code from having already run and printed their reports.
+  all: () => [new DbSource(), new MarkdownSource(), new CodeSource(), new DocsSource()],
 };
 
 const factory = sourcesByName[sourceName];
