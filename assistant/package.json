@@ -8,6 +8,7 @@
     "build": "tsc",
     "ingest": "tsx scripts/ingest.ts",
     "search": "tsx scripts/search.ts",
+    "inspect:docs": "tsx scripts/inspect-docs.ts",
     "mcp:dev": "tsx src/mcp/search-context/index.ts",
     "mcp:build": "tsup"
   },
@@ -24,9 +25,13 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@types/papaparse": "^5.3.16",
     "dotenv": "^16.0.0",
+    "mammoth": "^1.8.0",
+    "papaparse": "^5.4.1",
     "tsup": "^8.0.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "unpdf": "^0.12.1"
   }
 }
