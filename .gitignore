@@ -48,3 +48,8 @@ dist
 # Assistant ingest cache (cloned repos for code indexing)
 .cache/
 assistant/.cache/
+
+# Documentos pessoais (PDF/DOCX/CSV) contêm PII e nunca devem ser commitados;
+# só o README.md curado (política de curadoria) fica versionado.
+dados-pessoais/documentos/**
+!dados-pessoais/documentos/README.md

@@ -33,3 +33,15 @@ arquivo por headings `#`, `##` e `###`, incluindo o caminho de headings
 ("breadcrumb") no texto de cada chunk para dar contexto à busca semântica.
 Use headings de verdade para dividir assuntos — cada seção vira uma unidade
 de busca independente.
+
+## A subpasta `documentos/` se comporta diferente
+
+`documentos/` guarda PDF, DOCX e CSV indexados pela fonte `doc:` — ver a política completa em
+`dados-pessoais/documentos/README.md`. Duas coisas deliberadas que vale saber de antemão:
+
+- `.md` dentro de `documentos/` **não** é indexado como `md:`, porque `MarkdownSource` faz
+  `readdir` não recursivo apenas nesta pasta (`dados-pessoais/`). Isso é intencional: o único uso de
+  `.md` dentro de `documentos/` é o sidecar de anotação manual, que não deve virar chunk.
+- `documentos/**` está no `.gitignore` (menos o `README.md`): os binários originais (currículo,
+  certificados, planilhas) nunca são commitados, porque conteriam PII num repositório público. O
+  parse roda localmente, uma vez, no CLI de ingest; só os embeddings resultantes vão para o banco.
