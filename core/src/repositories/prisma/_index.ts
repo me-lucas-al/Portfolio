@@ -1,3 +1,6 @@
+export * from "./prisma-assistant-answer-repository";
+export * from "./prisma-chat-usage-repository";
+export * from "./prisma-chunk-repository";
 export * from "./prisma-education-repository";
 export * from "./prisma-experience-repository";
 export * from "./prisma-link-repository";

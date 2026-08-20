@@ -3,14 +3,18 @@
   "tasks": {
     "db:generate": {
       "cache": false,
-      "env": ["DATABASE_URL"]
+      "env": ["DATABASE_URL", "DIRECT_DATABASE_URL"]
     },
     "db:push": {
       "cache": false,
-      "env": ["DATABASE_URL"]
+      "env": ["DATABASE_URL", "DIRECT_DATABASE_URL"]
+    },
+    "db:migrate": {
+      "cache": false,
+      "env": ["DATABASE_URL", "DIRECT_DATABASE_URL"]
     },
     "build": {
-      "dependsOn": ["^build", "^db:generate", "^db:push"],
+      "dependsOn": ["^build", "^db:generate", "^db:migrate"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
         "AUTH_SECRET",
@@ -18,7 +22,13 @@
         "SEED_ADMIN_USERNAME",
         "SEED_ADMIN_PASSWORD",
         "DATABASE_URL",
-        "NEXT_PUBLIC_URL"
+        "DIRECT_DATABASE_URL",
+        "NEXT_PUBLIC_URL",
+        "GEMINI_API_KEY",
+        "ASSISTANT_ENABLED",
+        "ASSISTANT_DAILY_BUDGET",
+        "IP_HASH_SALT",
+        "REPOS_TO_INDEX"
       ]
     },
     "lint": {

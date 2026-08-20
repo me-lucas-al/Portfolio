@@ -50,6 +50,47 @@ O projeto é organizado em um **Monorepo** gerenciado pelo **Turborepo**, utiliz
 
 ---
 
+## 🤖 Assistente de IA (RAG)
+
+O portfólio expõe um assistente de IA (`/api/chat`, Gemini 3.7 Flash) que responde
+perguntas de visitantes sobre a trajetória do Lucas e a arquitetura dos seus
+projetos, com busca semântica (RAG) via **pgvector** sobre três fontes:
+
+- **`database` (`db:*`)**: fonte de verdade dos **fatos estruturados** — cargo,
+  empresa, período, curso, instituição, stack de projeto. Editado pelo Painel
+  de Controle e sincronizado automaticamente pelo pipeline de ingestão.
+- **`dados-pessoais/*.md` (`md:*`)**: narrativa de carreira, preferências de
+  arquitetura, forma de trabalhar e FAQ — **não** fatos tabulares (ver
+  `dados-pessoais/README.md`). Editar aqui não afeta o banco, e vice-versa.
+- **Código-fonte indexado (`code:*`)**: os repositórios em `REPOS_TO_INDEX`
+  (somente públicos), com denylist de segredos e allowlist de extensões.
+
+Workspace: **`assistant` (`@portfolio/assistant`)** — pipeline de ingestão,
+CLI de inspeção de retrieval e uma fachada MCP (`search_context`) para uso
+local no Claude Desktop / Cursor. Ver `assistant/README.md` para detalhes.
+
+### Comandos de operação
+
+```bash
+# Reindexar tudo (banco + notas + código) — idempotente, seguro rodar sempre
+pnpm --filter @portfolio/assistant run ingest --source=all
+
+# Inspecionar a qualidade do retrieval para uma pergunta
+pnpm --filter @portfolio/assistant run search "onde o Lucas trabalha hoje"
+```
+
+### Segurança e custo
+
+O endpoint é público (sem login) e endurecido por design: rate limit de
+5 msg/min e 30 msg/dia por IP (hash com salt, nunca o IP em si), um
+kill-switch (`ASSISTANT_ENABLED`), um teto diário global de mensagens
+(`ASSISTANT_DAILY_BUDGET`), e nenhuma tool de escrita — o modelo só lê o que
+foi indexado, nunca o sistema de arquivos. Métricas de operação (status,
+rounds de tool call, duração) são logadas em `[assistant][metrics]` para
+acompanhamento nos logs da Vercel.
+
+---
+
 ## 🐳 Desenvolvimento Local com Docker (Branch `local`)
 
 Para facilitar o setup do ambiente de desenvolvimento, o projeto possui uma branch específica chamada **`local`**. 

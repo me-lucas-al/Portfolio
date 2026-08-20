@@ -3,6 +3,7 @@ packages:
   - core
   - packages
   - database
+  - assistant
 
 ignoredBuiltDependencies:
   - sharp

@@ -1,0 +1,37 @@
+{
+  "name": "@portfolio/assistant",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "ingest": "tsx scripts/ingest.ts",
+    "search": "tsx scripts/search.ts",
+    "inspect:docs": "tsx scripts/inspect-docs.ts",
+    "mcp:dev": "tsx src/mcp/search-context/index.ts",
+    "mcp:build": "tsup"
+  },
+  "dependencies": {
+    "@portfolio/core": "workspace:*",
+    "@portfolio/database": "workspace:*",
+    "@portfolio/packages": "workspace:*",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "@google/genai": "^2.17.1",
+    "@prisma/adapter-pg": "^7.4.0",
+    "@prisma/client": "^7.3.0",
+    "pg": "^8.20.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/papaparse": "^5.3.16",
+    "dotenv": "^16.0.0",
+    "mammoth": "^1.8.0",
+    "papaparse": "^5.4.1",
+    "tsup": "^8.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.0.0",
+    "unpdf": "^0.12.1"
+  }
+}
