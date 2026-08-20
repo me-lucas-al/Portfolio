@@ -179,6 +179,14 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
     }
   }
 
+  function clearChat() {
+    setMessages([])
+    setError(null)
+    setFailedMessage(null)
+    setInput("")
+    persistChat([], Date.now())
+  }
+
   return {
     messages,
     input,
@@ -191,5 +199,6 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
     handleRetry,
     handleKeyDown,
     cancelPending,
+    clearChat,
   }
 }

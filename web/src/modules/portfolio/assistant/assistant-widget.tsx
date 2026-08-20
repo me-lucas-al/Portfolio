@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { MessageCircle, Send, X } from "lucide-react"
+import { MessageCircle, Send, Trash2, X } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
@@ -37,7 +37,7 @@ function markCtaSeen() {
 export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
   const [open, setOpen] = useState(false)
   const [showCta, setShowCta] = useState(false)
-  const { messages, input, setInput, loading, error, canRetry, bottomRef, handleSend, handleRetry, handleKeyDown, cancelPending } =
+  const { messages, input, setInput, loading, error, canRetry, bottomRef, handleSend, handleRetry, handleKeyDown, cancelPending, clearChat } =
     useAssistantChat(dict, locale)
   const panelRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -131,14 +131,26 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
             <p className="text-sm font-semibold text-white">{dict.title}</p>
             <p className="text-xs text-neutral-500">{dict.subtitle}</p>
           </div>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            aria-label={dict.close}
-            className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
-          >
-            <X className="size-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            {messages.length > 0 && (
+              <button
+                type="button"
+                onClick={clearChat}
+                aria-label="Clear chat"
+                className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+              >
+                <Trash2 className="size-4" />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label={dict.close}
+              className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-1 flex-col min-h-0 p-4">
