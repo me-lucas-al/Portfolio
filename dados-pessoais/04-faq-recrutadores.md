@@ -1,25 +1,11 @@
 # FAQ para recrutadores
 
-> PLACEHOLDER — o Lucas ainda vai substituir estas respostas pelas reais.
-> O objetivo é responder direto, sem repetir dados que o assistente já
-> busca no banco (disponibilidade de currículo, links de contato etc. já
-> vêm de `SystemSetting`/`Link` via `db-source.ts`).
+> O objetivo é responder direto, sem repetir dados que o assistente já busca no banco (disponibilidade de currículo, links de contato etc.).
 
-## Está aberto a novas oportunidades?
+## Qual foi o bug mais difícil ou maior desafio técnico que o Lucas já resolveu?
 
-(Substituir: resposta direta — sim/não, que tipo de vaga, remoto/híbrido/
-presencial, pretensão se quiser compartilhar.)
+Foi um episódio envolvendo um dos sistemas mais importantes da empresa chamado **Star Lockers**. O sistema simplesmente caiu e todas as informações de variáveis de ambiente do servidor foram perdidas. 
 
-## Qual stack domina melhor hoje?
+Para piorar a situação: era uma sexta-feira, eu era muito novo na empresa e estava completamente sozinho, pois meu colega de TI mais experiente só voltaria na segunda-feira. Como o sistema era extremamente utilizado nos finais de semana, eu precisava agir rápido, mesmo não tendo grande domínio de servidores VPS na época.
 
-(Substituir: resposta objetiva e honesta sobre nível de senioridade real
-em cada tecnologia, sem infravalorizar nem inflar.)
-
-## Por que contratar o Lucas?
-
-(Substituir: o diferencial real, em 2-3 frases, sem clichê de LinkedIn.)
-
-## Prefere trabalhar em quê?
-
-(Substituir: tipo de produto, tamanho de time, tipo de problema técnico
-que mais gosta de resolver.)
+As variáveis de ambiente locais eram bastante diferentes das variáveis que rodavam em produção. Tive que mapear, adaptar e testar cada uma na raça para o servidor. Literalmente no último minuto, instantes antes de ir embora, eu consegui subir o sistema novamente. Foi um momento de extrema pressão que demonstrou minha resiliência e capacidade de resolução de problemas de forma autônoma.
