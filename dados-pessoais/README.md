@@ -34,6 +34,16 @@ arquivo por headings `#`, `##` e `###`, incluindo o caminho de headings
 Use headings de verdade para dividir assuntos — cada seção vira uma unidade
 de busca independente.
 
+## Reindexação automática
+
+Um hook `post-commit` (`.githooks/post-commit`, ativado via `core.hooksPath`
+no `postinstall` do `package.json`) detecta commits que alteram algum `.md`
+direto nesta pasta e roda `pnpm --filter @portfolio/assistant run ingest
+--source=md` em background, sem travar o `git commit`. Saída em
+`.git/ingest-md.log`. Só dispara com o padrão exato lido por
+`MarkdownSource` (arquivos direto em `dados-pessoais/`, não recursivo), então
+mudanças em `documentos/` não acionam esse hook.
+
 ## A subpasta `documentos/` se comporta diferente
 
 `documentos/` guarda PDF, DOCX e CSV indexados pela fonte `doc:` — ver a política completa em

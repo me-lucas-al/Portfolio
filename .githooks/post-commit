@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Reindexa a base de conhecimento do assistente (dados-pessoais/*.md) sempre que
+# um commit tocar nesses arquivos. Roda em background para não travar o `git commit`.
+# Ativado via `core.hooksPath=.githooks` (ver package.json -> "postinstall").
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+changed_md=$(git diff-tree --no-commit-id --name-only -r HEAD | grep -E '^dados-pessoais/[^/]+\.md$' || true)
+
+if [ -z "$changed_md" ]; then
+  exit 0
+fi
+
+log_file="$repo_root/.git/ingest-md.log"
+{
+  echo ""
+  echo "=== post-commit ingest $(git rev-parse --short HEAD) ==="
+  echo "$changed_md"
+} >>"$log_file"
+
+echo "post-commit: dados-pessoais/*.md mudou, reindexando em background (log: .git/ingest-md.log)"
+nohup pnpm --filter @portfolio/assistant run ingest --source=md >>"$log_file" 2>&1 &
+disown
