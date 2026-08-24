@@ -28,7 +28,11 @@
         "ASSISTANT_ENABLED",
         "ASSISTANT_DAILY_BUDGET",
         "IP_HASH_SALT",
-        "REPOS_TO_INDEX"
+        "REPOS_TO_INDEX",
+        "SPEECH_ENABLED",
+        "SPEECH_DAILY_BUDGET",
+        "SPEECH_VOICE",
+        "SPEECH_MODEL_CHAIN"
       ]
     },
     "lint": {
