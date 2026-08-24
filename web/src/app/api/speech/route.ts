@@ -38,6 +38,19 @@ function errorBody(error: string, reason: string) {
   return { error, reason };
 }
 
+import { createHash } from "crypto";
+import { CloudinaryStorageProvider } from "@/lib/storage/cloudinary-storage-provider";
+
+function computeCacheId(text: string, voice: string, styleTags?: string[]): string {
+  const hash = createHash("md5");
+  hash.update(text);
+  hash.update(voice);
+  if (styleTags) {
+    hash.update(styleTags.join(","));
+  }
+  return hash.digest("hex");
+}
+
 export async function POST(request: NextRequest) {
   const startedAt = Date.now();
 
@@ -90,20 +103,56 @@ export async function POST(request: NextRequest) {
   try {
     const provider = makeSpeechProvider();
     const voice = process.env.SPEECH_VOICE || "Zubenelgenubi";
-    
+    const cacheId = computeCacheId(parsed.data.text, voice, parsed.data.styleTags);
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const cacheUrl = `https://res.cloudinary.com/${cloudName}/raw/upload/portfolio/speech-cache/${cacheId}.pcm`;
+
+    try {
+      const cacheRes = await fetch(cacheUrl, { method: "HEAD", signal: deadline.signal });
+      if (cacheRes.ok) {
+        logMetric({ ip: ipHashPrefix, locale: parsed.data.locale, status: 200, cached: 1, durationMs: Date.now() - startedAt });
+        const dataRes = await fetch(cacheUrl, { signal: deadline.signal });
+        return new Response(dataRes.body, {
+          headers: {
+            "Content-Type": "audio/pcm;rate=24000",
+            "Cache-Control": "public, max-age=31536000, immutable",
+          }
+        });
+      }
+    } catch (e) {
+      // Ignore cache fetch error, just generate
+    }
+
     const streamIter = await provider.synthesizeStreaming(parsed.data.text, { 
         voice, 
         styleTags: parsed.data.styleTags, 
         signal: deadline.signal 
     });
 
+    const chunksForCache: Uint8Array[] = [];
+
     const stream = new ReadableStream({
       async start(controller) {
         try {
           for await (const chunk of streamIter) {
+            chunksForCache.push(chunk);
             controller.enqueue(chunk);
           }
           controller.close();
+          
+          if (chunksForCache.length > 0) {
+            after(() => {
+              const totalLength = chunksForCache.reduce((acc, c) => acc + c.length, 0);
+              const fullBuffer = new Uint8Array(totalLength);
+              let offset = 0;
+              for (const c of chunksForCache) {
+                fullBuffer.set(c, offset);
+                offset += c.length;
+              }
+              const uploader = new CloudinaryStorageProvider();
+              uploader.uploadRaw(Buffer.from(fullBuffer), `${cacheId}.pcm`, "portfolio/speech-cache").catch(e => console.error("Cache upload failed", e));
+            });
+          }
         } catch (err) {
           controller.error(err);
         }
@@ -117,6 +166,7 @@ export async function POST(request: NextRequest) {
       ip: ipHashPrefix,
       locale: parsed.data.locale,
       status: 200,
+      cached: 0,
       durationMs: Date.now() - startedAt,
     });
 

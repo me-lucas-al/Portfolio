@@ -38,4 +38,23 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       })
     );
   }
+
+  async uploadRaw(buffer: Buffer, publicId: string, folder = "portfolio"): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder,
+          public_id: publicId,
+          resource_type: "raw",
+          overwrite: true
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          if (result) return resolve(result.secure_url);
+          reject(new Error("No result from Cloudinary"));
+        }
+      );
+      uploadStream.end(buffer);
+    });
+  }
 }

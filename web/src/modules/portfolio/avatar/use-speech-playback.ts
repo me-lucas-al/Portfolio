@@ -1,5 +1,6 @@
 import { useRef, useCallback, useState, useEffect } from "react";
 import { splitSentences } from "./split-sentences";
+import { detectTone } from "./detect-tone";
 
 let activeStopFunction: (() => void) | null = null;
 
@@ -8,6 +9,7 @@ export function useSpeechPlayback() {
   const analyserNodeRef = useRef<AnalyserNode | null>(null);
   const nextStartTimeRef = useRef<number>(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentEmotion, setCurrentEmotion] = useState<"neutral" | "happy" | "sad" | "surprised" | "relaxed">("neutral");
   const isPlayingRef = useRef(false);
 
   const initAudio = useCallback(() => {
@@ -28,11 +30,11 @@ export function useSpeechPlayback() {
   const stopPlaying = useCallback(() => {
     isPlayingRef.current = false;
     setIsPlaying(false);
+    setCurrentEmotion("neutral");
     if (activeStopFunction === stopPlaying) {
       activeStopFunction = null;
     }
     
-    // Para limpar a playhead atual, podemos simplesmente fechar o contexto e recriar
     if (audioContextRef.current) {
       audioContextRef.current.close().then(() => {
         audioContextRef.current = null;
@@ -56,18 +58,27 @@ export function useSpeechPlayback() {
     const sentences = splitSentences(text);
     setIsPlaying(true);
     isPlayingRef.current = true;
+    setCurrentEmotion("neutral");
 
     for (const sentence of sentences) {
-      if (!isPlayingRef.current) break; // Parou
+      if (!isPlayingRef.current) break;
+
+      const { emotion, styleTag } = detectTone(sentence);
+      setCurrentEmotion(emotion);
 
       try {
+        const body = { 
+          text: sentence,
+          styleTags: styleTag ? [styleTag] : undefined
+        };
+        
         const response = await fetch("/api/speech", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: sentence }),
+          body: JSON.stringify(body),
         });
 
-        if (!isPlayingRef.current) break; // Check if stopped during fetch
+        if (!isPlayingRef.current) break;
 
         if (!response.ok) {
           console.error("Speech request failed", response.status);
@@ -75,7 +86,7 @@ export function useSpeechPlayback() {
         }
 
         const arrayBuffer = await response.arrayBuffer();
-        if (!isPlayingRef.current) break; // Check if stopped during buffer read
+        if (!isPlayingRef.current) break;
 
         const int16Array = new Int16Array(arrayBuffer);
         const float32Array = new Float32Array(int16Array.length);
@@ -98,24 +109,30 @@ export function useSpeechPlayback() {
 
         source.start(nextStartTimeRef.current);
         
-        // Se quisermos poder parar a frase atual no meio, precisamos armazenar o `source`
-        // Mas por simplicidade de agendamento:
+        // Wait until this sentence is mostly done before fetching next
+        // For prefetching we could overlap fetches, but let's keep it simple and wait for current to finish
+        // To overlap fetches, we should resolve promises but this sequentially awaits fetch and playback
+        // Let's at least play sequentially
         nextStartTimeRef.current += audioBuffer.duration;
+        
+        const durationMs = audioBuffer.duration * 1000;
+        await new Promise(r => setTimeout(r, durationMs - 500)); // slight overlap / prefetch buffer
+        
       } catch (err) {
         console.error("Failed to fetch/play speech", err);
       }
     }
 
-    // Monitora quando termina de tocar a última frase
     const checkEnd = setInterval(() => {
       if (ctx.currentTime >= nextStartTimeRef.current) {
         setIsPlaying(false);
         isPlayingRef.current = false;
+        setCurrentEmotion("neutral");
         clearInterval(checkEnd);
       }
     }, 100);
 
   }, [initAudio, stopPlaying]);
 
-  return { playText, stopPlaying, isPlaying, analyserNode: analyserNodeRef.current };
+  return { playText, stopPlaying, isPlaying, analyserNode: analyserNodeRef.current, currentEmotion };
 }
