@@ -47,3 +47,5 @@ Sempre gostou de computadores e jogos, o que despertou o interesse pela área de
 - Atuou como um dos monitores do tiro de guerra.
 - Foi promovido a Cabo.
 - **Atualmente:** Cabo da reserva (Cabo R2 De Souza).
+
+<!-- re-ingest: trigger após correção do pnpm no CI -->
