@@ -5,6 +5,8 @@ import { checkSpeechRateLimit, isSpeechDailyBudgetExceeded } from "@/lib/assista
 import { hashIp } from "@/lib/assistant/rate-limit";
 import { createDeadline } from "@/lib/assistant/deadline";
 import { toChatErrorResponse } from "@/lib/assistant/chat-error-response";
+import { createHash } from "crypto";
+import { CloudinaryStorageProvider } from "@/lib/storage/cloudinary-storage-provider";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -38,8 +40,6 @@ function errorBody(error: string, reason: string) {
   return { error, reason };
 }
 
-import { createHash } from "crypto";
-import { CloudinaryStorageProvider } from "@/lib/storage/cloudinary-storage-provider";
 
 function computeCacheId(text: string, voice: string, styleTags?: string[]): string {
   const hash = createHash("md5");

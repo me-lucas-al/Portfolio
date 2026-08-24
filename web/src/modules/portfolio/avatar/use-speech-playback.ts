@@ -124,10 +124,12 @@ export function useSpeechPlayback() {
     }
 
     const checkEnd = setInterval(() => {
-      if (ctx.currentTime >= nextStartTimeRef.current) {
-        setIsPlaying(false);
-        isPlayingRef.current = false;
-        setCurrentEmotion("neutral");
+      if (!isPlayingRef.current || ctx.state === "closed" || ctx.currentTime >= nextStartTimeRef.current) {
+        if (isPlayingRef.current) {
+          setIsPlaying(false);
+          isPlayingRef.current = false;
+          setCurrentEmotion("neutral");
+        }
         clearInterval(checkEnd);
       }
     }, 100);

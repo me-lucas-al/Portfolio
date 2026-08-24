@@ -46,12 +46,8 @@ export class GeminiSpeechProvider implements ISpeechProvider {
           // The audio might come in as base64 or Uint8Array, based on genai sdk
           if (event.delta.audio?.data) {
              const base64Data = event.delta.audio.data;
-             const binaryStr = atob(base64Data);
-             const bytes = new Uint8Array(binaryStr.length);
-             for (let i = 0; i < binaryStr.length; i++) {
-               bytes[i] = binaryStr.charCodeAt(i);
-             }
-             yield bytes;
+             const buffer = Buffer.from(base64Data, 'base64');
+             yield new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
           }
         }
       }
@@ -93,12 +89,8 @@ export class GeminiSpeechProvider implements ISpeechProvider {
           if (part.audio) { // Or part.inlineData
              const base64Data = part.audio.data || part.inlineData?.data;
              if (base64Data) {
-               const binaryStr = atob(base64Data);
-               const bytes = new Uint8Array(binaryStr.length);
-               for (let i = 0; i < binaryStr.length; i++) {
-                 bytes[i] = binaryStr.charCodeAt(i);
-               }
-               return bytes;
+               const buffer = Buffer.from(base64Data, 'base64');
+               return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
              }
           }
         }
