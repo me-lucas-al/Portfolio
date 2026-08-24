@@ -7,6 +7,7 @@ on:
       - feat/ai-assistant
     paths:
       - 'dados-pessoais/**.md'
+  workflow_dispatch:
 
 jobs:
   ingest:
@@ -19,8 +20,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
-        with:
-          version: 8 # ou a versão do pnpm configurada no seu projeto
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
