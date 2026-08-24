@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -34,6 +34,20 @@ jobs:
         run: pnpm --filter @portfolio/database run db:generate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Verify required secrets are set
+        run: |
+          missing=""
+          [ -z "$DATABASE_URL" ] && missing="$missing DATABASE_URL"
+          [ -z "$GEMINI_API_KEY" ] && missing="$missing GEMINI_API_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing required secrets:$missing"
+            exit 1
+          fi
+          echo "All required secrets are set ✓"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Run Markdown Ingestion
         run: pnpm --filter @portfolio/assistant run ingest --source=md
