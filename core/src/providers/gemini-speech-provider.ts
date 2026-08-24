@@ -25,15 +25,15 @@ export class GeminiSpeechProvider implements ISpeechProvider {
 
       const stream = await this.ai.interactions.create({
         model,
-        config: {
-          response_format: { type: "audio", mime_type: "audio/l16", sample_rate: 24000 },
+        response_format: { type: "audio", mime_type: "audio/l16", sample_rate: 24000 },
+        generation_config: {
           speech_config: {
             voiceConfig: {
               prebuiltVoiceConfig: {
                 voiceName: options.voice,
               },
             },
-          },
+          } as any,
         },
         input: prompt,
       }, {
@@ -66,15 +66,15 @@ export class GeminiSpeechProvider implements ISpeechProvider {
 
       const response = await this.ai.interactions.create({
         model,
-        config: {
-          response_format: { type: "audio", mime_type: "audio/l16", sample_rate: 24000 },
+        response_format: { type: "audio", mime_type: "audio/l16", sample_rate: 24000 },
+        generation_config: {
           speech_config: {
             voiceConfig: {
               prebuiltVoiceConfig: {
                 voiceName: options.voice,
               },
             },
-          },
+          } as any,
         },
         input: prompt,
       }, {

@@ -1,7 +1,8 @@
 import { NextRequest, after } from "next/server";
 import { SpeechRequestSchema } from "@portfolio/packages/schemas/assistant/speech-request";
 import { makeSpeechProvider } from "@portfolio/core/src/factories/_index";
-import { checkSpeechRateLimit, hashIp, isSpeechDailyBudgetExceeded } from "@/lib/assistant/speech-rate-limit";
+import { checkSpeechRateLimit, isSpeechDailyBudgetExceeded } from "@/lib/assistant/speech-rate-limit";
+import { hashIp } from "@/lib/assistant/rate-limit";
 import { createDeadline } from "@/lib/assistant/deadline";
 import { toChatErrorResponse } from "@/lib/assistant/chat-error-response";
 
