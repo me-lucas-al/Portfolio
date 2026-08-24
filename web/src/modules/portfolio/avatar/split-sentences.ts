@@ -1,8 +1,8 @@
 export function splitSentences(text: string): string[] {
-  // Use a regex that splits on . ! ? followed by a space, keeping the punctuation
+  // Use a regex that splits on . ! ? optionally followed by quotes/asterisks, then a space, keeping the punctuation
   // by using a capturing group. This prevents dropping the last sentence
   // if it doesn't end with punctuation.
-  const regex = /([.!?]+)\s+/g;
+  const regex = /([.!?]+["'*)]*)\s+/g;
   const parts = text.split(regex);
   
   const sentences: string[] = [];
