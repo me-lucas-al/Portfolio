@@ -39,6 +39,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.185.4",
     "@vitejs/plugin-react": "^6.1.0",
     "jsdom": "^30.0.1",
     "shadcn": "^3.8.5",
