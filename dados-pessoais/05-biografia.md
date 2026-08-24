@@ -48,4 +48,4 @@ Sempre gostou de computadores e jogos, o que despertou o interesse pela área de
 - Foi promovido a Cabo.
 - **Atualmente:** Cabo da reserva (Cabo R2 De Souza).
 
-<!-- re-ingest: trigger após correção do pnpm no CI e adição do step prisma generate -->
+<!-- re-ingest: trigger após correção do prisma.config.ts (env() → process.env) -->
