@@ -239,3 +239,104 @@ stays on screen for as long as the tab stays backgrounded.
   needs to open a real browser with `ASSISTANT_VOICE_ENABLED=true` and a
   live `GEMINI_API_KEY` to judge how the mouth actually looks while
   speaking.
+
+## Fase 7: tone-driven expressions + a thinking signal
+
+Adds `tone/` (three-less, like `audio/`) and one new idle-mixer layer,
+`engine/layers/emotion-layer.ts`. Zero backend changes - tone is derived
+entirely client-side from the response text already sitting in the
+assistant's chat state, the same way `mouthOpen` is derived from the audio
+signal rather than from a server-provided field.
+
+### `tone/`
+
+- `tone.ts` - the taxonomy as data: `Tone` (`neutral` | `positive` |
+  `enthusiastic` | `explanatory` | `apologetic` | `surprised`), each mapped to
+  a target blendshape-weight record (`TONE_TARGETS`). No tone ever drives
+  anger, and neither `jawOpen` nor `mouthFunnel` appears in any target -
+  those two stay exclusively owned by `viseme-layer.ts` (lip sync).
+- `classify-tone.ts` - `classifyTone(text, locale)`, a pure pt/en heuristic
+  (no DOM, no `three`) with a documented precedence order (apologetic >
+  surprised > enthusiastic > positive > explanatory > neutral - see the
+  file's own doc comment for why that order matters). Recognizes this
+  project's actual `dict.assistant.{error,rateLimited,quotaExceeded,
+  overloaded,timeout}` strings and `agent.ts`'s `FALLBACK_MESSAGE` as
+  apologetic, in addition to pt/en apologetic phrasing markers.
+- `classify-tone.spec.ts` - a `vitest` unit suite (this module's first) with
+  a case per tone per locale plus a couple of edge cases. Run with
+  `npx vitest run` from `web/`.
+
+Every new canonical blendshape name this taxonomy needed
+(`mouthSmileLeft/Right`, `cheekSquintLeft/Right`, `browInnerUp`,
+`browOuterUpLeft/Right`, `eyeWideLeft/Right`, `mouthPressLeft/Right`,
+`mouthFrownLeft/Right`) was verified directly against the committed
+facecap.glb's `morphTargetDictionary` (same method Fase 6 used for
+`jawOpen`/`mouthFunnel`) and added to `engine/blendshape-names.ts` - every
+single one of them actually exists on this placeholder asset, all under the
+same `_L`/`_R` suffix convention as the eye names except `browInnerUp`,
+which (like `jawOpen`) is an unpaired ARKit shape carrying its exact
+canonical spelling already.
+
+### `engine/layers/emotion-layer.ts`
+
+Same shape as every other layer: `setTone(tone)` redirects a damped chase
+toward that tone's target weights (`current += (target - current) * (1 -
+exp(-6 * dt))`, the same rate `camera-rig.ts`/`viewport-rig.ts`/
+`look-at-layer.ts` already use), `update(dt)` advances it one tick and
+returns the weights to merge into `avatar-engine.ts`'s per-frame
+`applyBlendshapeWeights({ ...blinkWeights, ...lookAtWeights, ...visemeWeights,
+...emotionWeights })` call. `avatar-engine.ts`'s render loop polls
+`state/avatar-signal-bus.ts`'s `tone` field once per frame and forwards it
+into `setTone` (mirroring `setLookTarget` -> `lookAt.setTarget`); the layer
+itself reads `thinking` and `mouthOpen` directly off the bus inside
+`update()`, the same way `viseme-layer.ts` reads `mouthOpen`.
+
+Two things this layer specifically has to guard against:
+
+- **Smile/jaw interaction**: `mouthSmileLeft/Right` and `jawOpen` move
+  overlapping geometry and are additive, so a big smile plus a wide-open jaw
+  could push combined weights outside a sane range. Mitigated by scaling the
+  layer's *entire* output by `(1 - 0.45 * mouthOpen)` rather than
+  special-casing just the smile keys.
+- **The "thinking" fast path**: a `browInnerUp` bump only appears once
+  `thinking` has been continuously true for >=1200ms. This exists
+  specifically so a fast cache-hit response (loading flips true then false
+  within a few hundred ms) never visibly starts an animation that then gets
+  abruptly cut off mid-transition.
+
+### Where tone comes from
+
+`contract.ts` adds `setAvatarTone(tone)` and `setAvatarThinking(thinking)`,
+plus re-exports `classifyTone`/`Tone`. `assistant-widget.tsx` is the only
+caller:
+
+- `onModelMessage` (already used for `speak()`) also calls
+  `setAvatarTone(classifyTone(message.text, locale))` - never fired by
+  `useAssistantChat`'s localStorage-rehydration effect, so reloading the tab
+  wakes the avatar in `neutral`, not reprising yesterday's last answer.
+- A small `useEffect` on the hook's `error` string does the same, since a
+  failed request never reaches `onModelMessage` - this is the only "error
+  state" the avatar gets; there's no separate explicit error enum on top of
+  it, tone classification of the error copy itself (recognized as
+  apologetic) is enough.
+- Another `useEffect` mirrors `loading` straight into `setAvatarThinking`.
+
+`setAvatarTone` also owns a decay timer: a non-neutral tone reverts to
+`neutral` on its own `TONE_HOLD_MS` (2.5s, provisional) after being set -
+deliberately just one more damped transition, not a second decay curve
+layered on top of the layer's own exponential damping, which is what
+actually makes both edges of this look smooth.
+
+### Explicitly not done in Fase 7
+
+- No `listening` state (input box focused/has text) - needs visual judgment
+  this sandbox can't make.
+- No `thinking.deep`-past-25s "still here" nod - same reason.
+- No dedicated `failed` state distinct from the existing `NoWebglFallback` -
+  it already covers the no-WebGL/model-load-failure case.
+- Facial expression combinations were not (could not be) verified visually
+  in this environment - only `tsc`/`vitest`/the production build were
+  checked. A human needs to open a real browser to judge whether any given
+  tone's blendshape combination actually looks like the intended expression
+  rather than a distorted one, and to tune `TONE_HOLD_MS`/the thinking-bump
+  timing/magnitude by feel.
