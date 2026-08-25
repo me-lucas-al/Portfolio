@@ -111,6 +111,7 @@ model Chunk {
 model ChatUsage {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   ipHash    String
+  kind      String   @default("chat")
   createdAt DateTime @default(now())
 
   @@index([ipHash, createdAt])
