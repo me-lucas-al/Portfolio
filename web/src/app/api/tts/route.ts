@@ -4,7 +4,7 @@ import { getClientIp } from "@/lib/assistant/http-guards";
 import { hashIp, checkTtsRateLimit, isTtsDailyBudgetExceeded } from "@/lib/assistant/rate-limit";
 import { verifySpeechToken } from "@/lib/assistant/speech-token";
 import { createDeadline } from "@/lib/assistant/deadline";
-import { synthesizeSpeech, pcmToWav } from "@/lib/assistant/tts-provider";
+import { findCachedSpeech, synthesizeAndCacheSpeech } from "@/lib/assistant/speech-cache";
 
 export const runtime = "nodejs";
 // A single unary synthesis of MAX_TTS_CHARS (800) of PT text measured at
@@ -75,6 +75,22 @@ export async function GET(request: NextRequest) {
     return Response.json(errorBody("Rate limit exceeded", "rate_limited"), { status: 429 });
   }
 
+  // Checked before the daily synthesis budget, mirroring /api/chat's own
+  // answer-cache-before-budget ordering: a cache hit costs nothing to
+  // regenerate (no Gemini call, no Cloudinary upload), so it should keep
+  // working even once the day's synthesis budget is exhausted. It still runs
+  // after the per-IP rate limit above, since that caps abuse regardless of
+  // cache status.
+  try {
+    const cached = await findCachedSpeech(verified.text);
+    if (cached) {
+      logMetric({ ip: ipHashPrefix, status: 302, cacheHit: 1, durationMs: Date.now() - startedAt });
+      return Response.redirect(cached.audioUrl, 302);
+    }
+  } catch (error) {
+    console.error("[tts] cache lookup failed:", error);
+  }
+
   if (await isTtsDailyBudgetExceeded()) {
     logMetric({ ip: ipHashPrefix, status: 503, reason: "daily_budget" });
     return Response.json(errorBody("Voice daily budget exceeded, please try again tomorrow", "daily_budget"), { status: 503 });
@@ -83,10 +99,12 @@ export async function GET(request: NextRequest) {
   const deadline = createDeadline(TOTAL_BUDGET_MS, request.signal);
 
   try {
-    const { pcm, sampleRate } = await synthesizeSpeech(apiKey, verified.text, deadline.signal);
-    const wav = pcmToWav(pcm, sampleRate, 1);
+    // The very first requester gets the bytes directly - no reason to make
+    // them wait an extra round-trip to Cloudinary and back for their own
+    // request. Only later requesters hit the cache and get redirected.
+    const { wav } = await synthesizeAndCacheSpeech(apiKey, verified.text, deadline.signal);
 
-    logMetric({ ip: ipHashPrefix, status: 200, bytes: wav.length, durationMs: Date.now() - startedAt });
+    logMetric({ ip: ipHashPrefix, status: 200, cacheHit: 0, bytes: wav.length, durationMs: Date.now() - startedAt });
 
     return new Response(new Uint8Array(wav), {
       status: 200,
