@@ -32,6 +32,25 @@ export const BLENDSHAPE_ALIASES = {
   // table.
   jawOpen: ["jawOpen"],
   mouthFunnel: ["mouthFunnel"],
+  // Fase 7 (tone/emotion layer). Verified directly against the committed
+  // facecap.glb's `morphTargetDictionary` the same way Fase 6 did for
+  // jawOpen/mouthFunnel above - every one of these names actually exists on
+  // this placeholder asset, all under the same `_L`/`_R` suffix convention
+  // as the eye names, except `browInnerUp` which (like jawOpen/mouthFunnel)
+  // is an unpaired ARKit shape and carries its exact canonical spelling.
+  mouthSmileLeft: ["mouthSmileLeft", "mouthSmile_L"],
+  mouthSmileRight: ["mouthSmileRight", "mouthSmile_R"],
+  cheekSquintLeft: ["cheekSquintLeft", "cheekSquint_L"],
+  cheekSquintRight: ["cheekSquintRight", "cheekSquint_R"],
+  browInnerUp: ["browInnerUp"],
+  browOuterUpLeft: ["browOuterUpLeft", "browOuterUp_L"],
+  browOuterUpRight: ["browOuterUpRight", "browOuterUp_R"],
+  eyeWideLeft: ["eyeWideLeft", "eyeWide_L"],
+  eyeWideRight: ["eyeWideRight", "eyeWide_R"],
+  mouthPressLeft: ["mouthPressLeft", "mouthPress_L"],
+  mouthPressRight: ["mouthPressRight", "mouthPress_R"],
+  mouthFrownLeft: ["mouthFrownLeft", "mouthFrown_L"],
+  mouthFrownRight: ["mouthFrownRight", "mouthFrown_R"],
 } as const satisfies Record<string, readonly string[]>
 
 export type CanonicalBlendshapeName = keyof typeof BLENDSHAPE_ALIASES
