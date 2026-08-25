@@ -1,11 +1,12 @@
 "use client"
 
-import { useEffect, useRef, useState, type RefObject } from "react"
-import type { AvatarState } from "./contract"
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react"
+import type { AvatarFramingName, AvatarRect, AvatarState } from "./contract"
 
 interface EngineHandle {
   dispose: () => void
   setLookTarget: (x: number, y: number) => void
+  setFraming: (name: AvatarFramingName, rect: AvatarRect) => void
 }
 
 const IDLE_CALLBACK_TIMEOUT_MS = 2000
@@ -20,6 +21,10 @@ const IDLE_FALLBACK_DELAY_MS = 200
  * `enabled` should be `true` only once the caller has confirmed WebGL
  * support AND the canvas element is mounted - this hook does not render
  * anything itself.
+ *
+ * Returns a stable `setFraming` that's a safe no-op until the engine has
+ * actually booted (callers - see `use-avatar-framing.ts` - just keep polling
+ * and it starts taking effect once ready).
  */
 export function useAvatarEngine(canvasRef: RefObject<HTMLCanvasElement | null>, enabled: boolean) {
   const [state, setState] = useState<AvatarState>("loading")
@@ -75,5 +80,9 @@ export function useAvatarEngine(canvasRef: RefObject<HTMLCanvasElement | null>, 
     }
   }, [canvasRef, enabled])
 
-  return { state }
+  const setFraming = useCallback((name: AvatarFramingName, rect: AvatarRect) => {
+    engineRef.current?.setFraming(name, rect)
+  }, [])
+
+  return { state, setFraming }
 }

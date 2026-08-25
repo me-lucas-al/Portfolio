@@ -11,14 +11,17 @@ export interface RendererHandle {
 }
 
 /**
- * Builds the WebGLRenderer for the idle mini avatar: transparent background
- * so it blends with the page, DPR clamped to keep a ~112px corner canvas
- * cheap, and context-loss wiring so a driver crash doesn't take the tab down.
+ * Builds the WebGLRenderer backing the one full-viewport avatar canvas
+ * (Fase 4): transparent background so it blends with the page, DPR clamped
+ * to keep it cheap even at full-viewport size, and context-loss wiring so a
+ * driver crash doesn't take the tab down.
  *
- * Context-loss recovery is a stub for this phase: on `webglcontextlost` we
- * just flag the engine to stop rendering (the browser discards all GPU
- * resources); a later phase can rebuild geometries/materials on
- * `webglcontextrestored` instead of merely resuming.
+ * This module only flags the loss/restore transition via the two
+ * callbacks - `avatar-engine.ts` decides what to actually do about it: on
+ * `webglcontextlost` it stops rendering (the browser discards all GPU
+ * resources), and on `webglcontextrestored` it re-loads the model and
+ * rebuilds everything derived from it, rather than merely resuming with
+ * whatever textures happen to still be bound.
  */
 export function createRenderer(
   canvas: HTMLCanvasElement,
