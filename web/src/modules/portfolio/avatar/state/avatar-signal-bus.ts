@@ -12,6 +12,13 @@
  *
  * Three-less, like `../contract.ts` which is the only place allowed to call
  * `setOverlayState` from outside this module.
+ *
+ * Fase 6 adds `mouthOpen` (0..1), the same "write from outside, poll once
+ * per frame" convention: `audio/lip-sync-analyser.ts` writes it every tick
+ * while speech audio is playing (and forces it back to `0` the instant
+ * playback stops), and `engine/layers/viseme-layer.ts` reads it once per
+ * render-loop frame - never re-shaping or re-damping it, that's already done
+ * by the analyser.
  */
 
 export interface AvatarOverlayRect {
@@ -24,11 +31,13 @@ export interface AvatarOverlayRect {
 interface AvatarSignalState {
   overlayOpen: boolean
   overlayAnchorRect: AvatarOverlayRect | null
+  mouthOpen: number
 }
 
 const state: AvatarSignalState = {
   overlayOpen: false,
   overlayAnchorRect: null,
+  mouthOpen: 0,
 }
 
 /** Written by `contract.ts`'s `setAvatarOverlayState` on behalf of the assistant module. */
@@ -40,4 +49,14 @@ export function setOverlayState(open: boolean, anchorRect: AvatarOverlayRect | n
 /** Read by the avatar module's own framing hook. Never mutate the returned object. */
 export function getOverlayState(): Readonly<AvatarSignalState> {
   return state
+}
+
+/** Written every tick by `audio/lip-sync-analyser.ts` while speech is playing, and once with `0` when it stops. */
+export function setMouthOpen(value: number): void {
+  state.mouthOpen = value
+}
+
+/** Read once per frame by `engine/layers/viseme-layer.ts`. */
+export function getMouthOpen(): number {
+  return state.mouthOpen
 }
