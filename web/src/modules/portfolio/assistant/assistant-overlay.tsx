@@ -1,0 +1,65 @@
+"use client"
+
+import type { CSSProperties } from "react"
+import { Trash2, X } from "lucide-react"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
+import { AssistantConversation, type AssistantConversationProps } from "./assistant-conversation"
+
+interface AssistantOverlayProps extends AssistantConversationProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  clearChat: () => void
+}
+
+// Neutralizes DialogContent's default pop-in zoom (zoom-in-95/zoom-out-95) via
+// inline style, which always wins the cascade regardless of Tailwind's utility
+// generation order - twMerge can't dedupe those class names since they come
+// from the tw-animate-css plugin, not core Tailwind, so passing an override
+// class alongside the originals would leave both in the stylesheet with an
+// unpredictable winner. The panel should only slide, never zoom.
+const noZoomStyle: CSSProperties = {
+  ["--tw-enter-scale" as string]: 1,
+  ["--tw-exit-scale" as string]: 1,
+} as CSSProperties
+
+export function AssistantOverlay({ open, onOpenChange, clearChat, dict, messages, ...conversationProps }: AssistantOverlayProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        showCloseButton={false}
+        style={noZoomStyle}
+        className="top-0 bottom-0 right-0 left-auto translate-x-0 translate-y-0 z-50 flex flex-col w-full sm:w-[420px] max-w-none sm:max-w-none gap-0 rounded-none border-0 border-l border-neutral-800 p-0 shadow-2xl shadow-black/40 duration-300 bg-neutral-950 text-white outline-none data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right"
+      >
+        <div className="flex items-center justify-between border-b border-neutral-900 px-4 py-3">
+          <div>
+            <DialogTitle className="text-sm leading-normal font-semibold text-white">{dict.title}</DialogTitle>
+            <DialogDescription className="text-xs text-neutral-500">{dict.subtitle}</DialogDescription>
+          </div>
+          <div className="flex items-center gap-1">
+            {messages.length > 0 && (
+              <button
+                type="button"
+                onClick={clearChat}
+                aria-label="Clear chat"
+                className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+              >
+                <Trash2 className="size-4" />
+              </button>
+            )}
+            <DialogClose asChild>
+              <button
+                type="button"
+                aria-label={dict.close}
+                className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+              >
+                <X className="size-4" />
+              </button>
+            </DialogClose>
+          </div>
+        </div>
+
+        <AssistantConversation dict={dict} messages={messages} {...conversationProps} />
+      </DialogContent>
+    </Dialog>
+  )
+}
