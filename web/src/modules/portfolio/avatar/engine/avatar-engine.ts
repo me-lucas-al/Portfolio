@@ -12,6 +12,7 @@ import { createVisemeLayer } from "./layers/viseme-layer"
 import { createEmotionLayer } from "./layers/emotion-layer"
 import { createViewportRig, toRendererViewportRect, type Rect } from "./viewport-rig"
 import { createCameraRig, type CameraFramingName, type CameraRig } from "./camera-rig"
+import { createDprDegrade } from "./dpr-degrade"
 import type { CanonicalBlendshapeName } from "./blendshape-names"
 import { setMouthOpen, getTone } from "../state/avatar-signal-bus"
 
@@ -34,6 +35,12 @@ export interface CreateAvatarEngineOptions {
 }
 
 const RESIZE_DEBOUNCE_MS = 150
+// Below this fraction of `window.innerHeight`, `visualViewport.height` is
+// assumed to mean "the on-screen keyboard is very likely open" rather than
+// e.g. a mobile browser chrome (address bar) show/hide, which shrinks it by
+// a much smaller fraction. Only consulted on coarse-pointer devices - see
+// the `visualViewport` listener below.
+const KEYBOARD_VISIBLE_HEIGHT_RATIO = 0.75
 
 function getViewportCssSize() {
   return { width: window.innerWidth, height: window.innerHeight }
@@ -134,6 +141,12 @@ export async function create(
   const viseme = createVisemeLayer()
   const emotion = createEmotionLayer()
   const viewportRig = createViewportRig(reducedMotion)
+  // Never ticked while `reducedMotion` (see `dpr-degrade.ts`'s own doc
+  // comment) - there is no continuous rAF to react to a "sustained render
+  // load" in that mode, so the render loop callback below simply skips both
+  // of its calls whenever `reducedMotion` is true.
+  const dprDegrade = createDprDegrade(renderer.getPixelRatio())
+  let appliedDpr = renderer.getPixelRatio()
 
   const applyBlendshapeWeights = (weights: Record<string, number>) => {
     if (!blendshapeKeys) return
@@ -152,6 +165,22 @@ export async function create(
     }, RESIZE_DEBOUNCE_MS)
   }
   window.addEventListener("resize", handleResize)
+
+  // On coarse-pointer devices only: `visualViewport.height` shrinking well
+  // below `window.innerHeight` is the on-screen-keyboard heuristic from the
+  // plan (iOS never updates `innerHeight` when the keyboard opens - the
+  // layout viewport is unaffected, only the visual one shrinks). Gated to
+  // `coarsePointer` so a desktop window/devtools resize (which moves both
+  // dimensions together) never misreads as a keyboard opening. Routed
+  // through `renderLoop.setPaused` (declared below) rather than a second,
+  // parallel pause flag.
+  const visualViewport = coarsePointer ? window.visualViewport : null
+  const handleVisualViewportResize = () => {
+    if (!visualViewport) return
+    const heightRatio = visualViewport.height / window.innerHeight
+    renderLoop.setPaused(heightRatio < KEYBOARD_VISIBLE_HEIGHT_RATIO)
+  }
+  visualViewport?.addEventListener("resize", handleVisualViewportResize)
 
   const renderLoop = createRenderLoop((deltaSeconds) => {
     if (contextLost) return
@@ -183,7 +212,23 @@ export async function create(
     renderer.setScissor(glRect.x, glRect.y, glRect.width, glRect.height)
     renderer.setViewport(glRect.x, glRect.y, glRect.width, glRect.height)
 
-    renderer.render(scene, camera)
+    // `reducedMotion` bypasses the degrade loop entirely (see its own doc
+    // comment) - every on-demand render (there is no continuous rAF in that
+    // mode) always happens. Otherwise, once degraded, this gates the actual
+    // `render()` call to ~30fps while every update above still ran this tick.
+    const nowMs = performance.now()
+    if (reducedMotion || dprDegrade.shouldRenderThisFrame(nowMs)) {
+      const renderStartMs = performance.now()
+      renderer.render(scene, camera)
+
+      if (!reducedMotion) {
+        const nextDpr = dprDegrade.recordRenderTime(performance.now() - renderStartMs, nowMs)
+        if (nextDpr !== appliedDpr) {
+          appliedDpr = nextDpr
+          renderer.setPixelRatio(appliedDpr)
+        }
+      }
+    }
   }, reducedMotion, () => {
     // Fase 6: a backgrounded tab stops rendering entirely (see
     // `render-loop.ts`) - if that pause landed mid-word, the last painted
@@ -199,6 +244,7 @@ export async function create(
     renderLoop.dispose()
     lookAt.dispose()
     window.removeEventListener("resize", handleResize)
+    visualViewport?.removeEventListener("resize", handleVisualViewportResize)
     if (resizeTimeout !== null) clearTimeout(resizeTimeout)
     rendererHandle.dispose()
     if (model) disposeObject3D(model)

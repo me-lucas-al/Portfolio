@@ -151,8 +151,9 @@ textures. `create-renderer.ts` still only flags the loss/restore transition;
   deferral, not an oversight.
 - No fullscreen redesign of the assistant overlay - it's still the ~420px
   side panel, just with a small avatar-bust slot added to its header.
-- No LOD swap, no dynamic DPR degrade loop - the DPR clamp stays static.
-- No `visualViewport`-based mobile-keyboard handling.
+- No LOD swap - deferred to Fase 9, contingent on the final asset's size.
+- Dynamic DPR degrade and `visualViewport`-based mobile-keyboard handling
+  landed later, in Fase 10 - see below.
 
 ## Fase 6: audio player + amplitude-based lip sync
 
@@ -340,3 +341,59 @@ actually makes both edges of this look smooth.
   tone's blendshape combination actually looks like the intended expression
   rather than a distorted one, and to tune `TONE_HOLD_MS`/the thinking-bump
   timing/magnitude by feel.
+
+## Fase 10: dynamic DPR degrade + mobile-keyboard pause
+
+Two independent polish items, both layered onto existing primitives rather
+than replacing them.
+
+### `engine/dpr-degrade.ts`
+
+Three-less, `renderer`-less: a pure function of render-time samples in,
+target DPR out. `avatar-engine.ts` owns the only two effectful steps -
+actually measuring `renderer.render(...)`'s wall-clock duration around each
+call, and calling `renderer.setPixelRatio(...)` when the returned value
+changes. Batches render-time samples into non-overlapping windows of 60
+frames; if a window's median exceeds 22ms, DPR steps down by 0.25 (floor
+1.0) and a one-way `degraded` flag flips permanently on for the rest of the
+session - once degraded, it additionally caps the *frequency* of actual
+`render()` calls to ~30fps (every other per-frame update - blink/breath/
+look-at/viseme/emotion, the viewport/camera rigs - keeps running every rAF
+tick regardless; only the render call itself is skipped). Deliberately never
+steps back up: recovering risks visible oscillation, which reads worse than
+staying a bit blurrier for the rest of the session.
+
+Never ticked while `reducedMotion` - there's no continuous rAF to react to a
+sustained render load in that mode, so `avatar-engine.ts`'s render-loop
+callback skips both of this module's calls whenever `reducedMotion` is true
+and always renders on demand instead, same as it always did.
+
+### Mobile-keyboard pause
+
+`render-loop.ts` grew `setPaused(paused)`, a second, independent pause
+reason ORed together with the existing `document.hidden` tracking through
+the same `applyPaused` transition path - so un-pausing one reason while the
+other is still active correctly stays paused, and pausing either one runs
+the same `onBeforeHide` + one-more-synchronous-frame sequence Fase 6 already
+relies on to leave the mouth closed rather than frozen mid-word.
+
+`avatar-engine.ts` drives it from a `visualViewport` `resize` listener,
+registered only on coarse-pointer devices: when `visualViewport.height`
+drops below 75% of `window.innerHeight`, the on-screen keyboard is assumed
+open and the loop pauses. This ratio-based heuristic exists specifically
+because iOS never updates `window.innerHeight` when the keyboard opens (only
+`document.hidden` mattered before this) - the layout viewport stays put and
+only the visual one shrinks, which is also why this needs `visualViewport`
+at all rather than reusing the existing `resize` handler. Gating on
+`coarsePointer` keeps a desktop window/devtools resize (which moves both
+dimensions together) from ever misreading as a keyboard opening.
+
+### Explicitly not done in Fase 10
+
+- No LOD swap - still deferred to Fase 9, contingent on the final asset's
+  size.
+- No user-facing metrics/telemetry for DPR degrade events or render-loop
+  pauses.
+- Neither the DPR degrade thresholds nor the keyboard-height ratio were
+  tuned against a real low-end device or a real iOS keyboard - only
+  `tsc`/the production build were checked in this environment.

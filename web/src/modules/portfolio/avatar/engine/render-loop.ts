@@ -5,6 +5,15 @@ export interface RenderLoopHandle {
   dispose: () => void
   /** Renders a single frame on demand. Only meaningful in reduced-motion mode (no continuous rAF). */
   requestRender: () => void
+  /**
+   * Externally pause/resume the loop for a reason other than tab visibility
+   * (Fase 10: `avatar-engine.ts` calls this when `visualViewport` reports the
+   * mobile keyboard has very likely opened). Composes with the existing
+   * `document.hidden` pause rather than replacing it - the loop only
+   * actually runs when neither reason is active, and un-pausing this one
+   * while the tab is still hidden correctly stays paused.
+   */
+  setPaused: (paused: boolean) => void
 }
 
 /**
@@ -34,7 +43,17 @@ export function createRenderLoop(
   let rafId: number | null = null
   let lastTimeMs: number | null = null
   let started = false
-  let hidden = false
+  // `effectivePaused` is the OR of two independent pause reasons - the tab
+  // being backgrounded (`documentHidden`, driven by `visibilitychange`) and,
+  // since Fase 10, an externally-requested pause (`externallyPaused`, driven
+  // by `setPaused` - `avatar-engine.ts` uses this for the mobile-keyboard
+  // heuristic). Both reasons flow through the same `applyPaused` transition
+  // logic below rather than each maintaining their own cancel/resume code, so
+  // e.g. resuming from the keyboard-closed heuristic while the tab is still
+  // hidden correctly stays paused.
+  let documentHidden = false
+  let externallyPaused = false
+  let effectivePaused = false
 
   const cancelScheduled = () => {
     if (rafId !== null) {
@@ -51,24 +70,27 @@ export function createRenderLoop(
 
     onFrame(deltaSeconds)
 
-    if (started && !hidden) {
+    if (started && !effectivePaused) {
       rafId = window.requestAnimationFrame(runFrame)
     }
   }
 
   const scheduleContinuous = () => {
-    if (reducedMotion || hidden || !started || rafId !== null) return
+    if (reducedMotion || effectivePaused || !started || rafId !== null) return
     lastTimeMs = null
     rafId = window.requestAnimationFrame(runFrame)
   }
 
-  const handleVisibilityChange = () => {
-    hidden = document.hidden
-    if (hidden) {
+  const applyPaused = (nextPaused: boolean) => {
+    if (nextPaused === effectivePaused) return
+    effectivePaused = nextPaused
+
+    if (effectivePaused) {
       onBeforeHide?.()
       // Force one last render synchronously (not via rAF, which is exactly
       // what's being cancelled below) so whatever `onBeforeHide` just reset
-      // is what's actually on screen while the tab stays backgrounded.
+      // is what's actually on screen while paused (backgrounded tab or
+      // keyboard-open heuristic alike).
       onFrame(0)
       cancelScheduled()
     } else {
@@ -77,16 +99,27 @@ export function createRenderLoop(
     }
   }
 
+  const handleVisibilityChange = () => {
+    documentHidden = document.hidden
+    applyPaused(documentHidden || externallyPaused)
+  }
+
+  const setPaused = (paused: boolean) => {
+    externallyPaused = paused
+    applyPaused(documentHidden || externallyPaused)
+  }
+
   const start = () => {
     if (started) return
     started = true
-    hidden = document.hidden
+    documentHidden = document.hidden
+    effectivePaused = documentHidden || externallyPaused
 
     document.addEventListener("visibilitychange", handleVisibilityChange)
 
     if (reducedMotion) {
       onFrame(0)
-    } else if (!hidden) {
+    } else if (!effectivePaused) {
       scheduleContinuous()
     }
   }
@@ -101,5 +134,5 @@ export function createRenderLoop(
     cancelScheduled()
   }
 
-  return { start, dispose, requestRender }
+  return { start, dispose, requestRender, setPaused }
 }
