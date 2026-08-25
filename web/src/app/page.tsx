@@ -6,6 +6,7 @@ import { Experience } from "@/modules/portfolio/experience"
 import { Education } from "@/modules/portfolio/education"
 import { Contact } from "@/modules/portfolio/contact"
 import { AssistantWidget } from "@/modules/portfolio/assistant/assistant-widget"
+import { AvatarStage } from "@/modules/portfolio/avatar/avatar-stage"
 import { ProjectGrid } from "@/components/project/project-grid"
 import { getProjectsAction } from "@/app/actions/project"
 import { getExperiencesAction } from "@/app/actions/experience"
@@ -137,6 +138,7 @@ export default async function HomePage() {
           <p className="text-neutral-600">Lucas Almeida | {dict.footer.description}</p>
         </div>
       </footer>
+      <AvatarStage />
       <AssistantWidget dict={dict.assistant} locale={locale} />
     </main>
   )
