@@ -6,6 +6,7 @@ import { checkRateLimit, hashIp, isDailyBudgetExceeded } from "@/lib/assistant/r
 import { runAssistant } from "@/lib/assistant/agent";
 import { createDeadline } from "@/lib/assistant/deadline";
 import { toChatErrorResponse } from "@/lib/assistant/chat-error-response";
+import { getClientIp, isSameOrigin } from "@/lib/assistant/http-guards";
 
 export const runtime = "nodejs";
 // Not the full 300s Vercel allows: this is an unauthenticated public endpoint,
@@ -18,27 +19,6 @@ export const maxDuration = 60;
 export const preferredRegion = "gru1";
 
 const TOTAL_BUDGET_MS = 50_000;
-
-// Vercel's edge network sets `x-real-ip` to the actual client IP and cannot
-// have that value spoofed by the client; `x-forwarded-for` is used only as a
-// fallback for local dev, where neither header may be trustworthy anyway.
-function getClientIp(request: NextRequest): string {
-  const realIp = request.headers.get("x-real-ip");
-  if (realIp) return realIp;
-
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  const first = forwardedFor?.split(",")[0]?.trim();
-  return first || "unknown";
-}
-
-// Defense-in-depth against browser-based CSRF, not an anti-abuse control:
-// a non-browser client can simply omit Origin or forge it, which the actual
-// cost controls (rate limit + daily budget) are responsible for stopping.
-function isSameOrigin(request: NextRequest): boolean {
-  const origin = request.headers.get("origin");
-  if (!origin) return false;
-  return origin === new URL(request.url).origin;
-}
 
 function logMetric(fields: Record<string, string | number>): void {
   const line = Object.entries(fields)
