@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Dictionary, Locale } from "@/i18n"
+import type { ChatResponseType, ChatSpeechType } from "@portfolio/packages/schemas/assistant"
 import { resolveChatErrorMessage } from "./chat-error-message"
 
 export interface ChatMessage {
@@ -67,7 +68,30 @@ function truncateHistoryContent(content: string): string {
   return content.length > MAX_HISTORY_CONTENT_CHARS ? content.slice(0, MAX_HISTORY_CONTENT_CHARS) : content
 }
 
-export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) {
+export interface UseAssistantChatOptions {
+  /**
+   * Fired right after a *live* `/api/chat` response is parsed, with the full
+   * payload (text + optional speech). Never fired by the localStorage
+   * rehydration effect below - reloading a tab must not auto-speak
+   * yesterday's last answer, so that effect calls `setMessages` directly
+   * instead of going through `pushMessage`/this callback.
+   */
+  onModelMessage?: (message: { text: string; speech?: ChatSpeechType }) => void
+  /**
+   * Fired at the very top of `sendToApi`, before anything else - both a
+   * fresh send and a retry call `sendToApi`, so this is the hook a consumer
+   * uses to interrupt whatever's currently speaking because a new question
+   * is being asked.
+   */
+  onBeforeSend?: () => void
+}
+
+export function useAssistantChat(
+  dict: Dictionary["assistant"],
+  locale: Locale,
+  options: UseAssistantChatOptions = {}
+) {
+  const { onModelMessage, onBeforeSend } = options
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
@@ -106,6 +130,7 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
   }
 
   async function sendToApi(message: string) {
+    onBeforeSend?.()
     cancelPending()
     const controller = new AbortController()
     abortControllerRef.current = controller
@@ -140,8 +165,9 @@ export function useAssistantChat(dict: Dictionary["assistant"], locale: Locale) 
         return
       }
 
-      const data = (await response.json()) as { text: string }
+      const data = (await response.json()) as ChatResponseType
       pushMessage("model", data.text)
+      onModelMessage?.(data)
       setFailedMessage(null)
       setInput("")
     } catch (err) {
