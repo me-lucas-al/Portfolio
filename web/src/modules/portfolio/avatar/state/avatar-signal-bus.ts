@@ -19,7 +19,19 @@
  * playback stops), and `engine/layers/viseme-layer.ts` reads it once per
  * render-loop frame - never re-shaping or re-damping it, that's already done
  * by the analyser.
+ *
+ * Fase 7 adds two more fields, same convention:
+ * - `tone`: written by `contract.ts`'s `setAvatarTone` (itself called from
+ *   `modules/portfolio/assistant/*` after classifying a response's text
+ *   client-side, see `../tone/classify-tone.ts`), read once per frame by
+ *   `engine/layers/emotion-layer.ts`.
+ * - `thinking`: written by `contract.ts`'s `setAvatarThinking`, driven by
+ *   `useAssistantChat`'s `loading` state; also read by
+ *   `engine/layers/emotion-layer.ts`, which is the one place that decides
+ *   how (and whether, given how recently it flipped true) to show it.
  */
+
+import type { Tone } from "../tone/tone"
 
 export interface AvatarOverlayRect {
   x: number
@@ -32,12 +44,16 @@ interface AvatarSignalState {
   overlayOpen: boolean
   overlayAnchorRect: AvatarOverlayRect | null
   mouthOpen: number
+  tone: Tone
+  thinking: boolean
 }
 
 const state: AvatarSignalState = {
   overlayOpen: false,
   overlayAnchorRect: null,
   mouthOpen: 0,
+  tone: "neutral",
+  thinking: false,
 }
 
 /** Written by `contract.ts`'s `setAvatarOverlayState` on behalf of the assistant module. */
@@ -59,4 +75,24 @@ export function setMouthOpen(value: number): void {
 /** Read once per frame by `engine/layers/viseme-layer.ts`. */
 export function getMouthOpen(): number {
   return state.mouthOpen
+}
+
+/** Written by `contract.ts`'s `setAvatarTone`, which also owns the "hold, then decay to neutral" timing. */
+export function setTone(value: Tone): void {
+  state.tone = value
+}
+
+/** Read once per frame by `engine/layers/emotion-layer.ts`. */
+export function getTone(): Tone {
+  return state.tone
+}
+
+/** Written by `contract.ts`'s `setAvatarThinking`, driven by `useAssistantChat`'s `loading` state. */
+export function setThinking(value: boolean): void {
+  state.thinking = value
+}
+
+/** Read once per frame by `engine/layers/emotion-layer.ts`. */
+export function getThinking(): boolean {
+  return state.thinking
 }

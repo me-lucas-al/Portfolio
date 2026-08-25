@@ -9,10 +9,11 @@ import { createBlinkLayer } from "./layers/blink-layer"
 import { createBreathLayer, type BreathLayer } from "./layers/breath-layer"
 import { createLookAtLayer } from "./layers/look-at-layer"
 import { createVisemeLayer } from "./layers/viseme-layer"
+import { createEmotionLayer } from "./layers/emotion-layer"
 import { createViewportRig, toRendererViewportRect, type Rect } from "./viewport-rig"
 import { createCameraRig, type CameraFramingName, type CameraRig } from "./camera-rig"
 import type { CanonicalBlendshapeName } from "./blendshape-names"
-import { setMouthOpen } from "../state/avatar-signal-bus"
+import { setMouthOpen, getTone } from "../state/avatar-signal-bus"
 
 export interface AvatarEngineHandle {
   dispose: () => void
@@ -131,6 +132,7 @@ export async function create(
   const blink = createBlinkLayer(reducedMotion)
   const lookAt = createLookAtLayer({ coarsePointer })
   const viseme = createVisemeLayer()
+  const emotion = createEmotionLayer()
   const viewportRig = createViewportRig(reducedMotion)
 
   const applyBlendshapeWeights = (weights: Record<string, number>) => {
@@ -157,9 +159,16 @@ export async function create(
     const blinkWeights = blink.update(deltaSeconds)
     const lookAtWeights = lookAt.update(deltaSeconds)
     const visemeWeights = viseme.update(deltaSeconds)
+    // Polled once per frame from the bus (see `state/avatar-signal-bus.ts`)
+    // and forwarded into the layer's own `setTone`, mirroring how
+    // `setLookTarget` below forwards into `lookAt.setTarget` - the layer
+    // itself never reaches into the bus for `tone` (only for `thinking` and
+    // `mouthOpen`, which it reads directly every tick like `viseme` does).
+    emotion.setTone(getTone())
+    const emotionWeights = emotion.update(deltaSeconds)
     breath.update(deltaSeconds)
 
-    applyBlendshapeWeights({ ...blinkWeights, ...lookAtWeights, ...visemeWeights })
+    applyBlendshapeWeights({ ...blinkWeights, ...lookAtWeights, ...visemeWeights, ...emotionWeights })
 
     // Always run, at rest or mid-transition: a continuous chase-the-target
     // damp is correct (and effectively free) even when already converged.
