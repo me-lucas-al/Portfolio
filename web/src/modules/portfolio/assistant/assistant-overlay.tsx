@@ -1,6 +1,6 @@
 "use client"
 
-import type { CSSProperties } from "react"
+import type { CSSProperties, RefObject } from "react"
 import { Trash2, X } from "lucide-react"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { AssistantConversation, type AssistantConversationProps } from "./assistant-conversation"
@@ -9,6 +9,13 @@ interface AssistantOverlayProps extends AssistantConversationProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   clearChat: () => void
+  /**
+   * Header slot the avatar module draws its "overlay-bust" framing into
+   * (see `assistant-widget.tsx`). This component has no idea the avatar
+   * exists - it just renders an empty, decorative circular placeholder and
+   * hands the ref up.
+   */
+  avatarSlotRef: RefObject<HTMLDivElement | null>
 }
 
 // Neutralizes DialogContent's default pop-in zoom (zoom-in-95/zoom-out-95) via
@@ -22,7 +29,15 @@ const noZoomStyle: CSSProperties = {
   ["--tw-exit-scale" as string]: 1,
 } as CSSProperties
 
-export function AssistantOverlay({ open, onOpenChange, clearChat, dict, messages, ...conversationProps }: AssistantOverlayProps) {
+export function AssistantOverlay({
+  open,
+  onOpenChange,
+  clearChat,
+  avatarSlotRef,
+  dict,
+  messages,
+  ...conversationProps
+}: AssistantOverlayProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -30,10 +45,13 @@ export function AssistantOverlay({ open, onOpenChange, clearChat, dict, messages
         style={noZoomStyle}
         className="top-0 bottom-0 right-0 left-auto translate-x-0 translate-y-0 z-50 flex flex-col w-full sm:w-[420px] max-w-none sm:max-w-none gap-0 rounded-none border-0 border-l border-neutral-800 p-0 shadow-2xl shadow-black/40 duration-300 bg-neutral-950 text-white outline-none data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right"
       >
-        <div className="flex items-center justify-between border-b border-neutral-900 px-4 py-3">
-          <div>
-            <DialogTitle className="text-sm leading-normal font-semibold text-white">{dict.title}</DialogTitle>
-            <DialogDescription className="text-xs text-neutral-500">{dict.subtitle}</DialogDescription>
+        <div className="flex items-center justify-between gap-3 border-b border-neutral-900 px-4 py-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <div ref={avatarSlotRef} aria-hidden="true" className="size-11 shrink-0 rounded-full pointer-events-none" />
+            <div className="min-w-0">
+              <DialogTitle className="text-sm leading-normal font-semibold text-white">{dict.title}</DialogTitle>
+              <DialogDescription className="text-xs text-neutral-500">{dict.subtitle}</DialogDescription>
+            </div>
           </div>
           <div className="flex items-center gap-1">
             {messages.length > 0 && (
