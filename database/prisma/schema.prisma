@@ -117,15 +117,6 @@ model ChatUsage {
   @@map("chat_usage")
 }
 
-model SpeechUsage {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  ipHash    String
-  createdAt DateTime @default(now())
-
-  @@index([ipHash, createdAt])
-  @@map("speech_usage")
-}
-
 model AssistantAnswer {
   id        String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   locale    String

@@ -8,4 +8,3 @@ export * from "./project-service.factory";
 export * from "./rate-limit-service.factory";
 export * from "./user-service.factory";
 export * from "./system-setting-service.factory";
-export * from './speech-provider.factory';
