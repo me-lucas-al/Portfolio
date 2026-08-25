@@ -6,5 +6,6 @@ export * from "./knowledge-service.factory";
 export * from "./link-service.factory";
 export * from "./project-service.factory";
 export * from "./rate-limit-service.factory";
+export * from "./speech-cache-service.factory";
 export * from "./user-service.factory";
 export * from "./system-setting-service.factory";

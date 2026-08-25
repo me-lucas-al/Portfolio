@@ -131,3 +131,15 @@ model AssistantAnswer {
   @@index([locale])
   @@map("assistant_answers")
 }
+
+model AssistantSpeech {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  textHash   String   @unique
+  audioUrl   String
+  voice      String
+  model      String
+  byteLength Int
+  createdAt  DateTime @default(now())
+
+  @@map("assistant_speech")
+}
