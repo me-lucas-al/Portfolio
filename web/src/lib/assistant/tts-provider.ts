@@ -24,11 +24,16 @@ export interface SynthesizedSpeech {
   sampleRate: number;
 }
 
-function resolveModel(): string {
+// Exported so the speech cache key (computed both on /api/tts's cache-miss
+// path and on /api/chat's prewarm path) always resolves to the exact same
+// model/voice this module will actually use to synthesize - a mismatch here
+// would either miss a valid cache entry or, worse, key two different
+// renditions under the same hash.
+export function resolveModel(): string {
   return process.env.ASSISTANT_TTS_MODEL || DEFAULT_MODEL;
 }
 
-function resolveVoice(): string {
+export function resolveVoice(): string {
   return process.env.ASSISTANT_TTS_VOICE || DEFAULT_VOICE;
 }
 
