@@ -16,10 +16,20 @@ export interface RenderLoopHandle {
  * layers (blink/breath/look-at) are expected to no-op or render once and
  * hold; `requestRender()` lets an external event (e.g. a pointer move) ask
  * for a single extra frame.
+ *
+ * `onBeforeHide` (Fase 6) runs synchronously on the visible->hidden
+ * transition, before the loop actually stops scheduling frames - it exists
+ * so a caller can force any driven-by-audio state (the viseme layer's
+ * `mouthOpen`) back to its rest value, and this function then renders one
+ * more frame immediately (bypassing rAF) so that reset is what's actually
+ * left on screen for as long as the tab stays backgrounded, instead of
+ * whatever the mouth happened to look like on the last frame before the tab
+ * was hidden (e.g. mid-word, wide open).
  */
 export function createRenderLoop(
   onFrame: (deltaSeconds: number) => void,
-  reducedMotion: boolean
+  reducedMotion: boolean,
+  onBeforeHide?: () => void
 ): RenderLoopHandle {
   let rafId: number | null = null
   let lastTimeMs: number | null = null
@@ -55,6 +65,11 @@ export function createRenderLoop(
   const handleVisibilityChange = () => {
     hidden = document.hidden
     if (hidden) {
+      onBeforeHide?.()
+      // Force one last render synchronously (not via rAF, which is exactly
+      // what's being cancelled below) so whatever `onBeforeHide` just reset
+      // is what's actually on screen while the tab stays backgrounded.
+      onFrame(0)
       cancelScheduled()
     } else {
       lastTimeMs = null

@@ -22,6 +22,16 @@ export const BLENDSHAPE_ALIASES = {
   eyeLookOutRight: ["eyeLookOutRight", "eyeLookOut_R"],
   eyeLookUpRight: ["eyeLookUpRight", "eyeLookUp_R"],
   eyeLookDownRight: ["eyeLookDownRight", "eyeLookDown_R"],
+  // Fase 6 (viseme layer). Unlike the eye names above, `jawOpen` and
+  // `mouthFunnel` are not L/R-paired ARKit blendshapes, so the committed
+  // facecap.glb (which otherwise renames paired shapes with an `_L`/`_R`
+  // suffix) carries them under their exact canonical spelling already -
+  // verified by inspecting the asset's `morphTargetDictionary` directly.
+  // Listed here anyway (single-alias, no renaming) because
+  // `resolveBlendshapeKeys` only ever resolves names that are keys of this
+  // table.
+  jawOpen: ["jawOpen"],
+  mouthFunnel: ["mouthFunnel"],
 } as const satisfies Record<string, readonly string[]>
 
 export type CanonicalBlendshapeName = keyof typeof BLENDSHAPE_ALIASES

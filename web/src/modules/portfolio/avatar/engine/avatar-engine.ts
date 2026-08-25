@@ -8,9 +8,11 @@ import { createRenderLoop } from "./render-loop"
 import { createBlinkLayer } from "./layers/blink-layer"
 import { createBreathLayer, type BreathLayer } from "./layers/breath-layer"
 import { createLookAtLayer } from "./layers/look-at-layer"
+import { createVisemeLayer } from "./layers/viseme-layer"
 import { createViewportRig, toRendererViewportRect, type Rect } from "./viewport-rig"
 import { createCameraRig, type CameraFramingName, type CameraRig } from "./camera-rig"
 import type { CanonicalBlendshapeName } from "./blendshape-names"
+import { setMouthOpen } from "../state/avatar-signal-bus"
 
 export interface AvatarEngineHandle {
   dispose: () => void
@@ -128,6 +130,7 @@ export async function create(
 
   const blink = createBlinkLayer(reducedMotion)
   const lookAt = createLookAtLayer({ coarsePointer })
+  const viseme = createVisemeLayer()
   const viewportRig = createViewportRig(reducedMotion)
 
   const applyBlendshapeWeights = (weights: Record<string, number>) => {
@@ -153,9 +156,10 @@ export async function create(
 
     const blinkWeights = blink.update(deltaSeconds)
     const lookAtWeights = lookAt.update(deltaSeconds)
+    const visemeWeights = viseme.update(deltaSeconds)
     breath.update(deltaSeconds)
 
-    applyBlendshapeWeights({ ...blinkWeights, ...lookAtWeights })
+    applyBlendshapeWeights({ ...blinkWeights, ...lookAtWeights, ...visemeWeights })
 
     // Always run, at rest or mid-transition: a continuous chase-the-target
     // damp is correct (and effectively free) even when already converged.
@@ -171,7 +175,14 @@ export async function create(
     renderer.setViewport(glRect.x, glRect.y, glRect.width, glRect.height)
 
     renderer.render(scene, camera)
-  }, reducedMotion)
+  }, reducedMotion, () => {
+    // Fase 6: a backgrounded tab stops rendering entirely (see
+    // `render-loop.ts`) - if that pause landed mid-word, the last painted
+    // frame (mouth potentially wide open) would otherwise sit on screen
+    // indefinitely. Force the bus back to rest before that final forced
+    // render, so a mid-speech tab switch always leaves the mouth closed.
+    setMouthOpen(0)
+  })
 
   renderLoop.start()
 
