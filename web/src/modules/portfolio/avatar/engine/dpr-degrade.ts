@@ -70,7 +70,10 @@ export function createDprDegrade(initialDpr: number): DprDegrade {
   let dpr = initialDpr
   let degraded = false
   let lastRenderAtMs: number | null = null
-  let window: number[] = []
+  // Named to avoid shadowing the global `window` - this is exactly the kind
+  // of `engine/` module where a stray reference to the real `window` might
+  // otherwise be expected to work.
+  let renderTimeSamples: number[] = []
 
   function shouldRenderThisFrame(nowMs: number): boolean {
     if (!degraded) return true
@@ -80,11 +83,11 @@ export function createDprDegrade(initialDpr: number): DprDegrade {
 
   function recordRenderTime(renderMs: number, nowMs: number): number {
     lastRenderAtMs = nowMs
-    window.push(renderMs)
+    renderTimeSamples.push(renderMs)
 
-    if (window.length >= FRAME_WINDOW) {
-      const p50 = median([...window].sort((a, b) => a - b))
-      window = []
+    if (renderTimeSamples.length >= FRAME_WINDOW) {
+      const p50 = median([...renderTimeSamples].sort((a, b) => a - b))
+      renderTimeSamples = []
 
       if (p50 > SLOW_FRAME_MS && dpr > DPR_FLOOR) {
         dpr = Math.max(DPR_FLOOR, dpr - DPR_STEP)
