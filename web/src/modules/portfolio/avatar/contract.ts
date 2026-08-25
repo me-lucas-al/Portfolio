@@ -19,12 +19,20 @@
  * render loop. Re-exporting it here, instead of letting the assistant
  * module import `./audio/use-speech-player` directly, keeps the "only
  * `contract.ts`" import rule intact either way.
+ *
+ * Fase 7 adds `classifyTone` (pure, three-less, lives under `./tone/*`) and
+ * two more setters, `setAvatarTone`/`setAvatarThinking`, following the exact
+ * same "assistant module calls a setter here, avatar side polls the bus"
+ * shape as `setAvatarOverlayState`.
  */
 
-import { setOverlayState } from "./state/avatar-signal-bus"
+import { setOverlayState, setTone, setThinking } from "./state/avatar-signal-bus"
+import type { Tone } from "./tone/tone"
 
 export { useSpeechPlayer } from "./audio/use-speech-player"
 export type { UseSpeechPlayerResult } from "./audio/use-speech-player"
+export { classifyTone } from "./tone/classify-tone"
+export type { Tone } from "./tone/tone"
 
 /** High-level state the avatar can be in. Extended by later phases. */
 export type AvatarState = "idle" | "loading" | "error" | "unsupported"
@@ -67,4 +75,49 @@ export function setAvatarOverlayState(open: boolean, anchorRect: DOMRectReadOnly
       ? { x: anchorRect.x, y: anchorRect.y, width: anchorRect.width, height: anchorRect.height }
       : null
   )
+}
+
+// How long a non-neutral tone holds at full target weight before this
+// module reverts the target back to "neutral" on its own. Provisional/
+// tunable, picked from this phase's "hold near full for ~2-3s" guidance -
+// deliberately just ONE damped transition (target -> tone, then later
+// target -> neutral), not a second decay curve layered on top:
+// `engine/layers/emotion-layer.ts`'s own exponential damping (settling in
+// roughly a second either way) is what actually makes both edges of this
+// look smooth, comfortably inside the "fully neutral within ~10-15s" ceiling.
+const TONE_HOLD_MS = 2500
+
+let toneRevertTimeoutId: ReturnType<typeof setTimeout> | null = null
+
+/**
+ * Pushes a newly classified tone into the avatar and schedules it to revert
+ * to "neutral" on its own after `TONE_HOLD_MS` - the assistant module never
+ * has to remember to clear a tone itself. Calling this again before the
+ * timeout fires (e.g. a fast follow-up message) just re-schedules it, same
+ * "redirect the chase" spirit as the framing/camera rigs.
+ */
+export function setAvatarTone(tone: Tone): void {
+  if (toneRevertTimeoutId !== null) {
+    clearTimeout(toneRevertTimeoutId)
+    toneRevertTimeoutId = null
+  }
+
+  setTone(tone)
+  if (tone === "neutral") return
+
+  toneRevertTimeoutId = setTimeout(() => {
+    toneRevertTimeoutId = null
+    setTone("neutral")
+  }, TONE_HOLD_MS)
+}
+
+/**
+ * Tells the avatar whether the assistant is currently waiting on a
+ * response - drive this straight from `useAssistantChat`'s `loading` state.
+ * `engine/layers/emotion-layer.ts` is the one place that decides whether
+ * (and how) to show it, including the fast-path guard that keeps a
+ * cache-hit response from ever visibly starting a "thinking" animation.
+ */
+export function setAvatarThinking(thinking: boolean): void {
+  setThinking(thinking)
 }
