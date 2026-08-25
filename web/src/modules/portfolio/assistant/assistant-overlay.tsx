@@ -1,7 +1,7 @@
 "use client"
 
 import type { CSSProperties, RefObject } from "react"
-import { Trash2, X } from "lucide-react"
+import { CircleStop, Trash2, Volume2, VolumeX, X } from "lucide-react"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { AssistantConversation, type AssistantConversationProps } from "./assistant-conversation"
 
@@ -16,6 +16,15 @@ interface AssistantOverlayProps extends AssistantConversationProps {
    * hands the ref up.
    */
   avatarSlotRef: RefObject<HTMLDivElement | null>
+  /** User's voice preference (persisted by `useSpeechPlayer`) - controls only the toggle button's icon/label here. */
+  voiceEnabled: boolean
+  onToggleVoice: () => void
+  isSpeaking: boolean
+  /** True while `/api/tts` is still synthesizing - the response arrives whole, tens of seconds after the text does. */
+  isPreparingVoice: boolean
+  /** Voice is on but no gesture has unlocked the audio element yet this load. */
+  needsUnlock: boolean
+  onStopSpeaking: () => void
 }
 
 // Neutralizes DialogContent's default pop-in zoom (zoom-in-95/zoom-out-95) via
@@ -34,6 +43,12 @@ export function AssistantOverlay({
   onOpenChange,
   clearChat,
   avatarSlotRef,
+  voiceEnabled,
+  onToggleVoice,
+  isSpeaking,
+  isPreparingVoice,
+  needsUnlock,
+  onStopSpeaking,
   dict,
   messages,
   ...conversationProps
@@ -54,6 +69,27 @@ export function AssistantOverlay({
             </div>
           </div>
           <div className="flex items-center gap-1">
+            {(isSpeaking || isPreparingVoice) && (
+              <button
+                type="button"
+                onClick={onStopSpeaking}
+                aria-label={isPreparingVoice ? dict.preparingVoice : dict.stopSpeaking}
+                title={isPreparingVoice ? dict.preparingVoice : dict.stopSpeaking}
+                className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+              >
+                <CircleStop className={`size-4 ${isPreparingVoice ? "animate-pulse" : ""}`} />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onToggleVoice}
+              aria-label={voiceEnabled ? dict.voiceDisable : dict.voiceEnable}
+              aria-pressed={voiceEnabled}
+              title={needsUnlock ? dict.voiceUnlockHint : voiceEnabled ? dict.voiceDisable : dict.voiceEnable}
+              className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+            >
+              {voiceEnabled ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
+            </button>
             {messages.length > 0 && (
               <button
                 type="button"

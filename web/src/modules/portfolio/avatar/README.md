@@ -153,3 +153,89 @@ textures. `create-renderer.ts` still only flags the loss/restore transition;
   side panel, just with a small avatar-bust slot added to its header.
 - No LOD swap, no dynamic DPR degrade loop - the DPR clamp stays static.
 - No `visualViewport`-based mobile-keyboard handling.
+
+## Fase 6: audio player + amplitude-based lip sync
+
+Adds `audio/` (three-less, unlike `engine/`) and one new idle-mixer layer,
+`engine/layers/viseme-layer.ts`.
+
+### `audio/`
+
+- `audio-graph.ts` - lazily-created singleton: one `<audio>` element
+  (`crossOrigin = "anonymous"`, for a later CDN-cached-audio phase), one
+  shared `AudioContext`, wired
+  `MediaElementAudioSourceNode -> GainNode -> AnalyserNode` (and
+  `GainNode -> destination`). The analyser sits downstream of the gain node
+  on purpose: `speech-player.ts`'s `stop()` fades gain to 0 before pausing,
+  so an interrupted sentence's mouth eases shut over that fade instead of
+  the analyser reading the still-loud pre-fade signal right up to a hard
+  cut. `fftSize = 1024`; the `Float32Array` read buffer is allocated once
+  and reused every frame.
+- `lip-sync-analyser.ts` - its own `rAF` loop (independent of the three.js
+  render loop - the canvas may not even be booted yet when speech starts),
+  computing `rms -> norm -> shaped -> attack/release-damped current -> mouth`
+  every tick and writing the result into `state/avatar-signal-bus.ts`'s
+  `mouthOpen` (0..1). `stop()` immediately zeroes it - never leaves a stale
+  nonzero value hanging after speech ends.
+- `speech-player.ts` - `play(url)` / `stop()` on the shared element, plus a
+  plain pub/sub (`subscribeSpeechPlayer`) carrying `{ state, unlocked }` for
+  React to consume. Handles the iOS per-gesture unlock: a `{ once: true }`
+  `pointerdown`/`keydown` listener does a throwaway unlock play the first
+  time either fires. `unlocked` is in-memory only, reset every page load -
+  never written to or read from localStorage, since a stale flag from a
+  previous load is meaningless (the element isn't actually unlocked again
+  until a fresh gesture happens on the current load).
+- `use-speech-player.ts` - the React binding (`voiceEnabled` persisted in
+  `localStorage` under `assistant_voice_enabled`, default `false`;
+  `isSpeaking`/`isPreparingVoice`/`needsUnlock` derived from the pub/sub
+  snapshot; `speak()`/`stopSpeaking()`).
+
+`contract.ts` re-exports `useSpeechPlayer` (not a deep import) - `audio/` is
+three-less, same as `state/avatar-signal-bus.ts`, so re-exporting it costs
+nothing and keeps the "assistant/* only imports contract.ts" rule intact.
+
+### `engine/layers/viseme-layer.ts`
+
+Reads `mouthOpen` from the bus once per frame and maps it straight onto
+`{ jawOpen, mouthFunnel: mouthOpen * 0.2 }` - no re-damping, that's already
+done by `lip-sync-analyser.ts`. Both names were verified against the
+committed `facecap.glb`'s `morphTargetDictionary` directly: unlike the
+paired eye shapes in `blendshape-names.ts`, `jawOpen` and `mouthFunnel` are
+unpaired ARKit blendshapes, so this asset carries them under their exact
+canonical spelling already (no `_L`/`_R`-style rename) - both still needed
+one-alias entries in `blendshape-names.ts` regardless, since
+`resolveBlendshapeKeys` only ever resolves names that are keys of that
+table.
+
+### The ~tens-of-seconds silent gap
+
+`/api/tts` is a unary endpoint - it returns one complete `audio/wav` file,
+not a progressive stream (a real smoke test against Gemini TTS found no
+working streaming path for the available models). A response can take on
+the order of 30-40s to come back after the chat text already rendered. The
+UI covers this with `isPreparingVoice`: a pulsing stop-icon in the overlay
+header from the moment `speak()` is called until the `<audio>` element
+actually fires `playing` (or errors/aborts) - there is no way to shorten the
+wait itself in this phase, only to make it legible.
+
+### Tab-hidden mouth freeze fix
+
+`render-loop.ts` already paused its `rAF` loop on `document.hidden`. Fase 6
+adds an `onBeforeHide` hook, called synchronously on the visible->hidden
+transition before the loop stops scheduling frames: `avatar-engine.ts` uses
+it to force `mouthOpen` back to `0`, and `render-loop.ts` then renders one
+more frame immediately (bypassing `rAF`) so that reset - not whatever the
+mouth looked like on the last frame before the tab was hidden - is what
+stays on screen for as long as the tab stays backgrounded.
+
+### Explicitly not done in Fase 6
+
+- No audio caching - every `/api/tts` call re-synthesizes from scratch. A
+  later phase adds a cache.
+- No tone/emotion system.
+- No viewport/camera framing changes - Fase 4's territory, untouched here.
+- Lip-sync quality/timing feel was not (could not be) verified visually in
+  this environment - only `tsc`/the production build were checked. A human
+  needs to open a real browser with `ASSISTANT_VOICE_ENABLED=true` and a
+  live `GEMINI_API_KEY` to judge how the mouth actually looks while
+  speaking.

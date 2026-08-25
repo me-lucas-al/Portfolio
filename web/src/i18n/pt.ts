@@ -51,6 +51,11 @@ export interface Dictionary {
     retry: string
     disclaimer: string
     suggestions: string[]
+    voiceEnable: string
+    voiceDisable: string
+    preparingVoice: string
+    stopSpeaking: string
+    voiceUnlockHint: string
   }
 }
 
@@ -113,6 +118,11 @@ export const pt: Dictionary = {
       "Como o portfólio foi construído?",
       "Quais tecnologias o Lucas domina melhor?",
     ],
+    voiceEnable: "Ativar voz",
+    voiceDisable: "Desativar voz",
+    preparingVoice: "Preparando voz...",
+    stopSpeaking: "Parar de falar",
+    voiceUnlockHint: "Toque em qualquer lugar da página para ativar o áudio",
   },
 }
 

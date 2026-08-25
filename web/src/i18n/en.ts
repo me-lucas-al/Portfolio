@@ -59,5 +59,10 @@ export const en: Dictionary = {
       'How was this portfolio built?',
       'Which technologies does Lucas know best?',
     ],
+    voiceEnable: 'Enable voice',
+    voiceDisable: 'Disable voice',
+    preparingVoice: 'Preparing voice...',
+    stopSpeaking: 'Stop speaking',
+    voiceUnlockHint: 'Tap anywhere on the page to enable audio',
   },
 }
