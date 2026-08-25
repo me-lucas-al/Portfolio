@@ -29,10 +29,11 @@
         "ASSISTANT_DAILY_BUDGET",
         "IP_HASH_SALT",
         "REPOS_TO_INDEX",
-        "SPEECH_ENABLED",
-        "SPEECH_DAILY_BUDGET",
-        "SPEECH_VOICE",
-        "SPEECH_MODEL_CHAIN"
+        "ASSISTANT_MODEL_CHAIN",
+        "GEMINI_BASE_URL",
+        "CLOUDINARY_CLOUD_NAME",
+        "CLOUDINARY_API_KEY",
+        "CLOUDINARY_API_SECRET"
       ]
     },
     "lint": {
