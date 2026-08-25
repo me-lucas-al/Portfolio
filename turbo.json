@@ -33,7 +33,12 @@
         "GEMINI_BASE_URL",
         "CLOUDINARY_CLOUD_NAME",
         "CLOUDINARY_API_KEY",
-        "CLOUDINARY_API_SECRET"
+        "CLOUDINARY_API_SECRET",
+        "ASSISTANT_VOICE_ENABLED",
+        "SPEECH_TOKEN_SECRET",
+        "ASSISTANT_TTS_DAILY_BUDGET",
+        "ASSISTANT_TTS_MODEL",
+        "ASSISTANT_TTS_VOICE"
       ]
     },
     "lint": {

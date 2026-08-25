@@ -1,12 +1,15 @@
 import { NextRequest, after } from "next/server";
 import { ChatRequestSchema } from "@portfolio/packages/schemas/assistant";
 import type { ChatErrorBody, ChatErrorReason } from "@portfolio/packages/schemas/assistant/chat-error";
+import type { ChatSpeechType } from "@portfolio/packages/schemas/assistant/chat-response";
 import { makeAssistantAnswerService } from "@portfolio/core/src/factories/_index";
 import { checkRateLimit, hashIp, isDailyBudgetExceeded } from "@/lib/assistant/rate-limit";
 import { runAssistant } from "@/lib/assistant/agent";
 import { createDeadline } from "@/lib/assistant/deadline";
 import { toChatErrorResponse } from "@/lib/assistant/chat-error-response";
 import { getClientIp, isSameOrigin } from "@/lib/assistant/http-guards";
+import { signSpeechToken } from "@/lib/assistant/speech-token";
+import { truncateForSpeech } from "@/lib/assistant/tts-text";
 
 export const runtime = "nodejs";
 // Not the full 300s Vercel allows: this is an unauthenticated public endpoint,
@@ -19,6 +22,23 @@ export const maxDuration = 60;
 export const preferredRegion = "gru1";
 
 const TOTAL_BUDGET_MS = 50_000;
+const SPEECH_TOKEN_TTL_MS = 10 * 60_000;
+
+// Voice is gated independently from ASSISTANT_ENABLED so it can be killed
+// (e.g. cost spike, bad synthesis output) without taking down text chat.
+// Included on the cache-hit branch too: that's the fastest, cheapest path
+// (~500ms) and must not be the one path that never gets to speak.
+function buildSpeechField(text: string): ChatSpeechType | undefined {
+  if (process.env.ASSISTANT_VOICE_ENABLED !== "true") return undefined;
+
+  const speechText = truncateForSpeech(text);
+  const token = signSpeechToken(speechText, SPEECH_TOKEN_TTL_MS);
+  return {
+    url: `/api/tts?k=${token}`,
+    text: speechText,
+    expiresAt: Date.now() + SPEECH_TOKEN_TTL_MS,
+  };
+}
 
 function logMetric(fields: Record<string, string | number>): void {
   const line = Object.entries(fields)
@@ -92,7 +112,7 @@ export async function POST(request: NextRequest) {
         cacheHit: 1,
         durationMs: Date.now() - startedAt,
       });
-      return Response.json({ text: cached.answer });
+      return Response.json({ text: cached.answer, speech: buildSpeechField(cached.answer) });
     }
   } catch (error) {
     console.error("[assistant] cache lookup failed:", error);
@@ -129,7 +149,7 @@ export async function POST(request: NextRequest) {
         .catch((error) => console.error("[assistant] failed to persist answer:", error)),
     );
 
-    return Response.json({ text });
+    return Response.json({ text, speech: buildSpeechField(text) });
   } catch (error) {
     console.error("[assistant] generation failed:", error);
     const response = toChatErrorResponse(error, deadline);
