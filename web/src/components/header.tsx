@@ -36,7 +36,7 @@ export async function Header() {
                 href={item.href}
                 className="group flex items-center text-xs xl:text-sm font-medium text-fg-muted hover:text-fg transition-colors whitespace-nowrap"
               >
-                <span className="w-0 opacity-0 overflow-hidden text-accent transition-all duration-200 group-hover:w-3 group-hover:opacity-100">
+                <span className="w-0 opacity-0 overflow-hidden text-brand transition-all duration-200 group-hover:w-3 group-hover:opacity-100">
                   {"›"}
                 </span>
                 {item.label}
@@ -51,7 +51,7 @@ export async function Header() {
           {session && (
             <Link
               href="/control-painel"
-              className="px-3 py-1.5 rounded-lg bg-accent/10 text-accent-strong border border-accent/30 text-xs font-medium hover:bg-accent hover:text-accent-ink hover:border-accent transition-all whitespace-nowrap"
+              className="px-3 py-1.5 rounded-lg bg-brand/10 text-brand-strong border border-brand/30 text-xs font-medium hover:bg-brand hover:text-brand-ink hover:border-brand transition-all whitespace-nowrap"
             >
               {dict.header.controlPanel}
             </Link>

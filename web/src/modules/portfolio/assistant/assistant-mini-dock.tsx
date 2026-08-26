@@ -73,7 +73,7 @@ export function AssistantMiniDock({ dict, open, onOpenChange }: AssistantMiniDoc
         onClick={handleTriggerClick}
         aria-label={dict.trigger}
         aria-expanded={open}
-        className="flex size-14 items-center justify-center rounded-full bg-accent text-accent-ink shadow-lg shadow-accent-deep/50 transition-all hover:bg-accent-strong active:scale-95"
+        className="flex size-14 items-center justify-center rounded-full bg-brand text-brand-ink shadow-lg shadow-brand-deep/50 transition-all hover:bg-brand-strong active:scale-95"
       >
         {open ? <X className="size-6" /> : <MessageCircle className="size-6" />}
       </button>

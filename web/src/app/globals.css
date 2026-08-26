@@ -15,10 +15,10 @@
   --color-fg: var(--fg);
   --color-fg-muted: var(--fg-muted);
   --color-muted-2: var(--muted-2);
-  --color-accent: var(--accent);
-  --color-accent-strong: var(--accent-strong);
-  --color-accent-deep: var(--accent-deep);
-  --color-accent-ink: var(--accent-ink);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-ink: var(--brand-ink);
   --color-success: var(--success);
   --color-danger: var(--danger);
   --font-sans: var(--font-sans);
@@ -64,9 +64,11 @@
 
 :root {
   /* Portfolio visual identity — warm off-black + a single restrained amber
-     accent, plus a violet "prompt" tone used only inside the logo mark
-     (never exposed as a Tailwind utility) so the site's own UI never
-     splashes more than one accent hue around. */
+     brand color (named --brand, not --accent, so it never collides with
+     shadcn's own --accent/--sidebar-accent tokens used internally by
+     dropdown/select/tabs hover states), plus a violet "prompt" tone used
+     only inside the logo mark (never exposed as a Tailwind utility) so the
+     site's own UI never splashes more than one brand hue around. */
   --ink: #0d0b12;
   --surface: #17131f;
   --surface-2: #201a2c;
@@ -75,10 +77,10 @@
   --fg: #f4f1f8;
   --fg-muted: #a79bc0;
   --muted-2: #6f6484;
-  --accent: #f2a93c;
-  --accent-strong: #f7c374;
-  --accent-deep: #6b4a12;
-  --accent-ink: #1a1206;
+  --brand: #f2a93c;
+  --brand-strong: #f7c374;
+  --brand-deep: #6b4a12;
+  --brand-ink: #1a1206;
   --success: #45c98a;
   --danger: #f1616b;
   --prompt: #8b7bf0;

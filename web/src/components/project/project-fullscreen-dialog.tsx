@@ -58,8 +58,8 @@ export function ProjectFullscreenDialog({ title, imagesUrl, startIndex = 0 }: Pr
           </CarouselContent>
           
           <div className="flex items-center gap-6 mt-6">
-            <CarouselPrevious className="static translate-y-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-surface-2 border border-line-strong text-fg hover:bg-accent hover:border-accent hover:text-accent-ink transition-all shadow-xl" />
-            <CarouselNext className="static translate-y-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-surface-2 border border-line-strong text-fg hover:bg-accent hover:border-accent hover:text-accent-ink transition-all shadow-xl" />
+            <CarouselPrevious className="static translate-y-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-surface-2 border border-line-strong text-fg hover:bg-brand hover:border-brand hover:text-brand-ink transition-all shadow-xl" />
+            <CarouselNext className="static translate-y-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-surface-2 border border-line-strong text-fg hover:bg-brand hover:border-brand hover:text-brand-ink transition-all shadow-xl" />
           </div>
         </Carousel>
       )}

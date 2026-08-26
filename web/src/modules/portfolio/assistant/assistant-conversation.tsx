@@ -90,7 +90,7 @@ export function AssistantConversation({
                 <button
                   type="button"
                   onClick={handleRetry}
-                  className="self-start text-xs font-medium text-accent transition-colors hover:text-accent-strong"
+                  className="self-start text-xs font-medium text-brand transition-colors hover:text-brand-strong"
                 >
                   {dict.retry}
                 </button>

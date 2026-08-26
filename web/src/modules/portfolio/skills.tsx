@@ -150,7 +150,7 @@ export function Skills({ frontend, backend, tools, locale = "pt" }: SkillsProps)
             <div className="flex flex-wrap gap-3">
               {category.skills.map((skillName) => {
                 const normalized = skillName.toLowerCase();
-                const config = skillIconMap[normalized] || { icon: TerminalSquare, hoverColor: "group-hover:text-accent" };
+                const config = skillIconMap[normalized] || { icon: TerminalSquare, hoverColor: "group-hover:text-brand" };
                 const Icon = config.icon;
 
                 return (

@@ -3,9 +3,9 @@ import { Github, Linkedin, Mail, Smartphone, Link as LinkIcon } from "lucide-rea
 import Link from "next/link"
 import { getDictionary, type Locale } from "@/i18n"
 
-// Icon accents intentionally reference each platform's own brand color
+// Icon brands intentionally reference each platform's own brand color
 // (GitHub neutral, LinkedIn blue, WhatsApp green, email red) rather than the
-// site's own amber accent - a deliberate exception, not the "accent color
+// site's own amber brand - a deliberate exception, not the "brand color
 // splashed everywhere" pattern the rest of the UI avoids.
 const contactVisuals: Record<string, { icon: React.ReactNode; hoverClass: string; iconClass: string }> = {
   github: {
@@ -57,7 +57,7 @@ export function Contact({ links, locale }: ContactProps) {
     <section id="contatos" className="py-20 scroll-mt-20">
       <div className="space-y-12">
         <div className="space-y-4">
-          <h2 className="text-accent font-medium tracking-wider text-sm uppercase">
+          <h2 className="text-brand font-medium tracking-wider text-sm uppercase">
             {dict.contact.title}
           </h2>
           <h3 className="font-display text-3xl md:text-5xl font-bold text-fg tracking-tight">

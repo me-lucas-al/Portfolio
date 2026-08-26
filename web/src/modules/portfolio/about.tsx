@@ -34,7 +34,7 @@ export function About({ textPt, textEn, locale = "pt" }: AboutProps) {
         </div>
 
         <div className="flex justify-center md:justify-end">
-          <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full border-4 border-line-strong overflow-hidden shadow-xl shadow-accent/10">
+          <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full border-4 border-line-strong overflow-hidden shadow-xl shadow-brand/10">
             <Image
               src={profilePicture}
               alt="Lucas Almeida - Desenvolvedor Next.js, React e Node.js"

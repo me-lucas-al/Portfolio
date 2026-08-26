@@ -5,7 +5,7 @@ interface LogoMarkProps {
 // A terminal prompt ("›") followed by a cursor bar — the same "waiting to
 // type" glyph the avatar's own typewriter effect renders mid-response. This
 // mark is the site's one deliberate signature, so it's kept out of every
-// other component: no gradients, no accent color splashed elsewhere.
+// other component: no gradients, no brand color splashed elsewhere.
 export function LogoMark({ className }: LogoMarkProps) {
   return (
     <svg viewBox="0 0 100 100" className={className} aria-hidden focusable="false">
@@ -18,7 +18,7 @@ export function LogoMark({ className }: LogoMarkProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <rect x="66" y="30" width="12" height="40" rx="3" fill="var(--accent)" />
+      <rect x="66" y="30" width="12" height="40" rx="3" fill="var(--brand)" />
     </svg>
   )
 }

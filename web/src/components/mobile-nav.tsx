@@ -72,7 +72,7 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
                   onClick={handleLinkClick}
                   className="group flex items-center gap-1.5 px-3.5 py-3 rounded-xl text-fg-muted hover:text-fg hover:bg-surface-2/80 border border-transparent hover:border-line transition-all text-sm font-medium"
                 >
-                  <span className="w-0 opacity-0 overflow-hidden text-accent transition-all duration-200 group-hover:w-3 group-hover:opacity-100">
+                  <span className="w-0 opacity-0 overflow-hidden text-brand transition-all duration-200 group-hover:w-3 group-hover:opacity-100">
                     {"›"}
                   </span>
                   <span>{item.label}</span>
@@ -86,7 +86,7 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
               <Link
                 href="/control-painel"
                 onClick={handleLinkClick}
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-accent/10 text-accent-strong border border-accent/30 text-xs font-medium hover:bg-accent hover:text-accent-ink transition-all shadow-sm"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-brand/10 text-brand-strong border border-brand/30 text-xs font-medium hover:bg-brand hover:text-brand-ink transition-all shadow-sm"
               >
                 <LayoutDashboard className="w-4 h-4" />
                 {dict.header.controlPanel}

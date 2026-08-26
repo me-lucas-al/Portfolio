@@ -29,7 +29,7 @@ export function LanguageToggle({ currentLocale }: LanguageToggleProps) {
         aria-label="Mudar para Português"
         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
           currentLocale === "pt"
-            ? "bg-accent/15 text-accent-strong border border-accent/40"
+            ? "bg-brand/15 text-brand-strong border border-brand/40"
             : "text-muted-2 hover:text-fg-muted"
         }`}
       >
@@ -42,7 +42,7 @@ export function LanguageToggle({ currentLocale }: LanguageToggleProps) {
         aria-label="Switch to English"
         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
           currentLocale === "en"
-            ? "bg-accent/15 text-accent-strong border border-accent/40"
+            ? "bg-brand/15 text-brand-strong border border-brand/40"
             : "text-muted-2 hover:text-fg-muted"
         }`}
       >

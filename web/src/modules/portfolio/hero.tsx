@@ -30,12 +30,12 @@ export function Hero({ cvUrlPt, cvUrlEn, locale }: HeroProps) {
   return (
     <section className="min-h-[85vh] flex flex-col justify-center items-start pt-20">
       <div className="space-y-6 max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-700">
-        <h2 className="text-accent font-medium tracking-wider text-sm uppercase">
+        <h2 className="text-brand font-medium tracking-wider text-sm uppercase">
           Software Engineer
         </h2>
         <h1 className="font-display text-5xl md:text-7xl font-bold text-fg tracking-tight">
           Lucas Almeida
-          <span className="cursor-blink text-accent" aria-hidden>
+          <span className="cursor-blink text-brand" aria-hidden>
             ▍
           </span>
         </h1>
@@ -51,7 +51,7 @@ export function Hero({ cvUrlPt, cvUrlEn, locale }: HeroProps) {
           <Link
             href="https://linkedin.com/in/lucas-almeida-development"
             target="_blank"
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-accent-strong transition-all text-accent-ink font-semibold shadow-[0_0_30px_-10px_rgba(242,169,60,0.6)]"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-brand hover:bg-brand-strong transition-all text-brand-ink font-semibold shadow-[0_0_30px_-10px_rgba(242,169,60,0.6)]"
           >
             <Linkedin className="w-5 h-5" />
             LinkedIn

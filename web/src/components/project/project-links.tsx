@@ -23,7 +23,7 @@ export function ProjectLinks({ githubUrl, deployUrl, locale = "pt" }: ProjectLin
         </Link>
       )}
       {deployUrl && (
-        <Link href={deployUrl} target="_blank" className="flex items-center gap-2 text-sm font-medium text-muted-2 hover:text-accent transition-colors">
+        <Link href={deployUrl} target="_blank" className="flex items-center gap-2 text-sm font-medium text-muted-2 hover:text-brand transition-colors">
           <ExternalLink className="w-4 h-4" />
           {deployLabel}
         </Link>

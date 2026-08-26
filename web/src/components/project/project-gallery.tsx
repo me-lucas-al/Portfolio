@@ -26,7 +26,7 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
             <FolderGit2 className="w-6 h-6 text-fg-muted" />
           </div>
         </div>
-        <h4 className="text-xl font-bold text-fg mb-4 group-hover:text-accent transition-colors">
+        <h4 className="text-xl font-bold text-fg mb-4 group-hover:text-brand transition-colors">
           {title}
         </h4>
       </>
@@ -54,7 +54,7 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
             <ProjectFullscreenDialog title={title} imagesUrl={imagesUrl} />
           </Dialog>
         </div>
-        <h4 className="text-xl font-bold text-fg mb-4 group-hover:text-accent transition-colors">
+        <h4 className="text-xl font-bold text-fg mb-4 group-hover:text-brand transition-colors">
           {title}
         </h4>
       </>
@@ -96,7 +96,7 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
       </div>
 
       <div className="flex items-start justify-between gap-4 mb-4">
-        <h4 className="text-xl font-bold text-fg group-hover:text-accent transition-colors">
+        <h4 className="text-xl font-bold text-fg group-hover:text-brand transition-colors">
           {title}
         </h4>
         <div className="flex items-center gap-2 shrink-0">

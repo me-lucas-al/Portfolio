@@ -56,7 +56,7 @@ export function Experience({ experiences, locale }: ExperienceProps) {
                 {formatPeriod(exp.startDate, exp.endDate, locale)}
               </div>
               <div className="md:w-3/4 space-y-3">
-                <h4 className="text-xl font-bold text-fg group-hover:text-accent transition-colors">
+                <h4 className="text-xl font-bold text-fg group-hover:text-brand transition-colors">
                   {role} ·{" "}
                   <span className="font-medium text-fg-muted">
                     {exp.company}

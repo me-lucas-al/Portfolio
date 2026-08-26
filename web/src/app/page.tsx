@@ -115,7 +115,7 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-ink selection:bg-accent/25 selection:text-accent-strong">
+    <main className="min-h-screen bg-ink selection:bg-brand/25 selection:text-brand-strong">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
