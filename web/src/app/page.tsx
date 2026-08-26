@@ -115,7 +115,7 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-black selection:bg-blue-900/30 selection:text-blue-200">
+    <main className="min-h-screen bg-ink selection:bg-accent/25 selection:text-accent-strong">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
@@ -132,10 +132,10 @@ export default async function HomePage() {
         <Education educations={educations} locale={locale} />
         <Contact links={links} locale={locale} />
       </div>
-      <footer className="border-t border-neutral-900 py-8 text-center text-xs text-neutral-500 mt-12">
+      <footer className="border-t border-line py-8 text-center text-xs text-muted-2 mt-12">
         <div className="max-w-6xl mx-auto px-6 space-y-1">
           <p>© {new Date().getFullYear()} Lucas Almeida. {dict.footer.rights}</p>
-          <p className="text-neutral-600">Lucas Almeida | {dict.footer.description}</p>
+          <p className="text-muted-2">Lucas Almeida | {dict.footer.description}</p>
         </div>
       </footer>
       <AvatarStage dict={dict.assistant} />
