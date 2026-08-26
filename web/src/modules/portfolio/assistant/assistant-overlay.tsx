@@ -1,29 +1,21 @@
 "use client"
 
-import type { CSSProperties, RefObject } from "react"
+import type { CSSProperties } from "react"
 import { CircleStop, Trash2, Volume2, VolumeX, X } from "lucide-react"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
+import { AvatarSprite } from "@/modules/portfolio/avatar/contract"
 import { AssistantConversation, type AssistantConversationProps } from "./assistant-conversation"
 
 interface AssistantOverlayProps extends AssistantConversationProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   clearChat: () => void
-  /**
-   * Header slot the avatar module draws its "overlay-bust" framing into
-   * (see `assistant-widget.tsx`). This component has no idea the avatar
-   * exists - it just renders an empty, decorative circular placeholder and
-   * hands the ref up.
-   */
-  avatarSlotRef: RefObject<HTMLDivElement | null>
-  /** User's voice preference (persisted by `useSpeechPlayer`) - controls only the toggle button's icon/label here. */
-  voiceEnabled: boolean
-  onToggleVoice: () => void
+  /** Visitor's typing-blip sound preference (persisted by `useBlipPreferences`) - controls the toggle button's icon/label here. */
+  blipsEnabled: boolean
+  onToggleBlips: () => void
+  /** TTS is dormant (see `../avatar/README.md`) - these stay wired for when it's re-enabled per-message. */
   isSpeaking: boolean
-  /** True while `/api/tts` is still synthesizing - the response arrives whole, tens of seconds after the text does. */
   isPreparingVoice: boolean
-  /** Voice is on but no gesture has unlocked the audio element yet this load. */
-  needsUnlock: boolean
   onStopSpeaking: () => void
 }
 
@@ -42,12 +34,10 @@ export function AssistantOverlay({
   open,
   onOpenChange,
   clearChat,
-  avatarSlotRef,
-  voiceEnabled,
-  onToggleVoice,
+  blipsEnabled,
+  onToggleBlips,
   isSpeaking,
   isPreparingVoice,
-  needsUnlock,
   onStopSpeaking,
   dict,
   messages,
@@ -62,7 +52,7 @@ export function AssistantOverlay({
       >
         <div className="flex items-center justify-between gap-3 border-b border-neutral-900 px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
-            <div ref={avatarSlotRef} aria-hidden="true" className="size-11 shrink-0 rounded-full pointer-events-none" />
+            <AvatarSprite variant="bust" className="size-11 shrink-0 rounded-full object-cover" />
             <div className="min-w-0">
               <DialogTitle className="text-sm leading-normal font-semibold text-white">{dict.title}</DialogTitle>
               <DialogDescription className="text-xs text-neutral-500">{dict.subtitle}</DialogDescription>
@@ -82,13 +72,13 @@ export function AssistantOverlay({
             )}
             <button
               type="button"
-              onClick={onToggleVoice}
-              aria-label={voiceEnabled ? dict.voiceDisable : dict.voiceEnable}
-              aria-pressed={voiceEnabled}
-              title={needsUnlock ? dict.voiceUnlockHint : voiceEnabled ? dict.voiceDisable : dict.voiceEnable}
+              onClick={onToggleBlips}
+              aria-label={blipsEnabled ? dict.blipsDisable : dict.blipsEnable}
+              aria-pressed={blipsEnabled}
+              title={blipsEnabled ? dict.blipsDisable : dict.blipsEnable}
               className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
             >
-              {voiceEnabled ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
+              {blipsEnabled ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
             </button>
             {messages.length > 0 && (
               <button

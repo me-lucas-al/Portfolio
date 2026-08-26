@@ -76,7 +76,7 @@ export interface UseAssistantChatOptions {
    * yesterday's last answer, so that effect calls `setMessages` directly
    * instead of going through `pushMessage`/this callback.
    */
-  onModelMessage?: (message: { text: string; speech?: ChatSpeechType }) => void
+  onModelMessage?: (message: { text: string; speech?: ChatSpeechType }, messageId: number) => void
   /**
    * Fired at the very top of `sendToApi`, before anything else - both a
    * fresh send and a retry call `sendToApi`, so this is the hook a consumer
@@ -119,14 +119,16 @@ export function useAssistantChat(
     abortControllerRef.current?.abort()
   }, [])
 
-  function pushMessage(role: ChatMessage["role"], content: string) {
+  function pushMessage(role: ChatMessage["role"], content: string): number {
     nextId.current += 1
+    const id = nextId.current
     savedAtRef.current = Date.now()
     setMessages((prev) => {
-      const next = [...prev, { id: nextId.current, role, content }]
+      const next = [...prev, { id, role, content }]
       persistChat(next, savedAtRef.current)
       return next
     })
+    return id
   }
 
   async function sendToApi(message: string) {
@@ -166,8 +168,8 @@ export function useAssistantChat(
       }
 
       const data = (await response.json()) as ChatResponseType
-      pushMessage("model", data.text)
-      onModelMessage?.(data)
+      const messageId = pushMessage("model", data.text)
+      onModelMessage?.(data, messageId)
       setFailedMessage(null)
       setInput("")
     } catch (err) {

@@ -1,5 +1,5 @@
 import { getAudioGraph } from "./audio-graph"
-import { setMouthOpen } from "../state/avatar-signal-bus"
+import { activateMouthSource, deactivateMouthSource, writeMouthOpen } from "../mouth/mouth-source"
 
 // Typical speech RMS (time-domain, `getFloatTimeDomainData`) sits roughly in
 // 0.01..0.25 for the kind of audio this pipeline plays. `getByteTimeDomainData`
@@ -48,7 +48,7 @@ function tick(timeMs: number): void {
   const tau = shaped > current ? ATTACK_TAU_SECONDS : RELEASE_TAU_SECONDS
   current += (shaped - current) * (1 - Math.exp(-deltaSeconds / tau))
 
-  setMouthOpen(current < DEADZONE ? 0 : current * CEILING)
+  writeMouthOpen("audio", current < DEADZONE ? 0 : current * CEILING)
 
   rafId = window.requestAnimationFrame(tick)
 }
@@ -67,6 +67,7 @@ function tick(timeMs: number): void {
  */
 export function startLipSyncAnalyser(): void {
   if (rafId !== null) return
+  activateMouthSource("audio")
   lastTimeMs = null
   rafId = window.requestAnimationFrame(tick)
 }
@@ -78,5 +79,5 @@ export function stopLipSyncAnalyser(): void {
   }
   lastTimeMs = null
   current = 0
-  setMouthOpen(0)
+  deactivateMouthSource("audio")
 }

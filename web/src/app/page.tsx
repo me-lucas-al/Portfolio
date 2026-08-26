@@ -138,7 +138,7 @@ export default async function HomePage() {
           <p className="text-neutral-600">Lucas Almeida | {dict.footer.description}</p>
         </div>
       </footer>
-      <AvatarStage />
+      <AvatarStage dict={dict.assistant} />
       <AssistantWidget dict={dict.assistant} locale={locale} />
     </main>
   )

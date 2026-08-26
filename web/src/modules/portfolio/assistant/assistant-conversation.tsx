@@ -13,6 +13,8 @@ import type { Dictionary } from "@/i18n"
 export interface AssistantConversationProps {
   dict: Dictionary["assistant"]
   messages: ChatMessage[]
+  /** The message currently being typed out by the avatar (see `use-typing-speech.ts`), or `null` if none. */
+  typingMessageId: number | null
   input: string
   setInput: (value: string) => void
   loading: boolean
@@ -30,6 +32,7 @@ export interface AssistantConversationProps {
 export function AssistantConversation({
   dict,
   messages,
+  typingMessageId,
   input,
   setInput,
   loading,
@@ -62,7 +65,12 @@ export function AssistantConversation({
           )}
 
           {messages.map((message) => (
-            <AssistantMessage key={message.id} role={message.role} content={message.content} />
+            <AssistantMessage
+              key={message.id}
+              role={message.role}
+              content={message.content}
+              isTyping={message.id === typingMessageId}
+            />
           ))}
 
           {loading && (

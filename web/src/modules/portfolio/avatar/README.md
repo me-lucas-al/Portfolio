@@ -1,399 +1,132 @@
 # Avatar module
 
-Fase 2: three.js engine foundation + idle mini avatar in the page corner. No
-React Three Fiber - one `rAF` loop, one model, one light, one static camera,
-owned imperatively by `engine/avatar-engine.ts`.
-
-Fase 4 turned the "static camera" above into two damped rigs and moved the
-canvas itself out to a full-viewport portal - see "Fase 4: mini <-> overlay
-morph" below.
-
-## Asset contract
-
-- Model: `web/public/avatar/facecap.glb`, fetched client-side at
-  `/avatar/facecap.glb`. It is three.js's official sample - a bare head mesh
-  (plus teeth/eyeLeft/eyeRight meshes and transform groups) with **no
-  skeleton/bones**. Only the `head` mesh actually carries morph targets in
-  this file, though `engine/morph-index.ts` indexes every mesh generically
-  (a richer asset could spread blendshapes across head/teeth/tongue/eyelash
-  meshes, and writing to only the first one found would leave the rest
-  frozen).
-- Blendshapes: 52 targets on the head mesh's `morphTargetDictionary`. This
-  file uses the shorthand `_L`/`_R` suffix convention (`eyeBlink_L`,
-  `eyeLookIn_L`, ...), **not** full ARKit camelCase (`eyeBlinkLeft`,
-  `eyeLookInLeft`, ...). Layers are written against the canonical camelCase
-  names; `engine/blendshape-names.ts` maps each canonical name to the
-  aliases we've seen, and `resolveBlendshapeKeys()` (in `morph-index.ts`)
-  resolves them once per model load. If a future asset uses full ARKit
-  names directly, only that alias table needs a new entry - no layer code
-  changes.
-- No bones at all means the breath layer's spec'd "chest/torso bone, else a
-  head bob" fallback always takes the head-bob path for this asset - it
-  targets the `head` named node directly.
-
-## Module-scope globals convention
-
-Nothing under `engine/` may reference `window`, `document`, or `navigator`
-at module (top-level) scope - only inside function/method bodies. There is
-no ESLint rule enforcing this; it's a convention because `engine/` files get
-dynamically imported client-side only, but a stray top-level access would
-still throw if the module were ever evaluated during SSR or a static
-analysis pass. When adding a new file under `engine/`, keep any
-`window`/`document`/`navigator` read inside a function.
-
-The same restriction (informally) applies to `detect-webgl.ts` at the module
-root - it's a plain, three-less function, but it's still meant to be safe to
-import statically from a Server Component boundary, so all its DOM/window
-access is confined to the function body.
-
-## Layering / mixer convention
-
-`avatar-engine.ts` composes blink + breath + look-at every frame and writes
-**all** managed blendshape weights - including zeros - into the morph index
-each tick. It never "pokes" a single changed value. Later phases (audio/
-lip-sync, expressions, emotion/tone) add more layers on top of this same
-mixer and must follow the same convention, or layers will fight each other
-(e.g. a lip-sync layer leaving a mouth blendshape at its last nonzero value
-after speech ends, because nothing else claims to own it).
-
-## Lazy-loading
-
-`three` must never end up in the initial page bundle. The only path to it is:
-
-```
-avatar-stage.tsx (no three import)
-  -> use-avatar-engine.ts (no three import)
-    -> await import("./engine/avatar-engine") inside useEffect
-      -> engine/*.ts (three imports live here)
-```
-
-Do not add a static top-level `import ... from "three"` (or from anything
-under `engine/`) to any file reachable from `page.tsx`'s render tree without
-going through that dynamic import.
-
-## Scope of Fase 2
-
-Idle mini avatar only: engine foundation, disposal, a context-loss stub, and
-the reduced-motion / hidden-tab pause policy. No overlay, no chat wiring, no
-audio, no emotion/tone system, no scissor/viewport portal, no LOD swap -
-those came later (Fase 4) or are still later phases.
-
-## Fase 4: mini <-> overlay morph
-
-There is now exactly ONE `<canvas>` for the whole page, ever:
-`avatar-canvas-layer.tsx` portals it onto `document.body`
-(`fixed inset-0 z-30 pointer-events-none`), mounted once by `AvatarStage` and
-never conditionally unmounted while the page lives. `engine/avatar-engine.ts`
-sizes the renderer to the full viewport (`window.innerWidth/innerHeight`,
-debounced on resize) instead of a small fixed canvas.
-
-`AvatarStage` no longer renders a canvas of its own - it renders
-`<AvatarCanvasLayer />` plus a `pointer-events-none` placeholder `<div>` in
-the same corner slot as before, whose only job is to be measured
-(`getBoundingClientRect()`). The actual avatar pixels come from the
-full-viewport canvas, scissored into a sub-rectangle that tracks that div's
-on-screen position every frame.
-
-Two new rigs drive this, both in `engine/`, both using the same
-exponential-damping pattern as `layers/look-at-layer.ts`
-(`current += (target - current) * (1 - exp(-rate * dt))`) rather than a
-fixed-duration tween - there is no "transition start time" state anywhere,
-so re-targeting mid-chase (rapid open/close) just redirects the chase from
-wherever `current` already is:
-
-- `viewport-rig.ts` chases a target CSS-pixel rect and converts it into the
-  coordinates `renderer.setScissor`/`setViewport` expect each frame (Y-flip;
-  deliberately **no** DPR premultiplication - three.js's own
-  `setViewport`/`setScissor` already multiply by `renderer.getPixelRatio()`
-  internally, per their doc comments and implementation in
-  `WebGLRenderer.js`).
-- `camera-rig.ts` chases a named framing's fov/position/lookAt. Two presets
-  exist today: `MINI_HEAD_PRESET` (reuses the Fase 2 static camera's exact
-  numbers: 28deg fov, object radius filling 62% of the frustum) and
-  `OVERLAY_BUST_PRESET` (32deg fov, 48% coverage - pulled back and
-  re-centered for the assistant overlay's header slot). facecap.glb has no
-  torso/shoulders, so "bust" is provisional/tunable until a richer asset
-  exists.
-
-`AvatarEngineHandle.setFraming(name, rect)` drives both rigs together. The
-render loop (inside `avatar-engine.ts`) calls both rigs' `update()` and
-applies the scissor/viewport every frame, unconditionally - the damping is
-correct (and effectively free) at rest too, not just mid-transition.
-
-### Cross-module signal
-
-`state/avatar-signal-bus.ts` is a plain, three-less, module-scope mutable
-store (`{ overlayOpen, overlayAnchorRect }`) with a setter and a getter - no
-pub/sub. `contract.ts`'s `setAvatarOverlayState(open, anchorRect)` is the
-ONLY function `modules/portfolio/assistant/*` is allowed to call into this
-module; it just writes into the bus.
-
-On the avatar side, `use-avatar-framing.ts` polls the bus (mount, window
-resize, and a 120ms interval - cheap, and not the every-frame path; only the
-rigs' own `update()` runs every frame) and calls `engine.setFraming(...)`
-with either `{ name: "overlay-bust", rect: overlayAnchorRect }` when the
-overlay is open, or `{ name: "mini", rect: <mini anchor div's rect> }`
-otherwise.
-
-### Context-loss recovery
-
-Strengthened from the Fase 2 stub: `avatar-engine.ts` now actually re-loads
-`facecap.glb` and rebuilds the morph index / breath layer / camera rig on
-`webglcontextrestored`, instead of just resuming with possibly-stale
-textures. `create-renderer.ts` still only flags the loss/restore transition;
-`avatar-engine.ts` decides what to do about it.
-
-### Explicitly not done in Fase 4
-
-- The avatar is still visually and functionally separate from
-  `AssistantMiniDock`'s FAB trigger - it does not become a click target, and
-  the FAB still owns opening/closing the chat. Merging them is a deliberate
-  deferral, not an oversight.
-- No fullscreen redesign of the assistant overlay - it's still the ~420px
-  side panel, just with a small avatar-bust slot added to its header.
-- No LOD swap - deferred to Fase 9, contingent on the final asset's size.
-- Dynamic DPR degrade and `visualViewport`-based mobile-keyboard handling
-  landed later, in Fase 10 - see below.
-
-## Fase 6: audio player + amplitude-based lip sync
-
-Adds `audio/` (three-less, unlike `engine/`) and one new idle-mixer layer,
-`engine/layers/viseme-layer.ts`.
-
-### `audio/`
-
-- `audio-graph.ts` - lazily-created singleton: one `<audio>` element
-  (`crossOrigin = "anonymous"`, for a later CDN-cached-audio phase), one
-  shared `AudioContext`, wired
-  `MediaElementAudioSourceNode -> GainNode -> AnalyserNode` (and
-  `GainNode -> destination`). The analyser sits downstream of the gain node
-  on purpose: `speech-player.ts`'s `stop()` fades gain to 0 before pausing,
-  so an interrupted sentence's mouth eases shut over that fade instead of
-  the analyser reading the still-loud pre-fade signal right up to a hard
-  cut. `fftSize = 1024`; the `Float32Array` read buffer is allocated once
-  and reused every frame.
-- `lip-sync-analyser.ts` - its own `rAF` loop (independent of the three.js
-  render loop - the canvas may not even be booted yet when speech starts),
-  computing `rms -> norm -> shaped -> attack/release-damped current -> mouth`
-  every tick and writing the result into `state/avatar-signal-bus.ts`'s
-  `mouthOpen` (0..1). `stop()` immediately zeroes it - never leaves a stale
-  nonzero value hanging after speech ends.
-- `speech-player.ts` - `play(url)` / `stop()` on the shared element, plus a
-  plain pub/sub (`subscribeSpeechPlayer`) carrying `{ state, unlocked }` for
-  React to consume. Handles the iOS per-gesture unlock: a `{ once: true }`
-  `pointerdown`/`keydown` listener does a throwaway unlock play the first
-  time either fires. `unlocked` is in-memory only, reset every page load -
-  never written to or read from localStorage, since a stale flag from a
-  previous load is meaningless (the element isn't actually unlocked again
-  until a fresh gesture happens on the current load).
-- `use-speech-player.ts` - the React binding (`voiceEnabled` persisted in
-  `localStorage` under `assistant_voice_enabled`, default `false`;
-  `isSpeaking`/`isPreparingVoice`/`needsUnlock` derived from the pub/sub
-  snapshot; `speak()`/`stopSpeaking()`).
-
-`contract.ts` re-exports `useSpeechPlayer` (not a deep import) - `audio/` is
-three-less, same as `state/avatar-signal-bus.ts`, so re-exporting it costs
-nothing and keeps the "assistant/* only imports contract.ts" rule intact.
-
-### `engine/layers/viseme-layer.ts`
-
-Reads `mouthOpen` from the bus once per frame and maps it straight onto
-`{ jawOpen, mouthFunnel: mouthOpen * 0.2 }` - no re-damping, that's already
-done by `lip-sync-analyser.ts`. Both names were verified against the
-committed `facecap.glb`'s `morphTargetDictionary` directly: unlike the
-paired eye shapes in `blendshape-names.ts`, `jawOpen` and `mouthFunnel` are
-unpaired ARKit blendshapes, so this asset carries them under their exact
-canonical spelling already (no `_L`/`_R`-style rename) - both still needed
-one-alias entries in `blendshape-names.ts` regardless, since
-`resolveBlendshapeKeys` only ever resolves names that are keys of that
-table.
-
-### The ~tens-of-seconds silent gap
-
-`/api/tts` is a unary endpoint - it returns one complete `audio/wav` file,
-not a progressive stream (a real smoke test against Gemini TTS found no
-working streaming path for the available models). A response can take on
-the order of 30-40s to come back after the chat text already rendered. The
-UI covers this with `isPreparingVoice`: a pulsing stop-icon in the overlay
-header from the moment `speak()` is called until the `<audio>` element
-actually fires `playing` (or errors/aborts) - there is no way to shorten the
-wait itself in this phase, only to make it legible.
-
-### Tab-hidden mouth freeze fix
-
-`render-loop.ts` already paused its `rAF` loop on `document.hidden`. Fase 6
-adds an `onBeforeHide` hook, called synchronously on the visible->hidden
-transition before the loop stops scheduling frames: `avatar-engine.ts` uses
-it to force `mouthOpen` back to `0`, and `render-loop.ts` then renders one
-more frame immediately (bypassing `rAF`) so that reset - not whatever the
-mouth looked like on the last frame before the tab was hidden - is what
-stays on screen for as long as the tab stays backgrounded.
-
-### Explicitly not done in Fase 6
-
-- No audio caching - every `/api/tts` call re-synthesizes from scratch. A
-  later phase adds a cache.
-- No tone/emotion system.
-- No viewport/camera framing changes - Fase 4's territory, untouched here.
-- Lip-sync quality/timing feel was not (could not be) verified visually in
-  this environment - only `tsc`/the production build were checked. A human
-  needs to open a real browser with `ASSISTANT_VOICE_ENABLED=true` and a
-  live `GEMINI_API_KEY` to judge how the mouth actually looks while
-  speaking.
-
-## Fase 7: tone-driven expressions + a thinking signal
-
-Adds `tone/` (three-less, like `audio/`) and one new idle-mixer layer,
-`engine/layers/emotion-layer.ts`. Zero backend changes - tone is derived
-entirely client-side from the response text already sitting in the
-assistant's chat state, the same way `mouthOpen` is derived from the audio
-signal rather than from a server-provided field.
-
-### `tone/`
-
-- `tone.ts` - the taxonomy as data: `Tone` (`neutral` | `positive` |
-  `enthusiastic` | `explanatory` | `apologetic` | `surprised`), each mapped to
-  a target blendshape-weight record (`TONE_TARGETS`). No tone ever drives
-  anger, and neither `jawOpen` nor `mouthFunnel` appears in any target -
-  those two stay exclusively owned by `viseme-layer.ts` (lip sync).
-- `classify-tone.ts` - `classifyTone(text, locale)`, a pure pt/en heuristic
-  (no DOM, no `three`) with a documented precedence order (apologetic >
-  surprised > enthusiastic > positive > explanatory > neutral - see the
-  file's own doc comment for why that order matters). Recognizes this
-  project's actual `dict.assistant.{error,rateLimited,quotaExceeded,
-  overloaded,timeout}` strings and `agent.ts`'s `FALLBACK_MESSAGE` as
-  apologetic, in addition to pt/en apologetic phrasing markers.
-- `classify-tone.spec.ts` - a `vitest` unit suite (this module's first) with
-  a case per tone per locale plus a couple of edge cases. Run with
-  `npx vitest run` from `web/`.
-
-Every new canonical blendshape name this taxonomy needed
-(`mouthSmileLeft/Right`, `cheekSquintLeft/Right`, `browInnerUp`,
-`browOuterUpLeft/Right`, `eyeWideLeft/Right`, `mouthPressLeft/Right`,
-`mouthFrownLeft/Right`) was verified directly against the committed
-facecap.glb's `morphTargetDictionary` (same method Fase 6 used for
-`jawOpen`/`mouthFunnel`) and added to `engine/blendshape-names.ts` - every
-single one of them actually exists on this placeholder asset, all under the
-same `_L`/`_R` suffix convention as the eye names except `browInnerUp`,
-which (like `jawOpen`) is an unpaired ARKit shape carrying its exact
-canonical spelling already.
-
-### `engine/layers/emotion-layer.ts`
-
-Same shape as every other layer: `setTone(tone)` redirects a damped chase
-toward that tone's target weights (`current += (target - current) * (1 -
-exp(-6 * dt))`, the same rate `camera-rig.ts`/`viewport-rig.ts`/
-`look-at-layer.ts` already use), `update(dt)` advances it one tick and
-returns the weights to merge into `avatar-engine.ts`'s per-frame
-`applyBlendshapeWeights({ ...blinkWeights, ...lookAtWeights, ...visemeWeights,
-...emotionWeights })` call. `avatar-engine.ts`'s render loop polls
-`state/avatar-signal-bus.ts`'s `tone` field once per frame and forwards it
-into `setTone` (mirroring `setLookTarget` -> `lookAt.setTarget`); the layer
-itself reads `thinking` and `mouthOpen` directly off the bus inside
-`update()`, the same way `viseme-layer.ts` reads `mouthOpen`.
-
-Two things this layer specifically has to guard against:
-
-- **Smile/jaw interaction**: `mouthSmileLeft/Right` and `jawOpen` move
-  overlapping geometry and are additive, so a big smile plus a wide-open jaw
-  could push combined weights outside a sane range. Mitigated by scaling the
-  layer's *entire* output by `(1 - 0.45 * mouthOpen)` rather than
-  special-casing just the smile keys.
-- **The "thinking" fast path**: a `browInnerUp` bump only appears once
-  `thinking` has been continuously true for >=1200ms. This exists
-  specifically so a fast cache-hit response (loading flips true then false
-  within a few hundred ms) never visibly starts an animation that then gets
-  abruptly cut off mid-transition.
-
-### Where tone comes from
-
-`contract.ts` adds `setAvatarTone(tone)` and `setAvatarThinking(thinking)`,
-plus re-exports `classifyTone`/`Tone`. `assistant-widget.tsx` is the only
-caller:
-
-- `onModelMessage` (already used for `speak()`) also calls
-  `setAvatarTone(classifyTone(message.text, locale))` - never fired by
-  `useAssistantChat`'s localStorage-rehydration effect, so reloading the tab
-  wakes the avatar in `neutral`, not reprising yesterday's last answer.
-- A small `useEffect` on the hook's `error` string does the same, since a
-  failed request never reaches `onModelMessage` - this is the only "error
-  state" the avatar gets; there's no separate explicit error enum on top of
-  it, tone classification of the error copy itself (recognized as
-  apologetic) is enough.
-- Another `useEffect` mirrors `loading` straight into `setAvatarThinking`.
-
-`setAvatarTone` also owns a decay timer: a non-neutral tone reverts to
-`neutral` on its own `TONE_HOLD_MS` (2.5s, provisional) after being set -
-deliberately just one more damped transition, not a second decay curve
-layered on top of the layer's own exponential damping, which is what
-actually makes both edges of this look smooth.
-
-### Explicitly not done in Fase 7
-
-- No `listening` state (input box focused/has text) - needs visual judgment
-  this sandbox can't make.
-- No `thinking.deep`-past-25s "still here" nod - same reason.
-- No dedicated `failed` state distinct from the existing `NoWebglFallback` -
-  it already covers the no-WebGL/model-load-failure case.
-- Facial expression combinations were not (could not be) verified visually
-  in this environment - only `tsc`/`vitest`/the production build were
-  checked. A human needs to open a real browser to judge whether any given
-  tone's blendshape combination actually looks like the intended expression
-  rather than a distorted one, and to tune `TONE_HOLD_MS`/the thinking-bump
-  timing/magnitude by feel.
-
-## Fase 10: dynamic DPR degrade + mobile-keyboard pause
-
-Two independent polish items, both layered onto existing primitives rather
-than replacing them.
-
-### `engine/dpr-degrade.ts`
-
-Three-less, `renderer`-less: a pure function of render-time samples in,
-target DPR out. `avatar-engine.ts` owns the only two effectful steps -
-actually measuring `renderer.render(...)`'s wall-clock duration around each
-call, and calling `renderer.setPixelRatio(...)` when the returned value
-changes. Batches render-time samples into non-overlapping windows of 60
-frames; if a window's median exceeds 22ms, DPR steps down by 0.25 (floor
-1.0) and a one-way `degraded` flag flips permanently on for the rest of the
-session - once degraded, it additionally caps the *frequency* of actual
-`render()` calls to ~30fps (every other per-frame update - blink/breath/
-look-at/viseme/emotion, the viewport/camera rigs - keeps running every rAF
-tick regardless; only the render call itself is skipped). Deliberately never
-steps back up: recovering risks visible oscillation, which reads worse than
-staying a bit blurrier for the rest of the session.
-
-Never ticked while `reducedMotion` - there's no continuous rAF to react to a
-sustained render load in that mode, so `avatar-engine.ts`'s render-loop
-callback skips both of this module's calls whenever `reducedMotion` is true
-and always renders on demand instead, same as it always did.
-
-### Mobile-keyboard pause
-
-`render-loop.ts` grew `setPaused(paused)`, a second, independent pause
-reason ORed together with the existing `document.hidden` tracking through
-the same `applyPaused` transition path - so un-pausing one reason while the
-other is still active correctly stays paused, and pausing either one runs
-the same `onBeforeHide` + one-more-synchronous-frame sequence Fase 6 already
-relies on to leave the mouth closed rather than frozen mid-word.
-
-`avatar-engine.ts` drives it from a `visualViewport` `resize` listener,
-registered only on coarse-pointer devices: when `visualViewport.height`
-drops below 75% of `window.innerHeight`, the on-screen keyboard is assumed
-open and the loop pauses. This ratio-based heuristic exists specifically
-because iOS never updates `window.innerHeight` when the keyboard opens (only
-`document.hidden` mattered before this) - the layout viewport stays put and
-only the visual one shrinks, which is also why this needs `visualViewport`
-at all rather than reusing the existing `resize` handler. Gating on
-`coarsePointer` keeps a desktop window/devtools resize (which moves both
-dimensions together) from ever misreading as a keyboard opening.
-
-### Explicitly not done in Fase 10
-
-- No LOD swap - still deferred to Fase 9, contingent on the final asset's
-  size.
-- No user-facing metrics/telemetry for DPR degrade events or render-loop
-  pauses.
-- Neither the DPR degrade thresholds nor the keyboard-height ratio were
-  tuned against a real low-end device or a real iOS keyboard - only
-  `tsc`/the production build were checked in this environment.
+2D sprite avatar (plain `<img>` swap, no canvas, no `three.js`, no rig) with
+a typewriter speech balloon/message bubble and a per-character "blip" sound,
+in the style of Animal Crossing/Undertale. A three.js version of this module
+existed earlier in this branch's history (camera rig, blendshape layers,
+`facecap.glb`) - it was abandoned because the placeholder model had no
+resemblance to the portfolio's owner, and switching to a look-alike VRM would
+have required a third-party tool (VRoid Studio) this agent can't operate.
+See git history if you need to resurrect any of that.
+
+## Public contract
+
+`contract.ts` is the ONLY file other modules (`modules/portfolio/assistant/*`)
+are allowed to import from this module. It re-exports:
+
+- `AvatarSprite` / `AvatarSpriteVariant` - the `<img>` component itself.
+- `TypedText` - typewriter-reveal text component, used both by the floating
+  balloon and the assistant's message bubbles.
+- `useTypingSpeech` - starts/stops/skips the shared typing engine.
+- `useSpeechPlayer` / `useBlipPreferences` - audio preferences.
+- `classifyTone` / `Tone` - text -> tone classification.
+- `setAvatarOverlayState` / `setAvatarTone` / `setAvatarThinking` - setters
+  the assistant widget calls to drive the avatar's state.
+
+Nothing outside this module should reach into `./sprite/*`, `./speech/*`,
+`./mouth/*`, `./audio/*`, `./state/*`, or `./tone/*` directly.
+
+## Architecture
+
+### Signal bus (`state/avatar-signal-bus.ts`)
+
+Module-scope mutable store + a tiny pub/sub, written from outside React
+(assistant widget, timers, audio analysers) and read via
+`useSyncExternalStore` by `AvatarSprite`. Fields: `overlayOpen`, `mouthOpen`,
+`blinking`, `tone`, `thinking`. No rect/camera/framing fields exist - a 2D
+sprite has nothing to point a camera at.
+
+### Sprite engine (`sprite/*`)
+
+- `tone-expression-map.ts` reduces the six-value `Tone` taxonomy down to four
+  visual `Expression`s (`neutral`/`positive`/`apologetic`/`surprised`).
+- `sprite-frames.ts` maps `(expression, mouthState, blinking)` to a PNG URL
+  under `web/public/avatar/sprites/` and preloads all of them.
+- `avatar-sprite.tsx` is the actual `<img>` component - reads the signal bus,
+  thresholds `mouthOpen` at `0.15` into open/closed, and swaps `src`.
+  Mounted twice, independently, coordinated only through the shared bus: once
+  as `variant="mini"` (idle corner) by `avatar-stage.tsx`, once as
+  `variant="bust"` directly in the assistant overlay's header slot.
+- `blink-timer.ts` is a single ref-counted, module-scope timer (not one per
+  mounted instance) so both surfaces blink in sync. Paused while the tab is
+  hidden, never started under `prefers-reduced-motion`. Blink frames only
+  exist for the `neutral` expression.
+
+### Mouth arbiter (`mouth/mouth-source.ts`)
+
+Two things can want to move the mouth: the typing engine's synthetic tick, or
+real TTS audio amplitude (`audio/lip-sync-analyser.ts`). `audio` always wins
+over `typing`. `AvatarSprite` only ever reads the resulting `mouthOpen` value
+off the signal bus - it has no idea which source produced it. Re-enabling TTS
+per-message later needs zero changes here, in the bus, or in `AvatarSprite`.
+
+### Typing engine (`speech/*`)
+
+- `punctuation-cadence.ts` - pure function, extra hold (ms) after a given
+  character (comma/semicolon/colon, sentence-enders, newline, ellipsis).
+- `typing-engine.ts` - headless `rAF` loop: reveals characters at
+  `BASE_CHAR_MS=32` + punctuation holds, drives the mouth's attack/release
+  envelope, throttles blips to `MIN_BLIP_INTERVAL_MS=60` apart, and clamps a
+  large frame delta (tab backgrounded) so returning to the tab never dumps a
+  burst of characters/blips at once.
+- `typing-surface-registry.ts` - up to two DOM nodes (balloon + message
+  bubble) registered at once; the engine writes revealed text straight into
+  `textContent`, not React state (at ~32ms/char that would be dozens of
+  re-renders/second otherwise).
+- `typed-text.tsx` - registers its `<span>` while `isTyping`, else renders
+  the full text through React. `aria-hidden` on the animated span + a
+  `sr-only` sibling with the complete text, so a screen reader announces the
+  response once, not character by character.
+- `typing-speech-state.ts` / `use-typing-speech.ts` - small React-friendly
+  store wrapping the engine, tracking which message id is currently typing.
+  `speech-balloon.tsx` (mounted by `avatar-stage.tsx`, a different component
+  tree than the assistant panel) and `assistant-widget.tsx` both read this
+  same store - that's *why* it's a module-scope store and not just local
+  React state.
+- `speech-balloon.tsx` - floating balloon anchored above the mini avatar,
+  visible only while the panel is closed and there's something to show
+  (typing, or lingering ~6s after it finished). Click skips to the end.
+- Under `prefers-reduced-motion`, `typing-speech-state.ts` skips the reveal
+  entirely - text appears whole immediately, no blips, no mouth movement.
+
+### Audio (`audio/*`)
+
+- `audio-graph.ts` / `speech-player.ts` / `use-speech-player.ts` /
+  `lip-sync-analyser.ts` - the TTS playback + amplitude-based lip-sync
+  pipeline. **Dormant**: nothing currently sets `useSpeechPlayer`'s
+  `voiceEnabled` to `true` from the UI (`ASSISTANT_VOICE_ENABLED` still
+  exists server-side). Kept working end-to-end on purpose, so re-enabling it
+  per-message later is a one-line change in `assistant-widget.tsx`, not a
+  rewrite.
+- `audio-unlock.ts` - shared iOS/Safari unlock gesture (`pointerdown`/
+  `keydown`, once per page load), used by both `speech-player.ts` and
+  `blip-player.ts` so they don't each wire their own listeners.
+- `blip-player.ts` - its own `AudioContext` graph (deliberately separate from
+  the TTS one, so the two never fight over lip-sync), pitch-jittered,
+  never-repeats-the-last-clip, capped at 6 concurrent voices.
+- `use-blip-preferences.ts` - persists the blip on/off toggle in
+  `localStorage` (`assistant_blips_enabled`, defaults **on**).
+
+## Assets
+
+- `web/public/avatar/sprites/*.png` - 9 frames (4 expressions × closed/open
+  mouth, + 1 blink for `neutral`). **Currently placeholders**: a single
+  cropped bust from `dados-pessoais/avatar_lucas.jpg`, reused for every
+  frame (opaque beige background, not transparent) - this agent has no image
+  generation tool. Swap these for real AI-generated variants (see the
+  original planning doc for the prompt template and consistency checklist)
+  without touching any code - the file names are the contract.
+- `web/public/avatar/blips/blip-0{1..5}.wav` - **currently placeholders**: 5
+  synthesized short tones, not real recorded syllables. Swap for real
+  recordings (mono, 24kHz, 16-bit PCM, 70-90ms, zero-crossing edits) without
+  touching any code.
+
+## Explicitly not done in this phase
+
+- Real sprite art and real blip recordings (see Assets above).
+- Re-enabling TTS from the UI (the plumbing exists and works; nothing calls
+  `setVoiceEnabled(true)`).
+- A "tap to enable audio" affordance for blips specifically - the shared
+  unlock gesture (`audio-unlock.ts`) resumes the blip `AudioContext`
+  silently on first tap/keydown; there's no dedicated hint UI for it the way
+  TTS's dormant `voiceUnlockHint` copy is.

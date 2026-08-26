@@ -1,4 +1,5 @@
 import { getAudioGraph } from "./audio-graph"
+import { onAudioUnlockGesture } from "./audio-unlock"
 import { startLipSyncAnalyser, stopLipSyncAnalyser } from "./lip-sync-analyser"
 
 export type SpeechPlaybackState = "idle" | "preparing" | "playing"
@@ -73,7 +74,6 @@ export function getSpeechPlayerSnapshot(): SpeechPlayerSnapshot {
 }
 
 function handleUnlockGesture(): void {
-  if (unlocked) return
   unlocked = true
   emit()
 
@@ -133,8 +133,7 @@ export function initSpeechPlayer(): void {
   audioElement.addEventListener("error", handleStopped)
   audioElement.addEventListener("abort", handleStopped)
 
-  window.addEventListener("pointerdown", handleUnlockGesture, { once: true })
-  window.addEventListener("keydown", handleUnlockGesture, { once: true })
+  onAudioUnlockGesture(handleUnlockGesture)
 }
 
 /**

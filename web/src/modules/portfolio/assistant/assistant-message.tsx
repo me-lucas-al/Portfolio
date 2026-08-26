@@ -1,9 +1,12 @@
+import { TypedText } from "@/modules/portfolio/avatar/contract"
+
 interface AssistantMessageProps {
   role: "user" | "model"
   content: string
+  isTyping: boolean
 }
 
-export function AssistantMessage({ role, content }: AssistantMessageProps) {
+export function AssistantMessage({ role, content, isTyping }: AssistantMessageProps) {
   const isUser = role === "user"
 
   return (
@@ -15,7 +18,7 @@ export function AssistantMessage({ role, content }: AssistantMessageProps) {
             : "bg-neutral-900/80 border border-neutral-800 text-neutral-200"
         }`}
       >
-        {content}
+        {isUser ? content : <TypedText fullText={content} isTyping={isTyping} />}
       </div>
     </div>
   )
