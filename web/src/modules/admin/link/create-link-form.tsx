@@ -20,50 +20,50 @@ export function CreateLinkForm() {
   return (
     <form action={formAction} className="space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium text-white ml-1">Título do Link</label>
+        <label className="text-sm font-medium text-fg-muted ml-1">Título do Link</label>
         <input 
           name="title" 
           required 
           disabled={isPending}
           placeholder="Ex: GitHub, LinkedIn..."
-          className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50" 
+          className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50" 
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-white ml-1">URL</label>
+        <label className="text-sm font-medium text-fg-muted ml-1">URL</label>
         <input 
           name="url" 
-          type="url"
+          type="url" 
           required 
           disabled={isPending}
           placeholder="https://..."
-          className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50" 
+          className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50" 
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-white ml-1">Ícone</label>
+        <label className="text-sm font-medium text-fg-muted ml-1">Ícone</label>
         <input 
           name="icon" 
           required 
           disabled={isPending}
           placeholder="Ex: Github, Linkedin, Mail..."
-          className="w-full px-4 py-3 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50" 
+          className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50" 
         />
-        <p className="text-xs text-neutral-500 ml-1">
+        <p className="text-xs text-muted-2 ml-1">
           Nome do ícone da biblioteca <strong>lucide-react</strong> (Ex: Github, Linkedin, Mail, Twitter).
         </p>
       </div>
 
       {state?.error && (
-        <p className="text-sm text-red-500 ml-1">{state.error}</p>
+        <p className="text-sm text-danger ml-1">{state.error}</p>
       )}
 
       <button 
         type="submit" 
         disabled={isPending}
-        className="w-full py-4 rounded-xl bg-blue-950 hover:bg-blue-900 border border-blue-800/50 text-white text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 flex justify-center items-center"
+        className="w-full py-4 rounded-xl bg-brand hover:bg-brand-strong text-brand-ink text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-ink disabled:opacity-50 flex justify-center items-center cursor-pointer"
       >
         {isPending ? "A salvar..." : "Adicionar Link"}
       </button>

@@ -37,25 +37,25 @@ export function LinkItem({ link }: { link: DefaultLinkType & { id: number } }) {
   const IconComponent = LucideIcons[link.icon] || LucideIcons.Link
 
   return (
-    <div className="flex items-center justify-between p-5 rounded-xl border border-neutral-900 bg-neutral-950/50 group transition-all duration-300 hover:bg-neutral-900/50 hover:border-neutral-800">
+    <div className="flex items-center justify-between p-5 rounded-xl border border-line bg-surface/80 group transition-all duration-300 hover:bg-surface-2 hover:border-line-strong">
       <div className="flex items-center gap-4 flex-1 min-w-0 pr-4">
-        <div className="p-3 bg-neutral-900/50 rounded-lg text-neutral-400 group-hover:text-blue-400 transition-colors">
+        <div className="p-3 bg-surface-2 rounded-lg text-fg-muted group-hover:text-brand transition-colors">
           <IconComponent className="w-5 h-5" />
         </div>
         <div>
-          <h4 className="text-white font-medium truncate">{link.title}</h4>
-          <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-500 hover:text-blue-400 hover:underline truncate inline-block max-w-[200px] sm:max-w-md">
+          <h4 className="text-fg font-medium truncate">{link.title}</h4>
+          <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-fg-muted hover:text-brand hover:underline truncate inline-block max-w-[200px] sm:max-w-md">
             {link.url}
           </a>
         </div>
       </div>
 
       <div className="flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
-        <div className="flex items-center gap-1 mr-2 border-r border-neutral-800 pr-2">
+        <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
           <button 
             disabled={isPending}
             onClick={() => handleReorder('up')}
-            className="p-1.5 text-neutral-500 hover:text-blue-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-30"
+            className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
             title="Mover para cima"
           >
             <ChevronUp className="w-4 h-4" />
@@ -63,7 +63,7 @@ export function LinkItem({ link }: { link: DefaultLinkType & { id: number } }) {
           <button 
             disabled={isPending}
             onClick={() => handleReorder('down')}
-            className="p-1.5 text-neutral-500 hover:text-blue-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-30"
+            className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
             title="Mover para baixo"
           >
             <ChevronDown className="w-4 h-4" />
@@ -72,13 +72,13 @@ export function LinkItem({ link }: { link: DefaultLinkType & { id: number } }) {
 
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
-            <button className="p-2.5 text-neutral-500 hover:text-blue-400 hover:bg-blue-950/50 rounded-lg transition-all">
+            <button className="p-2.5 text-fg-muted hover:text-brand hover:bg-brand/10 rounded-lg transition-all cursor-pointer">
               <Edit2 className="w-4 h-4" />
             </button>
           </SheetTrigger>
-          <SheetContent className="bg-neutral-950 border-l-neutral-900 overflow-y-auto sm:max-w-xl">
+          <SheetContent className="bg-surface border-l-line overflow-y-auto sm:max-w-xl text-fg">
             <SheetHeader className="mb-8">
-              <SheetTitle className="text-white">Editar Link</SheetTitle>
+              <SheetTitle className="text-fg font-semibold">Editar Link</SheetTitle>
             </SheetHeader>
             <EditLinkForm link={link} onCancel={() => setIsSheetOpen(false)} />
           </SheetContent>
@@ -86,27 +86,27 @@ export function LinkItem({ link }: { link: DefaultLinkType & { id: number } }) {
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <button className="p-2.5 text-neutral-500 hover:text-red-400 hover:bg-red-950/30 rounded-lg transition-all">
+            <button className="p-2.5 text-fg-muted hover:text-danger hover:bg-danger/10 rounded-lg transition-all cursor-pointer">
               <Trash2 className="w-4 h-4" />
             </button>
           </DialogTrigger>
-          <DialogContent className="bg-neutral-950 border-neutral-900 text-white">
+          <DialogContent className="bg-surface border-line text-fg">
             <DialogHeader>
-              <DialogTitle>Excluir Link</DialogTitle>
+              <DialogTitle className="text-fg">Excluir Link</DialogTitle>
             </DialogHeader>
-            <p className="text-neutral-400 text-sm py-4">
-              Tem certeza que deseja excluir o link <strong className="text-white">{link.title}</strong>? Esta ação não pode ser desfeita.
+            <p className="text-fg-muted text-sm py-4">
+              Tem certeza que deseja excluir o link <strong className="text-fg">{link.title}</strong>? Esta ação não pode ser desfeita.
             </p>
             <DialogFooter className="gap-2 sm:gap-0">
               <DialogClose asChild>
-                <button className="px-4 py-2 rounded-lg border border-neutral-800 text-neutral-300 hover:bg-neutral-900 transition-all text-sm font-medium">
+                <button className="px-4 py-2 rounded-lg border border-line text-fg-muted hover:text-fg hover:bg-surface-2 transition-all text-sm font-medium cursor-pointer">
                   Cancelar
                 </button>
               </DialogClose>
               <button
                 onClick={handleDelete}
                 disabled={isPending}
-                className="flex items-center justify-center min-w-[100px] px-4 py-2 rounded-lg bg-red-950 border border-red-900/50 text-red-400 hover:bg-red-900 hover:text-white transition-all text-sm font-medium disabled:opacity-50"
+                className="flex items-center justify-center min-w-[100px] px-4 py-2 rounded-lg bg-danger/20 border border-danger/40 text-danger hover:bg-danger/30 hover:text-fg transition-all text-sm font-medium disabled:opacity-50 cursor-pointer"
               >
                 {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sim, Excluir"}
               </button>

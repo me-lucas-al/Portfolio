@@ -25,14 +25,14 @@ export function ResumeLinksForm({ cvUrlPt, cvUrlEn }: ResumeLinksFormProps) {
   }, [stateEn])
 
   return (
-    <div className="rounded-2xl border border-blue-950/60 bg-blue-950/10 p-6 space-y-6">
+    <div className="rounded-2xl border border-line bg-surface-2/30 p-6 space-y-6">
       <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 rounded-lg bg-blue-950/50 text-blue-400">
+        <div className="p-2 rounded-lg bg-brand/10 text-brand">
           <FileText className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="text-white font-semibold">Links de Currículo</h3>
-          <p className="text-xs text-neutral-500">Edite os links dos CVs exibidos no hero do portfólio</p>
+          <h3 className="text-fg font-semibold">Links de Currículo</h3>
+          <p className="text-xs text-fg-muted">Edite os links dos CVs exibidos no hero do portfólio</p>
         </div>
       </div>
 
@@ -40,8 +40,8 @@ export function ResumeLinksForm({ cvUrlPt, cvUrlEn }: ResumeLinksFormProps) {
         {/* CV PT */}
         <form action={formActionPt} className="space-y-3">
           <input type="hidden" name="key" value="cvUrlPt" />
-          <label className="flex items-center gap-2 text-sm font-medium text-neutral-300">
-            <Globe className="w-4 h-4 text-green-400" />
+          <label className="flex items-center gap-2 text-sm font-medium text-fg-muted">
+            <Globe className="w-4 h-4 text-success" />
             CV Português (PT)
           </label>
           <div className="flex gap-2">
@@ -52,18 +52,18 @@ export function ResumeLinksForm({ cvUrlPt, cvUrlEn }: ResumeLinksFormProps) {
               required
               disabled={isPendingPt}
               placeholder="https://drive.google.com/..."
-              className="flex-1 px-4 py-2.5 rounded-xl bg-neutral-900/60 border border-neutral-800 text-white text-sm focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 rounded-xl bg-surface border border-line text-fg text-sm placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={isPendingPt}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-950 hover:bg-blue-900 border border-blue-800/50 text-white text-sm font-medium transition-all disabled:opacity-50 whitespace-nowrap"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-strong text-brand-ink text-sm font-semibold transition-all disabled:opacity-50 whitespace-nowrap cursor-pointer"
             >
               {isPendingPt ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar"}
             </button>
           </div>
           {cvUrlPt && (
-            <a href={cvUrlPt} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:underline truncate block">
+            <a href={cvUrlPt} target="_blank" rel="noopener noreferrer" className="text-xs text-brand hover:underline truncate block">
               {cvUrlPt}
             </a>
           )}
@@ -72,8 +72,8 @@ export function ResumeLinksForm({ cvUrlPt, cvUrlEn }: ResumeLinksFormProps) {
         {/* CV EN */}
         <form action={formActionEn} className="space-y-3">
           <input type="hidden" name="key" value="cvUrlEn" />
-          <label className="flex items-center gap-2 text-sm font-medium text-neutral-300">
-            <Globe className="w-4 h-4 text-blue-400" />
+          <label className="flex items-center gap-2 text-sm font-medium text-fg-muted">
+            <Globe className="w-4 h-4 text-brand" />
             CV Inglês (EN)
           </label>
           <div className="flex gap-2">
@@ -84,18 +84,18 @@ export function ResumeLinksForm({ cvUrlPt, cvUrlEn }: ResumeLinksFormProps) {
               required
               disabled={isPendingEn}
               placeholder="https://drive.google.com/..."
-              className="flex-1 px-4 py-2.5 rounded-xl bg-neutral-900/60 border border-neutral-800 text-white text-sm focus:outline-none focus:border-blue-800 focus:ring-1 focus:ring-blue-800 transition-all disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 rounded-xl bg-surface border border-line text-fg text-sm placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={isPendingEn}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-950 hover:bg-blue-900 border border-blue-800/50 text-white text-sm font-medium transition-all disabled:opacity-50 whitespace-nowrap"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-strong text-brand-ink text-sm font-semibold transition-all disabled:opacity-50 whitespace-nowrap cursor-pointer"
             >
               {isPendingEn ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar"}
             </button>
           </div>
           {cvUrlEn && (
-            <a href={cvUrlEn} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:underline truncate block">
+            <a href={cvUrlEn} target="_blank" rel="noopener noreferrer" className="text-xs text-brand hover:underline truncate block">
               {cvUrlEn}
             </a>
           )}
