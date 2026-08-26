@@ -55,13 +55,13 @@ export function AssistantMiniDock({ dict, open, onOpenChange }: AssistantMiniDoc
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
       {showCta && !open && (
-        <div className="flex items-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-900/95 px-4 py-2 text-sm text-neutral-200 shadow-lg shadow-black/30 animate-in fade-in slide-in-from-bottom-2">
+        <div className="flex items-center gap-2 rounded-2xl border border-line bg-surface-2/95 px-4 py-2 text-sm text-fg-muted shadow-lg shadow-black/30 animate-in fade-in slide-in-from-bottom-2">
           <span>{dict.ctaBubble}</span>
           <button
             type="button"
             onClick={dismissCta}
             aria-label={dict.close}
-            className="text-neutral-500 transition-colors hover:text-neutral-300"
+            className="text-muted-2 transition-colors hover:text-fg-muted"
           >
             <X className="size-3.5" />
           </button>
@@ -73,7 +73,7 @@ export function AssistantMiniDock({ dict, open, onOpenChange }: AssistantMiniDoc
         onClick={handleTriggerClick}
         aria-label={dict.trigger}
         aria-expanded={open}
-        className="flex size-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-950/50 transition-all hover:bg-blue-500 active:scale-95"
+        className="flex size-14 items-center justify-center rounded-full bg-accent text-accent-ink shadow-lg shadow-accent-deep/50 transition-all hover:bg-accent-strong active:scale-95"
       >
         {open ? <X className="size-6" /> : <MessageCircle className="size-6" />}
       </button>

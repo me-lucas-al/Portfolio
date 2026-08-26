@@ -55,7 +55,7 @@ export function AssistantConversation({
                     key={suggestion}
                     type="button"
                     onClick={() => void handleSend(suggestion)}
-                    className="text-left text-sm px-3 py-2 rounded-lg bg-neutral-900/80 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition-colors"
+                    className="text-left text-sm px-3 py-2 rounded-lg bg-surface-2/80 border border-line text-fg-muted hover:text-fg hover:border-line-strong transition-colors"
                   >
                     {suggestion}
                   </button>
@@ -85,12 +85,12 @@ export function AssistantConversation({
 
           {error && (
             <div className="flex flex-col gap-1.5">
-              <p className="text-sm text-red-400">{error}</p>
+              <p className="text-sm text-danger">{error}</p>
               {canRetry && (
                 <button
                   type="button"
                   onClick={handleRetry}
-                  className="self-start text-xs font-medium text-blue-400 transition-colors hover:text-blue-300"
+                  className="self-start text-xs font-medium text-accent transition-colors hover:text-accent-strong"
                 >
                   {dict.retry}
                 </button>
@@ -102,7 +102,7 @@ export function AssistantConversation({
         </div>
       </ScrollArea>
 
-      <div className="pt-3 border-t border-neutral-900 flex flex-col gap-2">
+      <div className="pt-3 border-t border-line flex flex-col gap-2">
         <div className="flex items-end gap-2">
           <Textarea
             value={input}
@@ -110,7 +110,7 @@ export function AssistantConversation({
             onKeyDown={handleKeyDown}
             placeholder={dict.placeholder}
             maxLength={600}
-            className="min-h-10 max-h-32 resize-none bg-neutral-900/60 border-neutral-800 text-sm text-white placeholder:text-neutral-600"
+            className="min-h-10 max-h-32 resize-none bg-surface-2/60 border-line text-sm text-fg placeholder:text-muted-2"
           />
           <Button
             size="icon"
@@ -121,7 +121,7 @@ export function AssistantConversation({
             <Send className="size-4" />
           </Button>
         </div>
-        <p className="text-[11px] text-neutral-600">{dict.disclaimer}</p>
+        <p className="text-[11px] text-muted-2">{dict.disclaimer}</p>
       </div>
     </div>
   )

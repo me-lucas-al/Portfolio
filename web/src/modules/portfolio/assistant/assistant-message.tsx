@@ -14,8 +14,8 @@ export function AssistantMessage({ role, content, isTyping }: AssistantMessagePr
       <div
         className={`max-w-[85%] rounded-xl px-3 py-2 text-sm whitespace-pre-wrap break-words ${
           isUser
-            ? "bg-blue-600 text-white"
-            : "bg-neutral-900/80 border border-neutral-800 text-neutral-200"
+            ? "bg-accent text-accent-ink"
+            : "bg-surface-2/80 border border-line text-fg-muted"
         }`}
       >
         {isUser ? content : <TypedText fullText={content} isTyping={isTyping} />}

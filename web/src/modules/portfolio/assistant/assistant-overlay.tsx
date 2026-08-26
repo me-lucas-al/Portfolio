@@ -48,14 +48,14 @@ export function AssistantOverlay({
       <DialogContent
         showCloseButton={false}
         style={noZoomStyle}
-        className="top-0 bottom-0 right-0 left-auto translate-x-0 translate-y-0 z-50 flex flex-col w-full sm:w-[420px] max-w-none sm:max-w-none gap-0 rounded-none border-0 border-l border-neutral-800 p-0 shadow-2xl shadow-black/40 duration-300 bg-neutral-950 text-white outline-none data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right"
+        className="top-0 bottom-0 right-0 left-auto translate-x-0 translate-y-0 z-50 flex flex-col w-full sm:w-[420px] max-w-none sm:max-w-none gap-0 rounded-none border-0 border-l border-line p-0 shadow-2xl shadow-black/40 duration-300 bg-surface text-fg outline-none data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right"
       >
-        <div className="flex items-center justify-between gap-3 border-b border-neutral-900 px-4 py-3">
+        <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
             <AvatarSprite variant="bust" className="size-11 shrink-0 rounded-full object-cover" />
             <div className="min-w-0">
-              <DialogTitle className="text-sm leading-normal font-semibold text-white">{dict.title}</DialogTitle>
-              <DialogDescription className="text-xs text-neutral-500">{dict.subtitle}</DialogDescription>
+              <DialogTitle className="text-sm leading-normal font-semibold text-fg">{dict.title}</DialogTitle>
+              <DialogDescription className="text-xs text-muted-2">{dict.subtitle}</DialogDescription>
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -65,7 +65,7 @@ export function AssistantOverlay({
                 onClick={onStopSpeaking}
                 aria-label={isPreparingVoice ? dict.preparingVoice : dict.stopSpeaking}
                 title={isPreparingVoice ? dict.preparingVoice : dict.stopSpeaking}
-                className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+                className="rounded-md p-1.5 text-muted-2 transition-colors hover:bg-surface-2 hover:text-fg-muted"
               >
                 <CircleStop className={`size-4 ${isPreparingVoice ? "animate-pulse" : ""}`} />
               </button>
@@ -76,7 +76,7 @@ export function AssistantOverlay({
               aria-label={blipsEnabled ? dict.blipsDisable : dict.blipsEnable}
               aria-pressed={blipsEnabled}
               title={blipsEnabled ? dict.blipsDisable : dict.blipsEnable}
-              className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+              className="rounded-md p-1.5 text-muted-2 transition-colors hover:bg-surface-2 hover:text-fg-muted"
             >
               {blipsEnabled ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
             </button>
@@ -85,7 +85,7 @@ export function AssistantOverlay({
                 type="button"
                 onClick={clearChat}
                 aria-label="Clear chat"
-                className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+                className="rounded-md p-1.5 text-muted-2 transition-colors hover:bg-surface-2 hover:text-fg-muted"
               >
                 <Trash2 className="size-4" />
               </button>
@@ -94,7 +94,7 @@ export function AssistantOverlay({
               <button
                 type="button"
                 aria-label={dict.close}
-                className="rounded-md p-1.5 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300"
+                className="rounded-md p-1.5 text-muted-2 transition-colors hover:bg-surface-2 hover:text-fg-muted"
               >
                 <X className="size-4" />
               </button>

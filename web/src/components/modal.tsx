@@ -20,13 +20,13 @@ const ModalContent = React.forwardRef<React.ElementRef<typeof DialogContent>, Mo
   ({ className, title, description, children, ...props }, ref) => (
     <DialogContent
       ref={ref}
-      className={`bg-neutral-950 border-neutral-800 sm:max-w-md ${className || ""}`}
+      className={`bg-surface border-line sm:max-w-md ${className || ""}`}
       {...props}
     >
       {(title || description) && (
         <DialogHeader>
-          {title && <DialogTitle className="text-white">{title}</DialogTitle>}
-          {description && <DialogDescription className="text-neutral-400">{description}</DialogDescription>}
+          {title && <DialogTitle className="text-fg">{title}</DialogTitle>}
+          {description && <DialogDescription className="text-fg-muted">{description}</DialogDescription>}
         </DialogHeader>
       )}
       {children}

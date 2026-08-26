@@ -20,13 +20,13 @@ const SideSheetContent = React.forwardRef<React.ElementRef<typeof SheetContent>,
   ({ className, title, description, children, ...props }, ref) => (
     <SheetContent
       ref={ref}
-      className={`bg-neutral-950 border-l-neutral-800 w-full sm:max-w-md overflow-y-auto flex flex-col gap-0 p-6 ${className || ""}`}
+      className={`bg-surface border-l-line w-full sm:max-w-md overflow-y-auto flex flex-col gap-0 p-6 ${className || ""}`}
       {...props}
     >
       {(title || description) && (
         <SheetHeader className="mb-8 space-y-1.5 text-left">
-          {title && <SheetTitle className="text-white text-xl font-semibold tracking-tight">{title}</SheetTitle>}
-          {description && <SheetDescription className="text-neutral-400 text-sm leading-relaxed">{description}</SheetDescription>}
+          {title && <SheetTitle className="text-fg text-xl font-semibold tracking-tight">{title}</SheetTitle>}
+          {description && <SheetDescription className="text-fg-muted text-sm leading-relaxed">{description}</SheetDescription>}
         </SheetHeader>
       )}
       <div className="flex-1">
