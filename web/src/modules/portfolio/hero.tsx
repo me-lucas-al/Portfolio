@@ -85,7 +85,7 @@ export function Hero({ cvUrlPt, cvUrlEn, locale }: HeroProps) {
                       href={cvUrlPt}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-fg-muted hover:text-fg hover:bg-surface-2 transition-all cursor-pointer"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-fg-muted hover:text-fg hover:bg-surface-2 focus:text-fg focus:bg-surface-2 transition-all cursor-pointer"
                     >
                       <span className="text-base leading-none">🇧🇷</span>
                       <span className="text-sm font-medium">Português</span>
@@ -98,7 +98,7 @@ export function Hero({ cvUrlPt, cvUrlEn, locale }: HeroProps) {
                       href={cvUrlEn}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-fg-muted hover:text-fg hover:bg-surface-2 transition-all cursor-pointer"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-fg-muted hover:text-fg hover:bg-surface-2 focus:text-fg focus:bg-surface-2 transition-all cursor-pointer"
                     >
                       <span className="text-base leading-none">🇺🇸</span>
                       <span className="text-sm font-medium">English</span>

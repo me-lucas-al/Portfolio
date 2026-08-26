@@ -100,8 +100,8 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
           {title}
         </h4>
         <div className="flex items-center gap-2 shrink-0">
-          <CarouselPrevious className="static translate-y-0 h-8 w-8 rounded-full bg-surface-2 border border-line text-fg-muted hover:text-fg hover:border-line-strong transition-all" />
-          <CarouselNext className="static translate-y-0 h-8 w-8 rounded-full bg-surface-2 border border-line text-fg-muted hover:text-fg hover:border-line-strong transition-all" />
+          <CarouselPrevious className="static translate-y-0 h-8 w-8 rounded-full bg-surface-2 border border-line text-fg-muted hover:bg-line-strong hover:text-fg hover:border-line-strong transition-all" />
+          <CarouselNext className="static translate-y-0 h-8 w-8 rounded-full bg-surface-2 border border-line text-fg-muted hover:bg-line-strong hover:text-fg hover:border-line-strong transition-all" />
         </div>
       </div>
     </Carousel>

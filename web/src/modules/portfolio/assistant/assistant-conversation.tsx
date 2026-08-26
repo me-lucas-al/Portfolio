@@ -78,8 +78,8 @@ export function AssistantConversation({
               {/* aria-live region above is otherwise silent while waiting on a
                   cache-miss generation (up to ~50s) - announce it once. */}
               <span className="sr-only">{dict.thinking}</span>
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-4 w-32 bg-surface-2" />
+              <Skeleton className="h-4 w-48 bg-surface-2" />
             </div>
           )}
 
@@ -117,6 +117,7 @@ export function AssistantConversation({
             onClick={() => void handleSend()}
             disabled={loading || !input.trim()}
             aria-label={dict.send}
+            className="bg-brand text-brand-ink hover:bg-brand-strong disabled:opacity-50"
           >
             <Send className="size-4" />
           </Button>
