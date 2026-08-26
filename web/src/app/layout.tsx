@@ -1,5 +1,5 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import type { Metadata, Viewport } from "next"
+import { Inter, Fraunces, JetBrains_Mono } from "next/font/google"
 import { ToastContainer } from "react-toastify"
 import Provider from "@/components/auth/session-provider"
 import { getLocale } from "@/lib/locale"
@@ -10,6 +10,24 @@ const inter = Inter({
   display: "swap",
   variable: "--font-sans",
 })
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["600", "700", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-display",
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono-terminal",
+})
+
+export const viewport: Viewport = {
+  themeColor: "#0d0b12",
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.lucasalmeidasouza.com"),
@@ -109,7 +127,10 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale()
   return (
-    <html lang={locale === "en" ? "en" : "pt-BR"} className={inter.variable}>
+    <html
+      lang={locale === "en" ? "en" : "pt-BR"}
+      className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}
+    >
       <body>  
         <Provider>{children}</Provider>
         <ToastContainer position="bottom-right" autoClose={2500} theme="colored" aria-label="Toast container" />
