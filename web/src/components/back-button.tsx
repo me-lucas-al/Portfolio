@@ -5,7 +5,7 @@ export default function BackButton({ path ='/', className='p-8' }: { path?: stri
   return (
     <div className={`${className}`}>
       <Link href={path}>
-        <ArrowLeftIcon className="text-white"/>
+        <ArrowLeftIcon className="text-fg-muted hover:text-fg transition-colors" />
       </Link>
     </div>
   );

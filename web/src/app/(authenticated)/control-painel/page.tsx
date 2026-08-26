@@ -1,4 +1,4 @@
-﻿import { getProjectsAction } from "@/app/actions/project"
+import { getProjectsAction } from "@/app/actions/project"
 import { getExperiencesAction } from "@/app/actions/experience"
 import { getEducationsAction } from "@/app/actions/education"
 import { getLinksAction } from "@/app/actions/link"
@@ -23,14 +23,14 @@ export default async function AdminPage() {
   ])
 
   return (
-    <main className="min-h-screen bg-black">
+    <main className="min-h-screen bg-ink text-fg">
       <div className="max-w-5xl mx-auto space-y-12 px-6 pb-20">
         <div className="pt-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">
+            <h1 className="font-display text-3xl font-bold text-fg tracking-tight">
               Painel de Controle
             </h1>
-            <p className="text-neutral-500 mt-2 text-sm">
+            <p className="text-fg-muted mt-2 text-sm">
               Faça a gestão dos projetos, experiências e formações do seu portfólio.
             </p>
           </div>
@@ -38,7 +38,7 @@ export default async function AdminPage() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:items-center">
             <Link
               href="/"
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-xl bg-neutral-900/40 hover:bg-neutral-900/70 border border-neutral-800 px-4 py-2.5 text-xs font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-offset-2 focus:ring-offset-black"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-xl bg-surface hover:bg-surface-2 border border-line hover:border-line-strong px-4 py-2.5 text-xs font-medium text-fg transition-all focus:outline-none focus:ring-2 focus:ring-brand/40 focus:ring-offset-2 focus:ring-offset-ink"
             >
               Voltar para o portfólio
             </Link>
@@ -46,7 +46,7 @@ export default async function AdminPage() {
             <form action={logoutAction} className="w-full sm:w-auto">
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center whitespace-nowrap rounded-xl bg-blue-950 hover:bg-blue-900 border border-blue-800/50 px-4 py-2.5 text-xs font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-offset-2 focus:ring-offset-black"
+                className="w-full inline-flex items-center justify-center whitespace-nowrap rounded-xl bg-danger/10 hover:bg-danger/20 border border-danger/30 px-4 py-2.5 text-xs font-medium text-danger transition-all focus:outline-none focus:ring-2 focus:ring-danger/40 focus:ring-offset-2 focus:ring-offset-ink cursor-pointer"
               >
                 Logout
               </button>

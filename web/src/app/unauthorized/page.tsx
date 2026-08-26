@@ -3,24 +3,24 @@ import Link from "next/link";
 
 export default function UnauthorizedPage() {
   return (
-    <main className="min-h-screen bg-black">
+    <main className="min-h-screen bg-ink text-fg">
       <BackButton path="/" />
       <section className="flex items-center justify-center px-4">
-        <div className="w-full max-w-md p-8 rounded-2xl bg-neutral-950 border border-red-900/40 shadow-[0_0_50px_-15px_rgba(127,29,29,0.6)]">
+        <div className="w-full max-w-md p-8 rounded-2xl bg-surface border border-danger/30 shadow-xl shadow-danger/5">
           <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-semibold text-white tracking-tight">
+            <h1 className="font-display text-2xl font-bold text-fg tracking-tight">
               Acesso não autorizado
             </h1>
-            <p className="text-sm text-neutral-400">
+            <p className="text-sm text-fg-muted">
               Você não tem permissão para acessar esta página. 
             </p>
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs text-muted-2">
               Caso acredite que isso seja um engano, contate o administrador do sistema.
             </p>
             <div className="pt-4">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-blue-950 hover:bg-blue-900 border border-blue-800/50 text-white text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-offset-2 focus:ring-offset-black"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand hover:bg-brand-strong text-brand-ink text-xs font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-ink"
               >
                 Ir para o login
               </Link>
