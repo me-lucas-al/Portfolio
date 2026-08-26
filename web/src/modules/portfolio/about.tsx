@@ -1,5 +1,5 @@
 import Image from "next/image"
-import profilePicture from "@/public/portfolio_profile.jpg"
+import profilePicture from "@/public/portfolio-profile-photo.jpg"
 import { getDictionary, type Locale } from "@/i18n"
 
 interface AboutProps {
@@ -39,7 +39,7 @@ export function About({ textPt, textEn, locale = "pt" }: AboutProps) {
               src={profilePicture}
               alt="Lucas Almeida - Desenvolvedor Next.js, React e Node.js"
               fill
-              className="object-cover"
+              className="object-cover object-[center_90%] scale-105"
               sizes="(max-width: 768px) 256px, 288px"
               priority
             />
