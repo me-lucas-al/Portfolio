@@ -4,7 +4,7 @@ import { ProjectItem } from "./project-item"
 
 export function ProjectList({ projects }: { projects: ProjectType[] }) {
   if (!projects?.length) {
-    return <p className="text-neutral-500 text-sm py-8">Nenhum projeto cadastrado no momento.</p>
+    return <p className="text-fg-muted text-sm py-8">Nenhum projeto cadastrado no momento.</p>
   }
 
   return (

@@ -11,7 +11,7 @@ export function ProjectTabContent({ activeView, projects }: ProjectTabContentPro
   if (activeView === "view") {
     return (
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-        <h2 className="text-xl font-medium text-white mb-6">Projetos Publicados</h2>
+        <h2 className="text-xl font-medium text-fg mb-6">Projetos Publicados</h2>
         <ProjectList projects={projects} />
       </div>
     )
@@ -19,7 +19,7 @@ export function ProjectTabContent({ activeView, projects }: ProjectTabContentPro
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-      <h2 className="text-xl font-medium text-white mb-6">Novo Projeto</h2>
+      <h2 className="text-xl font-medium text-fg mb-6">Novo Projeto</h2>
       <CreateProjectForm />
     </div>
   )

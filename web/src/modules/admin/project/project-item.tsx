@@ -34,20 +34,20 @@ export function ProjectItem({ project }: { project: ProjectType }) {
   }
 
   return (
-    <div className="flex items-center justify-between p-5 rounded-xl border border-neutral-900 bg-neutral-950/50 group transition-all duration-300 hover:bg-neutral-900/50 hover:border-neutral-800">
+    <div className="flex items-center justify-between p-5 rounded-xl border border-line bg-surface/80 group transition-all duration-300 hover:bg-surface-2 hover:border-line-strong">
       <div className="flex flex-1 min-w-0 pr-4 items-center">
-        <div className="relative flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900 flex items-center justify-center mr-4">
+        <div className="relative flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-line bg-surface-2 flex items-center justify-center mr-4">
           {project.imagesUrl && project.imagesUrl.length > 0 ? (
             <Image src={project.imagesUrl[0]} alt={project.title} fill className="object-cover" sizes="48px" />
           ) : (
-            <FolderGit2 className="w-6 h-6 text-neutral-500" />
+            <FolderGit2 className="w-6 h-6 text-fg-muted" />
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-white font-medium truncate">{project.title}</h4>
+          <h4 className="text-fg font-medium truncate">{project.title}</h4>
           <div className="flex flex-wrap gap-2 mt-2">
             {project.technologies?.map((tech: string) => (
-              <span key={tech} className="text-[10px] px-2 py-0.5 rounded-full bg-blue-950/30 text-blue-400 border border-blue-900/30">
+              <span key={tech} className="text-[10px] px-2.5 py-0.5 rounded-full bg-surface-2 text-fg-muted border border-line font-mono">
                 {tech}
               </span>
             ))}
@@ -56,11 +56,11 @@ export function ProjectItem({ project }: { project: ProjectType }) {
       </div>
 
       <div className="flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
-        <div className="flex items-center gap-1 mr-2 border-r border-neutral-800 pr-2">
+        <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
           <button 
             disabled={isPending}
             onClick={() => handleReorder('up')}
-            className="p-1.5 text-neutral-500 hover:text-blue-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-30"
+            className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
             title="Mover para cima"
           >
             <ChevronUp className="w-4 h-4" />
@@ -68,7 +68,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
           <button 
             disabled={isPending}
             onClick={() => handleReorder('down')}
-            className="p-1.5 text-neutral-500 hover:text-blue-400 hover:bg-neutral-800 rounded transition-all disabled:opacity-30"
+            className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
             title="Mover para baixo"
           >
             <ChevronDown className="w-4 h-4" />
@@ -77,13 +77,13 @@ export function ProjectItem({ project }: { project: ProjectType }) {
 
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
-            <button className="p-2.5 text-neutral-500 hover:text-blue-400 hover:bg-blue-950/50 rounded-lg transition-all">
+            <button className="p-2.5 text-fg-muted hover:text-brand hover:bg-brand/10 rounded-lg transition-all cursor-pointer">
               <Edit2 className="w-4 h-4" />
             </button>
           </SheetTrigger>
-          <SheetContent className="bg-neutral-950 border-l-neutral-900 overflow-y-auto sm:max-w-xl">
+          <SheetContent className="bg-surface border-l-line overflow-y-auto sm:max-w-xl text-fg">
             <SheetHeader className="mb-8">
-              <SheetTitle className="text-white">Editar Projeto</SheetTitle>
+              <SheetTitle className="text-fg font-semibold">Editar Projeto</SheetTitle>
             </SheetHeader>
             <EditProjectForm project={project} onCancel={() => setIsSheetOpen(false)} />
           </SheetContent>
@@ -91,27 +91,27 @@ export function ProjectItem({ project }: { project: ProjectType }) {
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <button className="p-2.5 text-neutral-500 hover:text-red-400 hover:bg-red-950/30 rounded-lg transition-all">
+            <button className="p-2.5 text-fg-muted hover:text-danger hover:bg-danger/10 rounded-lg transition-all cursor-pointer">
               <Trash2 className="w-4 h-4" />
             </button>
           </DialogTrigger>
-          <DialogContent className="bg-neutral-950 border-neutral-900 text-white">
+          <DialogContent className="bg-surface border-line text-fg">
             <DialogHeader>
-              <DialogTitle>Excluir Projeto</DialogTitle>
+              <DialogTitle className="text-fg">Excluir Projeto</DialogTitle>
             </DialogHeader>
-            <p className="text-neutral-400 text-sm py-4">
-              Tem certeza que deseja excluir o projeto <strong className="text-white">{project.title}</strong>? Esta ação não pode ser desfeita e os dados serão removidos permanentemente.
+            <p className="text-fg-muted text-sm py-4">
+              Tem certeza que deseja excluir o projeto <strong className="text-fg">{project.title}</strong>? Esta ação não pode ser desfeita e os dados serão removidos permanentemente.
             </p>
             <DialogFooter className="gap-2 sm:gap-0">
               <DialogClose asChild>
-                <button className="px-4 py-2 rounded-lg border border-neutral-800 text-neutral-300 hover:bg-neutral-900 transition-all text-sm font-medium">
+                <button className="px-4 py-2 rounded-lg border border-line text-fg-muted hover:text-fg hover:bg-surface-2 transition-all text-sm font-medium cursor-pointer">
                   Cancelar
                 </button>
               </DialogClose>
               <button
                 onClick={handleDelete}
                 disabled={isPending}
-                className="flex items-center justify-center min-w-[100px] px-4 py-2 rounded-lg bg-red-950 border border-red-900/50 text-red-400 hover:bg-red-900 hover:text-white transition-all text-sm font-medium disabled:opacity-50"
+                className="flex items-center justify-center min-w-[100px] px-4 py-2 rounded-lg bg-danger/20 border border-danger/40 text-danger hover:bg-danger/30 hover:text-fg transition-all text-sm font-medium disabled:opacity-50 cursor-pointer"
               >
                 {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sim, Excluir"}
               </button>
