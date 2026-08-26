@@ -33,59 +33,59 @@ export function EditExperienceForm({ experience, onSuccess }: { experience: Expe
   return (
     <form action={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <label className="text-sm text-neutral-400">Empresa</label>
-        <input required name="company" defaultValue={experience.company} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+        <label className="text-sm text-fg-muted">Empresa</label>
+        <input required name="company" defaultValue={experience.company} className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-sm text-neutral-400">Data de Início</label>
-          <input required type="month" name="startDate" defaultValue={formatMonthForInput(experience.startDate)} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+          <label className="text-sm text-fg-muted">Data de Início</label>
+          <input required type="month" name="startDate" defaultValue={formatMonthForInput(experience.startDate)} className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" />
         </div>
         <div className="space-y-2">
-          <label className="text-sm text-neutral-400 flex justify-between">
+          <label className="text-sm text-fg-muted flex justify-between">
             Data de Término
-            <span className="text-neutral-600 text-[10px] mt-1">Opcional</span>
+            <span className="text-muted-2 text-[10px] mt-1">Opcional</span>
           </label>
-          <input type="month" name="endDate" defaultValue={formatMonthForInput(experience.endDate)} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+          <input type="month" name="endDate" defaultValue={formatMonthForInput(experience.endDate)} className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" />
         </div>
       </div>
 
       <Tabs defaultValue="pt" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-neutral-900 border border-neutral-800">
-          <TabsTrigger value="pt" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+        <TabsList className="grid w-full grid-cols-2 bg-surface border border-line">
+          <TabsTrigger value="pt" className="data-[state=active]:bg-brand/10 data-[state=active]:text-brand text-fg-muted">
             🇧🇷 PT-BR
           </TabsTrigger>
-          <TabsTrigger value="en" className="data-[state=active]:bg-blue-950 data-[state=active]:text-blue-300">
+          <TabsTrigger value="en" className="data-[state=active]:bg-brand/10 data-[state=active]:text-brand text-fg-muted">
             🇺🇸 EN-US
           </TabsTrigger>
         </TabsList>
         <TabsContent value="pt" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
-            <label className="text-sm text-neutral-400">Cargo</label>
-            <input required name="role" defaultValue={experience.role} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+            <label className="text-sm text-fg-muted">Cargo</label>
+            <input required name="role" defaultValue={experience.role} className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" />
           </div>
           <div className="space-y-2">
-            <label className="text-sm text-neutral-400">Descrição</label>
-            <textarea required name="description" defaultValue={experience.description} rows={4} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500 resize-none" />
+            <label className="text-sm text-fg-muted">Descrição</label>
+            <textarea required name="description" defaultValue={experience.description} rows={4} className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all resize-none" />
           </div>
         </TabsContent>
         <TabsContent value="en" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
-            <label className="text-sm text-neutral-400">Role <span className="text-neutral-600">(English)</span></label>
-            <input name="roleEn" defaultValue={experience.roleEn ?? ""} placeholder="English role (optional)" className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+            <label className="text-sm text-fg-muted">Role <span className="text-muted-2">(English)</span></label>
+            <input name="roleEn" defaultValue={experience.roleEn ?? ""} placeholder="English role (optional)" className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" />
           </div>
           <div className="space-y-2">
-            <label className="text-sm text-neutral-400">Description <span className="text-neutral-600">(English)</span></label>
-            <textarea name="descriptionEn" defaultValue={experience.descriptionEn ?? ""} rows={4} placeholder="English description (optional)" className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500 resize-none" />
+            <label className="text-sm text-fg-muted">Description <span className="text-muted-2">(English)</span></label>
+            <textarea name="descriptionEn" defaultValue={experience.descriptionEn ?? ""} rows={4} placeholder="English description (optional)" className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all resize-none" />
           </div>
         </TabsContent>
       </Tabs>
       <div className="space-y-2">
-        <label className="text-sm text-neutral-400">Tecnologias</label>
-        <input name="techs" defaultValue={experience.techs?.join(", ")} className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 text-white focus:border-blue-500" />
+        <label className="text-sm text-fg-muted">Tecnologias</label>
+        <input name="techs" defaultValue={experience.techs?.join(", ")} className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" />
       </div>
-      <button disabled={isPending} type="submit" className="w-full px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+      <button disabled={isPending} type="submit" className="w-full px-6 py-3 bg-brand hover:bg-brand-strong text-brand-ink font-semibold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50">
         {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Atualizar Experiência"}
       </button>
     </form>
