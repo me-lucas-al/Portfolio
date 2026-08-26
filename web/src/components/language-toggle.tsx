@@ -22,15 +22,15 @@ export function LanguageToggle({ currentLocale }: LanguageToggleProps) {
   }
 
   return (
-    <div className="flex items-center gap-1 p-1 rounded-lg bg-neutral-900/80 border border-neutral-800">
+    <div className="flex items-center gap-1 p-1 rounded-lg bg-surface-2/80 border border-line">
       <button
         onClick={() => handleToggle("pt")}
         disabled={isPending}
         aria-label="Mudar para Português"
         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
           currentLocale === "pt"
-            ? "bg-blue-950 text-blue-300 border border-blue-800/60"
-            : "text-neutral-500 hover:text-neutral-200"
+            ? "bg-accent/15 text-accent-strong border border-accent/40"
+            : "text-muted-2 hover:text-fg-muted"
         }`}
       >
         <span aria-hidden>🇧🇷</span>
@@ -42,8 +42,8 @@ export function LanguageToggle({ currentLocale }: LanguageToggleProps) {
         aria-label="Switch to English"
         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
           currentLocale === "en"
-            ? "bg-blue-950 text-blue-300 border border-blue-800/60"
-            : "text-neutral-500 hover:text-neutral-200"
+            ? "bg-accent/15 text-accent-strong border border-accent/40"
+            : "text-muted-2 hover:text-fg-muted"
         }`}
       >
         <span aria-hidden>🇺🇸</span>
