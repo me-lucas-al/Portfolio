@@ -21,12 +21,12 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
   if (!imagesUrl || imagesUrl.length === 0) {
     return (
       <>
-        <div className="w-full aspect-video bg-neutral-900/50 rounded-xl overflow-hidden relative border border-neutral-800/50 mb-5 flex flex-col items-center justify-center">
-          <div className="w-12 h-12 rounded-xl bg-blue-950/40 flex items-center justify-center border border-blue-900/50">
-            <FolderGit2 className="w-6 h-6 text-blue-500" />
+        <div className="w-full aspect-video bg-surface-2/50 rounded-xl overflow-hidden relative border border-line/50 mb-5 flex flex-col items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-surface flex items-center justify-center border border-line">
+            <FolderGit2 className="w-6 h-6 text-fg-muted" />
           </div>
         </div>
-        <h4 className="text-xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">
+        <h4 className="text-xl font-bold text-fg mb-4 group-hover:text-accent transition-colors">
           {title}
         </h4>
       </>
@@ -36,7 +36,7 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
   if (imagesUrl.length === 1) {
     return (
       <>
-        <div className="w-full aspect-video bg-neutral-900/50 rounded-xl overflow-hidden relative border border-neutral-800/50 mb-5">
+        <div className="w-full aspect-video bg-surface-2/50 rounded-xl overflow-hidden relative border border-line/50 mb-5">
           <Dialog>
             <DialogTrigger asChild>
               <div className="w-full h-full cursor-pointer block">
@@ -54,7 +54,7 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
             <ProjectFullscreenDialog title={title} imagesUrl={imagesUrl} />
           </Dialog>
         </div>
-        <h4 className="text-xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">
+        <h4 className="text-xl font-bold text-fg mb-4 group-hover:text-accent transition-colors">
           {title}
         </h4>
       </>
@@ -63,7 +63,7 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
 
   return (
     <Carousel className="w-full">
-      <div className="w-full bg-neutral-900/50 rounded-xl overflow-hidden border border-neutral-800/50 mb-5 relative">
+      <div className="w-full bg-surface-2/50 rounded-xl overflow-hidden border border-line/50 mb-5 relative">
         <CarouselContent className="ml-0">
           {imagesUrl.map((url, index) => (
             <CarouselItem
@@ -96,12 +96,12 @@ export function ProjectGallery({ title, imagesUrl }: ProjectGalleryProps) {
       </div>
 
       <div className="flex items-start justify-between gap-4 mb-4">
-        <h4 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+        <h4 className="text-xl font-bold text-fg group-hover:text-accent transition-colors">
           {title}
         </h4>
         <div className="flex items-center gap-2 shrink-0">
-          <CarouselPrevious className="static translate-y-0 h-8 w-8 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:bg-blue-900/60 hover:border-blue-800 transition-all" />
-          <CarouselNext className="static translate-y-0 h-8 w-8 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:bg-blue-900/60 hover:border-blue-800 transition-all" />
+          <CarouselPrevious className="static translate-y-0 h-8 w-8 rounded-full bg-surface-2 border border-line text-fg-muted hover:text-fg hover:border-line-strong transition-all" />
+          <CarouselNext className="static translate-y-0 h-8 w-8 rounded-full bg-surface-2 border border-line text-fg-muted hover:text-fg hover:border-line-strong transition-all" />
         </div>
       </div>
     </Carousel>

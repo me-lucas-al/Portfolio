@@ -3,27 +3,30 @@ import { Github, Linkedin, Mail, Smartphone, Link as LinkIcon } from "lucide-rea
 import Link from "next/link"
 import { getDictionary, type Locale } from "@/i18n"
 
-// 1. Criamos um mapa de configurações visuais fora do componente para não recriá-lo a cada render
+// Icon accents intentionally reference each platform's own brand color
+// (GitHub neutral, LinkedIn blue, WhatsApp green, email red) rather than the
+// site's own amber accent - a deliberate exception, not the "accent color
+// splashed everywhere" pattern the rest of the UI avoids.
 const contactVisuals: Record<string, { icon: React.ReactNode; hoverClass: string; iconClass: string }> = {
   github: {
     icon: <Github className="w-6 h-6" />,
-    hoverClass: "hover:border-blue-800 hover:bg-neutral-900",
-    iconClass: "text-white"
+    hoverClass: "hover:border-line-strong hover:bg-surface-2",
+    iconClass: "text-fg"
   },
   linkedin: {
     icon: <Linkedin className="w-6 h-6" />,
-    hoverClass: "hover:border-blue-600 hover:bg-blue-950/30",
-    iconClass: "text-blue-500"
+    hoverClass: "hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10",
+    iconClass: "text-[#0A66C2]"
   },
   whatsapp: {
     icon: <Smartphone className="w-6 h-6" />,
-    hoverClass: "hover:border-green-600 hover:bg-green-950/30",
-    iconClass: "text-green-500"
+    hoverClass: "hover:border-success/50 hover:bg-success/10",
+    iconClass: "text-success"
   },
   email: {
     icon: <Mail className="w-6 h-6" />,
-    hoverClass: "hover:border-red-600 hover:bg-red-950/30",
-    iconClass: "text-red-500"
+    hoverClass: "hover:border-danger/50 hover:bg-danger/10",
+    iconClass: "text-danger"
   }
 }
 
@@ -45,8 +48,8 @@ export function Contact({ links, locale }: ContactProps) {
       url: link.url,
       icon: visual?.icon || <LinkIcon className="w-6 h-6" />,
       description: description || dict.contact.fallback,
-      hoverClass: visual?.hoverClass || "hover:border-neutral-600 hover:bg-neutral-800",
-      iconClass: visual?.iconClass || "text-neutral-400"
+      hoverClass: visual?.hoverClass || "hover:border-line-strong hover:bg-surface-2",
+      iconClass: visual?.iconClass || "text-fg-muted"
     };
   });
 
@@ -54,13 +57,13 @@ export function Contact({ links, locale }: ContactProps) {
     <section id="contatos" className="py-20 scroll-mt-20">
       <div className="space-y-12">
         <div className="space-y-4">
-          <h2 className="text-blue-500 font-medium tracking-wider text-sm uppercase">
-            06. {dict.contact.title}
+          <h2 className="text-accent font-medium tracking-wider text-sm uppercase">
+            {dict.contact.title}
           </h2>
-          <h3 className="text-3xl md:text-5xl font-bold text-white tracking-tight">
+          <h3 className="font-display text-3xl md:text-5xl font-bold text-fg tracking-tight">
             {dict.contact.heading}
           </h3>
-          <p className="text-neutral-400 text-lg max-w-2xl leading-relaxed">
+          <p className="text-fg-muted text-lg max-w-2xl leading-relaxed">
             {dict.contact.description}
           </p>
         </div>
@@ -72,14 +75,14 @@ export function Contact({ links, locale }: ContactProps) {
               href={contact.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group flex flex-col items-center justify-center gap-4 p-8 rounded-2xl bg-neutral-950/50 border border-neutral-900 transition-all duration-300 ${contact.hoverClass}`}
+              className={`group flex flex-col items-center justify-center gap-4 p-8 rounded-2xl bg-surface/50 border border-line transition-all duration-300 ${contact.hoverClass}`}
             >
-              <div className={`p-4 rounded-full bg-neutral-900 border border-neutral-800 transition-transform duration-300 group-hover:-translate-y-1 ${contact.iconClass}`}>
+              <div className={`p-4 rounded-full bg-surface-2 border border-line transition-transform duration-300 group-hover:-translate-y-1 ${contact.iconClass}`}>
                 {contact.icon}
               </div>
               <div className="text-center space-y-1">
-                <h4 className="text-white font-medium text-lg">{contact.title}</h4>
-                <p className="text-sm text-neutral-500 transition-colors duration-300 group-hover:text-neutral-400">{contact.description}</p>
+                <h4 className="text-fg font-medium text-lg">{contact.title}</h4>
+                <p className="text-sm text-muted-2 transition-colors duration-300 group-hover:text-fg-muted">{contact.description}</p>
               </div>
             </Link>
           ))}

@@ -21,21 +21,20 @@ export function About({ textPt, textEn, locale = "pt" }: AboutProps) {
   return (
     <section id="sobre" className="py-24 scroll-mt-20">
       <div className="flex items-center gap-6 mb-12">
-        <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-          <span className="text-blue-500 font-mono text-lg font-normal">01.</span>
+        <h3 className="font-display text-2xl font-bold text-fg">
           {title}
         </h3>
-        <div className="h-px bg-neutral-900 flex-1" />
+        <div className="h-px bg-line flex-1" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-12 items-center">
-        <div className="text-neutral-400 text-lg leading-relaxed space-y-6">
+        <div className="text-fg-muted text-lg leading-relaxed space-y-6">
           {paragraphs.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
         </div>
 
         <div className="flex justify-center md:justify-end">
-          <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full border-4 border-white overflow-hidden shadow-xl shadow-white/10">
+          <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full border-4 border-line-strong overflow-hidden shadow-xl shadow-accent/10">
             <Image
               src={profilePicture}
               alt="Lucas Almeida - Desenvolvedor Next.js, React e Node.js"

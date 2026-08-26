@@ -135,32 +135,31 @@ export function Skills({ frontend, backend, tools, locale = "pt" }: SkillsProps)
   return (
     <section id="tecnologias" className="py-24 scroll-mt-20">
       <div className="flex items-center gap-6 mb-12">
-        <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-          <span className="text-blue-500 font-mono text-lg font-normal">02.</span> 
+        <h3 className="font-display text-2xl font-bold text-fg">
           {sectionTitle}
         </h3>
-        <div className="h-px bg-neutral-900 flex-1" />
+        <div className="h-px bg-line flex-1" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
         {displayCategories.map((category) => (
           <div key={category.title} className="space-y-6">
-            <h4 className="text-lg font-medium text-white/90 pb-2 border-b border-neutral-900">
+            <h4 className="text-lg font-medium text-fg/90 pb-2 border-b border-line">
               {category.title}
             </h4>
             <div className="flex flex-wrap gap-3">
               {category.skills.map((skillName) => {
                 const normalized = skillName.toLowerCase();
-                const config = skillIconMap[normalized] || { icon: TerminalSquare, hoverColor: "group-hover:text-blue-400" };
+                const config = skillIconMap[normalized] || { icon: TerminalSquare, hoverColor: "group-hover:text-accent" };
                 const Icon = config.icon;
 
                 return (
-                  <div 
-                    key={skillName} 
-                    className="group flex items-center gap-2.5 px-4 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-300 text-sm font-medium hover:border-neutral-700 hover:bg-neutral-900 transition-all cursor-default"
+                  <div
+                    key={skillName}
+                    className="group flex items-center gap-2.5 px-4 py-2 rounded-xl bg-surface border border-line text-fg-muted text-sm font-medium hover:border-line-strong hover:bg-surface-2 transition-all cursor-default"
                   >
-                    <Icon className={`w-4 h-4 text-neutral-500 transition-colors ${config.hoverColor}`} />
-                    <span className="group-hover:text-white transition-colors">
+                    <Icon className={`w-4 h-4 text-muted-2 transition-colors ${config.hoverColor}`} />
+                    <span className="group-hover:text-fg transition-colors">
                       {skillName}
                     </span>
                   </div>

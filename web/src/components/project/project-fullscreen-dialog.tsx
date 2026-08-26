@@ -22,7 +22,7 @@ export function ProjectFullscreenDialog({ title, imagesUrl, startIndex = 0 }: Pr
     <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-[80vw] h-[95vh] border-none bg-transparent shadow-none flex flex-col items-center justify-center p-0 [&>button:last-child]:hidden">
       <DialogTitle className="sr-only">Modo tela cheia do projeto {title}</DialogTitle>
       
-      <DialogClose className="absolute right-0 top-0 md:-right-8 md:-top-8 p-3 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-700/50 transition-colors rounded-full text-neutral-300 hover:text-white z-50 shadow-2xl backdrop-blur-sm">
+      <DialogClose className="absolute right-0 top-0 md:-right-8 md:-top-8 p-3 bg-surface-2/80 hover:bg-surface-2 border border-line-strong/50 transition-colors rounded-full text-fg-muted hover:text-fg z-50 shadow-2xl backdrop-blur-sm">
         <X className="w-6 h-6" />
         <span className="sr-only">Fechar</span>
       </DialogClose>
@@ -58,8 +58,8 @@ export function ProjectFullscreenDialog({ title, imagesUrl, startIndex = 0 }: Pr
           </CarouselContent>
           
           <div className="flex items-center gap-6 mt-6">
-            <CarouselPrevious className="static translate-y-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-neutral-900 border border-neutral-700 text-white hover:bg-blue-600 hover:border-blue-500 transition-all shadow-xl" />
-            <CarouselNext className="static translate-y-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-neutral-900 border border-neutral-700 text-white hover:bg-blue-600 hover:border-blue-500 transition-all shadow-xl" />
+            <CarouselPrevious className="static translate-y-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-surface-2 border border-line-strong text-fg hover:bg-accent hover:border-accent hover:text-accent-ink transition-all shadow-xl" />
+            <CarouselNext className="static translate-y-0 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-surface-2 border border-line-strong text-fg hover:bg-accent hover:border-accent hover:text-accent-ink transition-all shadow-xl" />
           </div>
         </Carousel>
       )}

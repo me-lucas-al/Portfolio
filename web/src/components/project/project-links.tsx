@@ -15,15 +15,15 @@ export function ProjectLinks({ githubUrl, deployUrl, locale = "pt" }: ProjectLin
   const deployLabel = locale === "en" ? "Live Demo" : "Site (Deploy)"
 
   return (
-    <div className="flex items-center gap-5 mt-auto pt-6 border-t border-neutral-900/50">
+    <div className="flex items-center gap-5 mt-auto pt-6 border-t border-line/50">
       {githubUrl && (
-        <Link href={githubUrl} target="_blank" className="flex items-center gap-2 text-sm font-medium text-neutral-500 hover:text-white transition-colors">
+        <Link href={githubUrl} target="_blank" className="flex items-center gap-2 text-sm font-medium text-muted-2 hover:text-fg transition-colors">
           <Github className="w-4 h-4" />
           {codeLabel}
         </Link>
       )}
       {deployUrl && (
-        <Link href={deployUrl} target="_blank" className="flex items-center gap-2 text-sm font-medium text-neutral-500 hover:text-blue-400 transition-colors">
+        <Link href={deployUrl} target="_blank" className="flex items-center gap-2 text-sm font-medium text-muted-2 hover:text-accent transition-colors">
           <ExternalLink className="w-4 h-4" />
           {deployLabel}
         </Link>
