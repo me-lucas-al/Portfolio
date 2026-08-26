@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { EditProfileForm } from "./edit-profile-form"
 
@@ -11,8 +11,8 @@ export function ProfileTabContent({ systemSettings }: ProfileTabContentProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-white">Perfil e Tecnologias</h2>
-          <p className="text-neutral-500 text-sm mt-1">
+          <h2 className="text-2xl font-bold text-fg">Perfil e Tecnologias</h2>
+          <p className="text-fg-muted text-sm mt-1">
             Atualize o texto "Quem Sou" e as tecnologias exibidas na sua página inicial.
           </p>
         </div>
