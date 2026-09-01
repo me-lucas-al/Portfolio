@@ -9,6 +9,9 @@
     "generate:avatar-sprites": "node scripts/generate-avatar-sprites.mjs"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@google/genai": "^2.17.1",
     "@portfolio/core": "workspace:*",
     "@portfolio/packages": "workspace:*",

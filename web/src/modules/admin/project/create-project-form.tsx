@@ -5,49 +5,78 @@ import { createProjectAction } from "@/app/actions/project"
 import { toast } from "react-toastify"
 import { Loader2, X, ImageIcon } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
+import { SortableContext, arrayMove, rectSortingStrategy, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
+import { SortableImageItem } from "./sortable-image-item"
+
+interface NewImage {
+  id: string
+  file: File
+  preview: string
+}
 
 export function CreateProjectForm() {
   const [state, formAction, isPending] = useActionState(createProjectAction, null)
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [newFiles, setNewFiles] = useState<File[]>([])
-  const [newPreviews, setNewPreviews] = useState<string[]>([])
+  const [newImages, setNewImages] = useState<NewImage[]>([])
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  )
 
   useEffect(() => {
     if (state?.error) {
       toast.error(state.error)
     }
-    
+
     if (state?.success && state?.message) {
       toast.success(state.message)
-      setNewFiles([])
-      setNewPreviews([])
+      setNewImages([])
     }
   }, [state])
-  
+
   const handleNewFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
-    setNewFiles(prev => [...prev, ...files])
-    const previews = files.map(f => URL.createObjectURL(f))
-    setNewPreviews(prev => [...prev, ...previews])
+    setNewImages(prev => [...prev, ...files.map(file => ({ id: URL.createObjectURL(file), file, preview: URL.createObjectURL(file) }))])
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
 
-  const handleRemoveNew = (index: number) => {
-    setNewFiles(prev => prev.filter((_, i) => i !== index))
-    setNewPreviews(prev => {
-      URL.revokeObjectURL(prev[index])
-      return prev.filter((_, i) => i !== index)
+  const handleRemoveNew = (id: string) => {
+    setNewImages(prev => {
+      const removed = prev.find(img => img.id === id)
+      if (removed) URL.revokeObjectURL(removed.preview)
+      return prev.filter(img => img.id !== id)
+    })
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setNewImages(items => {
+      const oldIndex = items.findIndex(img => img.id === active.id)
+      const newIndex = items.findIndex(img => img.id === over.id)
+      return arrayMove(items, oldIndex, newIndex)
     })
   }
 
   const handleSubmit = async (formData: FormData) => {
-    newFiles.forEach(file => formData.append("images", file))
+    newImages.forEach(({ file }) => formData.append("images", file))
     return formAction(formData)
   }
-  
-  const hasImages = newPreviews.length > 0
+
+  const hasImages = newImages.length > 0
 
   return (
     <form action={handleSubmit} className="space-y-6">
@@ -130,23 +159,23 @@ export function CreateProjectForm() {
         <label className="text-sm font-medium text-fg-muted ml-1">Imagens do Projeto</label>
 
         {hasImages && (
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-            {newPreviews.map((src, i) => (
-              <div key={src} className="relative group aspect-video rounded-lg overflow-hidden border border-line-strong bg-surface-2">
-                <img src={src} alt={`Nova imagem ${i + 1}`} className="w-full h-full object-cover" />
-                {i === 0 && (
-                  <span className="absolute top-1 left-1 text-[10px] font-semibold bg-brand/20 text-brand border border-brand/40 px-1.5 py-0.5 rounded">Capa</span>
-                )}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveNew(i)}
-                  className="absolute top-1 right-1 p-1 rounded-full bg-ink/80 text-danger hover:bg-danger/20 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={newImages.map(img => img.id)} strategy={rectSortingStrategy}>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {newImages.map((img, i) => (
+                  <SortableImageItem
+                    key={img.id}
+                    id={img.id}
+                    badge={i === 0 ? "Capa" : undefined}
+                    badgeClassName="bg-brand/20 text-brand border-brand/40"
+                    onRemove={() => handleRemoveNew(img.id)}
+                  >
+                    <img src={img.preview} alt={`Nova imagem ${i + 1}`} className="w-full h-full object-cover pointer-events-none" />
+                  </SortableImageItem>
+                ))}
               </div>
-            ))}
-          </div>
+            </SortableContext>
+          </DndContext>
         )}
 
         <label
