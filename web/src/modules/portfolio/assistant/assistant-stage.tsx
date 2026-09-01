@@ -1,10 +1,10 @@
 "use client"
 
-import type { KeyboardEvent } from "react"
+import { useEffect, useRef, type KeyboardEvent } from "react"
 import { Send } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { AnswerBalloon, AvatarSprite } from "@/modules/portfolio/avatar/contract"
+import { AnswerBalloon, AvatarSprite, TypedText, useTypingSpeech } from "@/modules/portfolio/avatar/contract"
 import type { ChatMessage } from "./use-assistant-chat"
 import type { Dictionary } from "@/i18n"
 
@@ -22,12 +22,15 @@ export interface AssistantStageProps {
 }
 
 // Body of the bottom-docked "dialogue box" (see `assistant-dialogue-bar.tsx`
-// for the shell around this): bust portrait + name tag on the left, current
-// answer/greeting/suggestions to its right, question prompt pinned to the
-// bottom - a JRPG/visual-novel layout, not a scrollable message list. Each
-// answer replaces the last (`../avatar/speech/answer-balloon.tsx`); the
-// visitor's own question never gets a bubble, it just clears from the
-// prompt on send.
+// for the shell around this): bust portrait + name tag pinned on the left,
+// a scrolling transcript of every past question/answer to its right, question
+// prompt pinned to the bottom. Only the transcript column scrolls - the
+// avatar stays put. The visitor's own questions render as `▸`-prefixed
+// lines (echoing the input row's own prompt glyph) rather than a full chat
+// bubble, keeping the JRPG/visual-novel text-log feel; the live answer (still
+// typing, or waiting on `dict.thinking`) is rendered by
+// `../avatar/speech/answer-balloon.tsx` at the tail of the transcript, every
+// earlier answer by `TypedText` with `isTyping` forced to `false`.
 export function AssistantStage({
   dict,
   messages,
@@ -40,36 +43,62 @@ export function AssistantStage({
   handleRetry,
   handleKeyDown,
 }: AssistantStageProps) {
+  const { typingMessageId } = useTypingSpeech()
+  const transcriptRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const node = transcriptRef.current
+    if (!node) return
+    node.scrollTop = node.scrollHeight
+  }, [messages, loading, typingMessageId])
+
   return (
-    <div className="flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto px-4 pb-4 pt-1 sm:px-5">
-      <div className="flex items-start gap-3">
+    <div className="flex flex-1 min-h-0 flex-col gap-3 px-4 pb-4 pt-1 sm:px-5">
+      <div className="flex min-h-0 flex-1 items-start gap-3">
         <AvatarSprite
           variant="bust"
           className="size-12 shrink-0 rounded-full object-cover ring-2 ring-brand/60 sm:size-16"
         />
-        <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 pt-1">
           <span className="w-fit rounded-full bg-brand px-3 py-0.5 text-xs font-bold text-brand-ink">
             {dict.title}
           </span>
 
-          <AnswerBalloon skipLabel={dict.skipTyping} thinkingLabel={dict.thinking} />
+          <div ref={transcriptRef} className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
+            {messages.length === 0 && !loading && <p className="text-sm text-fg-muted">{dict.subtitle}</p>}
 
-          {messages.length === 0 && !loading && <p className="text-sm text-fg-muted">{dict.subtitle}</p>}
+            {messages.map((message) => {
+              if (message.role === "model" && message.id === typingMessageId) return null
 
-          {messages.length === 0 && (
-            <div className="flex flex-wrap gap-2">
-              {dict.suggestions.map((suggestion) => (
-                <button
-                  key={suggestion}
-                  type="button"
-                  onClick={() => void handleSend(suggestion)}
-                  className="rounded-full border border-line bg-surface-2/80 px-3 py-1.5 text-left text-xs text-fg-muted transition-colors hover:border-brand/60 hover:text-fg"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
-          )}
+              if (message.role === "user") {
+                return (
+                  <p key={message.id} className="text-sm font-medium text-brand">
+                    <span aria-hidden="true">▸ </span>
+                    {message.content}
+                  </p>
+                )
+              }
+
+              return <TypedText key={message.id} fullText={message.content} isTyping={false} className="block text-sm leading-relaxed text-fg" />
+            })}
+
+            <AnswerBalloon skipLabel={dict.skipTyping} thinkingLabel={dict.thinking} />
+
+            {messages.length === 0 && (
+              <div className="flex flex-wrap gap-2">
+                {dict.suggestions.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => void handleSend(suggestion)}
+                    className="rounded-full border border-line bg-surface-2/80 px-3 py-1.5 text-left text-xs text-fg-muted transition-colors hover:border-brand/60 hover:text-fg"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {error && (
             <div className="flex flex-col gap-1.5">

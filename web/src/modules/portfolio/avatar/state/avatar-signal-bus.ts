@@ -1,12 +1,11 @@
 /**
  * Module-scope mutable store bridging state written from outside React (the
- * assistant module's overlay-open flag, the typing/blink/mouth timers) to
+ * assistant module's overlay-open flag, the typing/mouth timers) to
  * whatever reads it back - the same "write from outside, poll or subscribe
  * without going through React state" convention this module has always used.
  *
  * `overlayOpen` has no anchor rect anymore: the 2D sprite avatar has no
- * camera to point, so there is nothing to measure. `blinking` is new -
- * written by `../sprite/blink-timer.ts`, read by `../sprite/avatar-sprite.tsx`.
+ * camera to point, so there is nothing to measure.
  *
  * `mouthOpen`, `tone`, and `thinking` keep their original semantics:
  * `mouthOpen` is written by `../mouth/mouth-source.ts` (typing tick or real
@@ -26,7 +25,6 @@ import type { Tone } from "../tone/tone"
 interface AvatarSignalState {
   overlayOpen: boolean
   mouthOpen: number
-  blinking: boolean
   tone: Tone
   thinking: boolean
 }
@@ -36,7 +34,6 @@ type Listener = () => void
 let snapshot: AvatarSignalState = {
   overlayOpen: false,
   mouthOpen: 0,
-  blinking: false,
   tone: "neutral",
   thinking: false,
 }
@@ -75,12 +72,6 @@ export function setOverlayState(open: boolean): void {
 export function setMouthOpen(value: number): void {
   if (snapshot.mouthOpen === value) return
   commit({ mouthOpen: value })
-}
-
-/** Written by `../sprite/blink-timer.ts`. */
-export function setBlinking(value: boolean): void {
-  if (snapshot.blinking === value) return
-  commit({ blinking: value })
 }
 
 /** Written by `contract.ts`'s `setAvatarTone`, which also owns the "hold, then decay to neutral" timing. */

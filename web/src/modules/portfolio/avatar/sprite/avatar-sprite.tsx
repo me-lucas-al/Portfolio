@@ -4,7 +4,6 @@ import { useEffect, useState, useSyncExternalStore } from "react"
 import { getAvatarSignalSnapshot, subscribeAvatarSignal } from "../state/avatar-signal-bus"
 import { getFrameUrl, preloadAllSpriteFrames, type MouthState } from "./sprite-frames"
 import { toneToExpression } from "./tone-expression-map"
-import { startBlinkTimer, stopBlinkTimer } from "./blink-timer"
 
 export type AvatarSpriteVariant = "mini" | "bust"
 
@@ -24,8 +23,8 @@ function getServerSnapshot() {
 }
 
 /**
- * Pure `<img>` swap - no canvas, no `three`. Reads `tone`/`mouthOpen`/
- * `blinking` off the shared signal bus via `useSyncExternalStore` (the same
+ * Pure `<img>` swap - no canvas, no `three`. Reads `tone`/`mouthOpen`
+ * off the shared signal bus via `useSyncExternalStore` (the same
  * "module-scope mutable store" pattern `use-speech-player.ts` already uses
  * for `speech-player.ts`). Mounted twice, independently, with no
  * coordination beyond the shared bus: once as `variant="mini"` in
@@ -44,12 +43,6 @@ export function AvatarSprite({ variant, className }: AvatarSpriteProps) {
 
   useEffect(() => {
     void preloadAllSpriteFrames()
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    if (reducedMotion) return
-
-    startBlinkTimer()
-    return () => stopBlinkTimer()
   }, [])
 
   if (variant === "mini" && signal.overlayOpen) return null
@@ -59,9 +52,7 @@ export function AvatarSprite({ variant, className }: AvatarSpriteProps) {
   // fight the real tone the assistant is mid-response with.
   const expression = variant === "mini" && hovered ? "positive" : toneToExpression(signal.tone)
   const mouthState: MouthState = signal.mouthOpen > OPEN_THRESHOLD ? "open" : "closed"
-  // Blink frames only exist for "neutral" - see `sprite-frames.ts`.
-  const blinking = signal.blinking && expression === "neutral"
-  const frameUrl = getFrameUrl(expression, mouthState, blinking)
+  const frameUrl = getFrameUrl(expression, mouthState)
 
   return (
     // eslint-disable-next-line @next/next/no-img-element -- frequent src swaps on a fixed-size element; next/image's optimizer adds nothing here.

@@ -9,6 +9,7 @@
     "ingest": "tsx scripts/ingest.ts",
     "search": "tsx scripts/search.ts",
     "inspect:docs": "tsx scripts/inspect-docs.ts",
+    "test:qa": "tsx scripts/test-assistant-qa.ts",
     "mcp:dev": "tsx src/mcp/search-context/index.ts",
     "mcp:build": "tsup"
   },

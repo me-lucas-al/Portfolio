@@ -65,12 +65,11 @@ const MOUTH_PROMPTS = {
   open: "the mouth open mid-speech, as if talking, teeth barely visible",
 }
 
-// The 9 combinations `sprite-frames.ts` reads by file name - this list IS
+// The 8 combinations `sprite-frames.ts` reads by file name - this list IS
 // the contract, matching `FRAME_URLS` there exactly.
 const FRAMES = [
   { name: "neutral-closed", expression: "neutral", mouth: "closed", blink: false },
   { name: "neutral-open", expression: "neutral", mouth: "open", blink: false },
-  { name: "neutral-blink", expression: "neutral", mouth: "closed", blink: true },
   { name: "positive-closed", expression: "positive", mouth: "closed", blink: false },
   { name: "positive-open", expression: "positive", mouth: "open", blink: false },
   { name: "apologetic-closed", expression: "apologetic", mouth: "closed", blink: false },
