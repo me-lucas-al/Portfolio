@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { X } from "lucide-react"
+import { Sparkles, X } from "lucide-react"
 import type { Dictionary } from "@/i18n"
 import { AvatarSprite } from "./sprite/avatar-sprite"
 import { SpeechBalloon } from "./speech/speech-balloon"
@@ -72,16 +72,25 @@ export function AvatarStage({ dict, open, onOpenChange }: AvatarStageProps) {
   return (
     <>
       {showCta && (
-        <div className="fixed bottom-32 left-6 z-30 flex max-w-[min(220px,calc(100vw-3rem))] items-center gap-2 rounded-2xl rounded-bl-sm border border-line bg-surface-2/95 px-4 py-2 text-sm text-fg-muted shadow-lg shadow-black/30 animate-in fade-in slide-in-from-bottom-2">
-          <span>{dict.ctaBubble}</span>
-          <button
-            type="button"
-            onClick={dismissCta}
-            aria-label={dict.close}
-            className="text-muted-2 transition-colors hover:text-fg-muted"
-          >
-            <X className="size-3.5" />
-          </button>
+        <div className="fixed bottom-32 left-6 z-30 max-w-[min(240px,calc(100vw-3rem))] animate-in fade-in zoom-in-75 slide-in-from-bottom-4 duration-500">
+          <div className="relative">
+            <div
+              aria-hidden="true"
+              className="absolute -inset-1 rounded-2xl rounded-bl-sm bg-brand/60 blur-lg animate-pulse"
+            />
+            <div className="relative flex items-center gap-2 rounded-2xl rounded-bl-sm border border-brand-strong/60 bg-gradient-to-br from-brand to-brand-strong px-4 py-2.5 text-sm font-semibold text-brand-ink shadow-lg shadow-brand-deep/40">
+              <Sparkles className="size-4 shrink-0 animate-pulse" />
+              <span>{dict.ctaBubble}</span>
+              <button
+                type="button"
+                onClick={dismissCta}
+                aria-label={dict.close}
+                className="shrink-0 rounded-full p-0.5 text-brand-ink/70 transition-colors hover:bg-brand-ink/10 hover:text-brand-ink cursor-pointer"
+              >
+                <X className="size-3.5" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

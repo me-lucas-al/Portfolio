@@ -40,7 +40,7 @@ export const en: Dictionary = {
   },
   assistant: {
     trigger: 'AI Assistant',
-    ctaBubble: 'Got questions? Ask the AI',
+    ctaBubble: 'Chat with my AI, ask me anything! 👋',
     close: 'Close',
     title: "Lucas's Assistant",
     subtitle: "Ask about Lucas's background, projects and the portfolio's architecture",

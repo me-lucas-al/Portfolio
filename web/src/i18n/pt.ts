@@ -102,7 +102,7 @@ export const pt: Dictionary = {
   },
   assistant: {
     trigger: "Assistente de IA",
-    ctaBubble: "Tire suas dúvidas com a IA",
+    ctaBubble: "Fale com a minha IA e tire suas dúvidas! 👋",
     close: "Fechar",
     title: "Assistente do Lucas",
     subtitle: "Pergunte sobre a trajetória, os projetos e a arquitetura do portfólio",
