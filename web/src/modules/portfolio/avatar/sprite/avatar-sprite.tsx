@@ -40,14 +40,14 @@ export function AvatarSprite({ variant, className }: AvatarSpriteProps) {
   // is the assistant's click target now (`avatar-stage.tsx`), so it doubles
   // as a hover affordance; the bust has no such interaction to hint at.
   const [hovered, setHovered] = useState(false)
-  // Gates the first paint on every frame being fully downloaded and decoded
-  // in the background first - without this, the very first time any
-  // `AvatarSprite` mounts after a page load, its `<img src>` races the same
-  // still-in-flight network request `preloadAllSpriteFrames` just kicked
-  // off, and the browser shows its broken/low-quality placeholder for the
-  // image until that request finishes. Resolves once, ever (module-scope
-  // promise), so every later mount/expression swap paints instantly from
-  // the browser's own cache with no re-check.
+  // Gates the `src` (not the element itself - see the `<img>` below) on
+  // every frame being fully downloaded in the background first. Without
+  // this, the very first time any `AvatarSprite` mounts after a page load,
+  // its `src` races the same still-in-flight request `preloadAllSpriteFrames`
+  // just kicked off; painting a same-origin PNG whose bytes are still
+  // arriving is what produces the torn/glitched frame this guards against.
+  // Resolves once, ever (module-scope promise), so every later mount or
+  // expression swap paints instantly from the browser's own cache.
   const [spritesReady, setSpritesReady] = useState(false)
 
   useEffect(() => {
@@ -61,7 +61,6 @@ export function AvatarSprite({ variant, className }: AvatarSpriteProps) {
   }, [])
 
   if (variant === "mini" && signal.overlayOpen) return null
-  if (!spritesReady) return <div aria-hidden="true" className={className} />
 
   // Hover forces "positive" regardless of `tone` - a deliberate, purely
   // cosmetic override with no effect on the signal bus, so it can never
@@ -73,11 +72,16 @@ export function AvatarSprite({ variant, className }: AvatarSpriteProps) {
   return (
     // eslint-disable-next-line @next/next/no-img-element -- frequent src swaps on a fixed-size element; next/image's optimizer adds nothing here.
     <img
-      src={frameUrl}
+      // Always the same `<img>` node (never swapped for a placeholder
+      // element) so a parent mid-transition (e.g. the dialogue bar's
+      // slide-in) never has to recomposite a freshly-mounted element - only
+      // this one attribute changes, once, when the cache is actually warm.
+      src={spritesReady ? frameUrl : undefined}
       alt=""
       aria-hidden="true"
       className={className}
       draggable={false}
+      style={{ willChange: "transform" }}
       onMouseEnter={variant === "mini" ? () => setHovered(true) : undefined}
       onMouseLeave={variant === "mini" ? () => setHovered(false) : undefined}
     />
