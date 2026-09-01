@@ -29,28 +29,20 @@ const ALLOWED_EXTENSIONS: Record<string, "pdf" | "docx" | "csv"> = { ".pdf": "pd
 // throws and escapes the per-file try/catch below so the whole run aborts
 // loudly, mirroring ENV_PATH_GUARD in code-source.ts. Only the pattern NAME
 // is ever reported, never the matched value.
-const PII_PATTERNS: { name: string; pattern: RegExp }[] = [
-  { name: "email", pattern: /[\w.+-]+@[\w-]+\.[\w.-]+/ },
-  { name: "cpf", pattern: /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/ },
-  { name: "cep", pattern: /\b\d{5}-\d{3}\b/ },
-  { name: "telefone", pattern: /\(\d{2}\)\s?9?\d{4}[\s.-]?\d{4}\b/ },
-  { name: "rg", pattern: /\b\d{1,2}\.\d{3}\.\d{3}-[0-9xX]\b/ },
+const PII_PATTERNS: { name: string; pattern: RegExp; mask: string }[] = [
+  { name: "email", pattern: /[\w.+-]+@[\w-]+\.[\w.-]+/g, mask: "[EMAIL REDACTED]" },
+  { name: "cpf", pattern: /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, mask: "[CPF REDACTED]" },
+  { name: "cep", pattern: /\b\d{5}-\d{3}\b/g, mask: "[CEP REDACTED]" },
+  { name: "telefone", pattern: /\(\d{2}\)\s?9?\d{4}[\s.-]?\d{4}\b/g, mask: "[TELEFONE REDACTED]" },
+  { name: "rg", pattern: /\b\d{1,2}\.\d{3}\.\d{3}-[0-9xX]\b/g, mask: "[RG REDACTED]" },
 ];
 
-class PiiDetectedError extends Error {
-  constructor(
-    public readonly file: string,
-    public readonly pattern: string,
-  ) {
-    super(`PII pattern "${pattern}" matched in "${file}"`);
+function sanitizePii(text: string): string {
+  let result = text;
+  for (const { pattern, mask } of PII_PATTERNS) {
+    result = result.replace(pattern, mask);
   }
-}
-
-function detectPii(text: string): string | null {
-  for (const { name, pattern } of PII_PATTERNS) {
-    if (pattern.test(text)) return name;
-  }
-  return null;
+  return result;
 }
 
 // Strips diacritics and anything outside [a-z0-9/._-] so the same file
@@ -152,10 +144,8 @@ export class DocsSource implements ChunkSource {
 
         if (kind === "pdf") {
           const extracted = await extractPdf(new Uint8Array(raw));
-          const fullText = extracted.pages.join("\n\n");
-
-          const piiMatch = detectPii(fullText);
-          if (piiMatch) throw new PiiDetectedError(displayName, piiMatch);
+          const sanitizedPages = extracted.pages.map((page) => sanitizePii(page));
+          const fullText = sanitizedPages.join("\n\n");
 
           if (extracted.emptyPageCount === extracted.totalPages || fullText.trim().length === 0) {
             issues.push(
@@ -172,7 +162,7 @@ export class DocsSource implements ChunkSource {
 
           let remainingBudget = MAX_EXTRACTED_CHARS;
           let didTruncate = false;
-          const boundedPages = extracted.pages.map((page) => {
+          const boundedPages = sanitizedPages.map((page) => {
             if (remainingBudget <= 0) {
               didTruncate = didTruncate || page.length > 0;
               return "";
@@ -190,24 +180,19 @@ export class DocsSource implements ChunkSource {
           chunks = chunkPdfPages(displayName, boundedPages);
         } else if (kind === "docx") {
           const extracted = await extractDocx(raw);
+          const sanitizedMarkdown = sanitizePii(extracted.markdown);
 
-          const piiMatch = detectPii(extracted.markdown);
-          if (piiMatch) throw new PiiDetectedError(displayName, piiMatch);
-
-          if (extracted.markdown.trim().length === 0) {
+          if (sanitizedMarkdown.trim().length === 0) {
             issues.push(
               sidecarPresent ? { kind: "covered_by_sidecar", file: displayName } : { kind: "no_text_layer", file: displayName },
             );
             continue;
           }
 
-          const markdown = truncateIfNeeded(extracted.markdown, issues, displayName);
+          const markdown = truncateIfNeeded(sanitizedMarkdown, issues, displayName);
           chunks = chunkMarkdown(displayName, markdown);
         } else {
           const extracted = extractCsv(raw);
-
-          const piiMatch = detectPii(extracted.rows.map((row) => Object.values(row).join(" ")).join("\n"));
-          if (piiMatch) throw new PiiDetectedError(displayName, piiMatch);
 
           if (extracted.fields.length === 0) {
             issues.push({ kind: "parse_failed", file: displayName, reason: extracted.errors.join("; ") || "cabeçalho não reconhecido" });
@@ -220,7 +205,11 @@ export class DocsSource implements ChunkSource {
             rows = rows.slice(0, MAX_CSV_ROWS);
           }
 
-          chunks = chunkCsvRows(displayName, extracted.fields, rows);
+          const sanitizedRows = rows.map((row) =>
+            Object.fromEntries(Object.entries(row).map(([key, val]) => [key, sanitizePii(String(val))])),
+          );
+
+          chunks = chunkCsvRows(displayName, extracted.fields, sanitizedRows);
         }
 
         if (chunks.length > MAX_CHUNKS_PER_DOC) {
@@ -228,7 +217,6 @@ export class DocsSource implements ChunkSource {
           chunks = chunks.slice(0, MAX_CHUNKS_PER_DOC);
         }
       } catch (error) {
-        if (error instanceof PiiDetectedError) throw error;
         issues.push({ kind: "parse_failed", file: displayName, reason: error instanceof Error ? error.message : String(error) });
         continue;
       }
