@@ -97,7 +97,6 @@ export function useAssistantChat(
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [failedMessage, setFailedMessage] = useState<string | null>(null)
-  const bottomRef = useRef<HTMLDivElement>(null)
   const nextId = useRef(0)
   const savedAtRef = useRef(Date.now())
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -110,10 +109,6 @@ export function useAssistantChat(
     savedAtRef.current = restored.savedAt
     nextId.current = restored.messages.reduce((max, message) => Math.max(max, message.id), 0) + 1
   }, [])
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages, loading])
 
   const cancelPending = useCallback(() => {
     abortControllerRef.current?.abort()
@@ -222,7 +217,6 @@ export function useAssistantChat(
     loading,
     error,
     canRetry: failedMessage !== null,
-    bottomRef,
     handleSend,
     handleRetry,
     handleKeyDown,

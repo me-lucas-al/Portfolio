@@ -23,6 +23,7 @@ export type { Tone } from "./tone/tone"
 export { AvatarSprite } from "./sprite/avatar-sprite"
 export type { AvatarSpriteVariant } from "./sprite/avatar-sprite"
 export { TypedText } from "./speech/typed-text"
+export { AnswerBalloon } from "./speech/answer-balloon"
 export { useTypingSpeech } from "./speech/use-typing-speech"
 export type { UseTypingSpeechResult } from "./speech/use-typing-speech"
 

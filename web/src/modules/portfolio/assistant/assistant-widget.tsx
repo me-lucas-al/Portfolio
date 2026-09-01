@@ -24,7 +24,7 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
   const [open, setOpen] = useState(false)
   const { isSpeaking, isPreparingVoice, speak, stopSpeaking } = useSpeechPlayer()
   const { blipsEnabled, setBlipsEnabled } = useBlipPreferences()
-  const { typingMessageId, startTypingSpeech, stopTypingSpeech } = useTypingSpeech()
+  const { startTypingSpeech, stopTypingSpeech } = useTypingSpeech()
   const {
     messages,
     input,
@@ -32,7 +32,6 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
     loading,
     error,
     canRetry,
-    bottomRef,
     handleSend,
     handleRetry,
     handleKeyDown,
@@ -112,13 +111,11 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
         isPreparingVoice={isPreparingVoice}
         onStopSpeaking={stopSpeaking}
         messages={messages}
-        typingMessageId={typingMessageId}
         input={input}
         setInput={setInput}
         loading={loading}
         error={error}
         canRetry={canRetry}
-        bottomRef={bottomRef}
         handleSend={handleSend}
         handleRetry={handleRetry}
         handleKeyDown={handleKeyDown}

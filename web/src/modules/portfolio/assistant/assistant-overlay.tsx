@@ -4,9 +4,9 @@ import type { CSSProperties } from "react"
 import { CircleStop, Trash2, Volume2, VolumeX, X } from "lucide-react"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { AvatarSprite } from "@/modules/portfolio/avatar/contract"
-import { AssistantConversation, type AssistantConversationProps } from "./assistant-conversation"
+import { AssistantStage, type AssistantStageProps } from "./assistant-stage"
 
-interface AssistantOverlayProps extends AssistantConversationProps {
+interface AssistantOverlayProps extends AssistantStageProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   clearChat: () => void
@@ -41,7 +41,7 @@ export function AssistantOverlay({
   onStopSpeaking,
   dict,
   messages,
-  ...conversationProps
+  ...stageProps
 }: AssistantOverlayProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -102,7 +102,7 @@ export function AssistantOverlay({
           </div>
         </div>
 
-        <AssistantConversation dict={dict} messages={messages} {...conversationProps} />
+        <AssistantStage dict={dict} messages={messages} {...stageProps} />
       </DialogContent>
     </Dialog>
   )
