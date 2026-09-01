@@ -23,7 +23,7 @@ are allowed to import from this module. It re-exports:
 - `AnswerBalloon` - the persistent answer text for the assistant dialogue
   bar's open state (see "Typing engine" below).
 - `useTypingSpeech` - starts/stops/skips the shared typing engine.
-- `useSpeechPlayer` / `useBlipPreferences` - audio preferences.
+- `useSpeechPlayer` - TTS audio preferences (dormant, see "Audio" below).
 - `classifyTone` / `Tone` - text -> tone classification.
 - `setAvatarOverlayState` / `setAvatarTone` / `setAvatarThinking` - setters
   the assistant widget calls to drive the avatar's state.
@@ -116,9 +116,14 @@ per-message later needs zero changes here, in the bus, or in `AvatarSprite`.
   `blip-player.ts` so they don't each wire their own listeners.
 - `blip-player.ts` - its own `AudioContext` graph (deliberately separate from
   the TTS one, so the two never fight over lip-sync), pitch-jittered,
-  never-repeats-the-last-clip, capped at 6 concurrent voices.
-- `use-blip-preferences.ts` - persists the blip on/off toggle in
-  `localStorage` (`assistant_blips_enabled`, defaults **on**).
+  never-repeats-the-last-clip, capped at 6 concurrent voices. **Dormant**:
+  the per-message audio toggle was removed from the dialogue bar (product
+  decision - visitors found it noisy), and with it the only caller of
+  `preloadBlips()`/`setBlipVolume()` (formerly `use-blip-preferences.ts`,
+  now deleted). `typing-speech-state.ts` still calls `playBlip()` on every
+  revealed character, but it's a permanent no-op since `isBlipReady()` never
+  turns true. Re-enabling needs a new preferences hook (or a hardcoded
+  `preloadBlips()` call) wired back into `assistant-widget.tsx`.
 
 ## Assets
 
@@ -137,7 +142,9 @@ per-message later needs zero changes here, in the bus, or in `AvatarSprite`.
 
 ## Explicitly not done in this phase
 
-- Real blip recordings (see Assets above - sprite art is done).
+- Real blip recordings (see Assets above - sprite art is done). Moot for now
+  since blips are dormant (see "Audio" above), but the assets are still
+  there for whenever the feature comes back.
 - Re-enabling TTS from the UI (the plumbing exists and works; nothing calls
   `setVoiceEnabled(true)`).
 - A "tap to enable audio" affordance for blips specifically - the shared

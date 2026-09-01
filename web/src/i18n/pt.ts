@@ -57,8 +57,6 @@ export interface Dictionary {
     stopSpeaking: string
     voiceUnlockHint: string
     skipTyping: string
-    blipsEnable: string
-    blipsDisable: string
   }
 }
 
@@ -127,8 +125,6 @@ export const pt: Dictionary = {
     stopSpeaking: "Parar de falar",
     voiceUnlockHint: "Toque em qualquer lugar da página para ativar o áudio",
     skipTyping: "Pular para o fim",
-    blipsEnable: "Ativar som de digitação",
-    blipsDisable: "Desativar som de digitação",
   },
 }
 

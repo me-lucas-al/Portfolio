@@ -16,8 +16,6 @@ import type { Tone } from "./tone/tone"
 
 export { useSpeechPlayer } from "./audio/use-speech-player"
 export type { UseSpeechPlayerResult } from "./audio/use-speech-player"
-export { useBlipPreferences } from "./audio/use-blip-preferences"
-export type { UseBlipPreferencesResult } from "./audio/use-blip-preferences"
 export { classifyTone } from "./tone/classify-tone"
 export type { Tone } from "./tone/tone"
 export { AvatarSprite } from "./sprite/avatar-sprite"

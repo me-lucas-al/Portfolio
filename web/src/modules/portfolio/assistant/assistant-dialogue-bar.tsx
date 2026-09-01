@@ -1,7 +1,7 @@
 "use client"
 
 import type { CSSProperties } from "react"
-import { CircleStop, Trash2, Volume2, VolumeX, X } from "lucide-react"
+import { CircleStop, Trash2, X } from "lucide-react"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { AssistantStage, type AssistantStageProps } from "./assistant-stage"
 
@@ -9,9 +9,6 @@ interface AssistantDialogueBarProps extends AssistantStageProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   clearChat: () => void
-  /** Visitor's typing-blip sound preference (persisted by `useBlipPreferences`) - controls the toggle button's icon/label here. */
-  blipsEnabled: boolean
-  onToggleBlips: () => void
   /** TTS is dormant (see `../avatar/README.md`) - these stay wired for when it's re-enabled per-message. */
   isSpeaking: boolean
   isPreparingVoice: boolean
@@ -38,8 +35,6 @@ export function AssistantDialogueBar({
   open,
   onOpenChange,
   clearChat,
-  blipsEnabled,
-  onToggleBlips,
   isSpeaking,
   isPreparingVoice,
   onStopSpeaking,
@@ -69,16 +64,6 @@ export function AssistantDialogueBar({
               <CircleStop className={`size-4 ${isPreparingVoice ? "animate-pulse" : ""}`} />
             </button>
           )}
-          <button
-            type="button"
-            onClick={onToggleBlips}
-            aria-label={blipsEnabled ? dict.blipsDisable : dict.blipsEnable}
-            aria-pressed={blipsEnabled}
-            title={blipsEnabled ? dict.blipsDisable : dict.blipsEnable}
-            className="rounded-md p-1.5 text-muted-2 transition-colors hover:bg-surface-2 hover:text-fg-muted"
-          >
-            {blipsEnabled ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
-          </button>
           {messages.length > 0 && (
             <button
               type="button"

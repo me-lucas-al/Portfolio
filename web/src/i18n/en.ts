@@ -65,7 +65,5 @@ export const en: Dictionary = {
     stopSpeaking: 'Stop speaking',
     voiceUnlockHint: 'Tap anywhere on the page to enable audio',
     skipTyping: 'Skip to the end',
-    blipsEnable: 'Enable typing sound',
-    blipsDisable: 'Disable typing sound',
   },
 }

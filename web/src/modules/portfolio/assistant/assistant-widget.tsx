@@ -9,7 +9,6 @@ import {
   setAvatarOverlayState,
   setAvatarThinking,
   setAvatarTone,
-  useBlipPreferences,
   useSpeechPlayer,
   useTypingSpeech,
 } from "@/modules/portfolio/avatar/contract"
@@ -23,7 +22,6 @@ interface AssistantWidgetProps {
 export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
   const [open, setOpen] = useState(false)
   const { isSpeaking, isPreparingVoice, speak, stopSpeaking } = useSpeechPlayer()
-  const { blipsEnabled, setBlipsEnabled } = useBlipPreferences()
   const { startTypingSpeech, stopTypingSpeech } = useTypingSpeech()
   const {
     messages,
@@ -105,8 +103,6 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
         open={open}
         onOpenChange={setOpen}
         clearChat={clearChat}
-        blipsEnabled={blipsEnabled}
-        onToggleBlips={() => setBlipsEnabled(!blipsEnabled)}
         isSpeaking={isSpeaking}
         isPreparingVoice={isPreparingVoice}
         onStopSpeaking={stopSpeaking}
