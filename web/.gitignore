@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# raw Gemini output cached by scripts/generate-avatar-sprites.mjs, so tuning
+# the chroma-key post-processing doesn't need a fresh (paid) API call
+.cache/
