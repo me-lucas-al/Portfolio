@@ -40,12 +40,28 @@ export function AvatarSprite({ variant, className }: AvatarSpriteProps) {
   // is the assistant's click target now (`avatar-stage.tsx`), so it doubles
   // as a hover affordance; the bust has no such interaction to hint at.
   const [hovered, setHovered] = useState(false)
+  // Gates the first paint on every frame being fully downloaded and decoded
+  // in the background first - without this, the very first time any
+  // `AvatarSprite` mounts after a page load, its `<img src>` races the same
+  // still-in-flight network request `preloadAllSpriteFrames` just kicked
+  // off, and the browser shows its broken/low-quality placeholder for the
+  // image until that request finishes. Resolves once, ever (module-scope
+  // promise), so every later mount/expression swap paints instantly from
+  // the browser's own cache with no re-check.
+  const [spritesReady, setSpritesReady] = useState(false)
 
   useEffect(() => {
-    void preloadAllSpriteFrames()
+    let cancelled = false
+    void preloadAllSpriteFrames().then(() => {
+      if (!cancelled) setSpritesReady(true)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   if (variant === "mini" && signal.overlayOpen) return null
+  if (!spritesReady) return <div aria-hidden="true" className={className} />
 
   // Hover forces "positive" regardless of `tone` - a deliberate, purely
   // cosmetic override with no effect on the signal bus, so it can never
