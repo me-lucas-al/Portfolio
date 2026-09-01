@@ -15,9 +15,13 @@ See git history if you need to resurrect any of that.
 are allowed to import from this module. It re-exports:
 
 - `AvatarSprite` / `AvatarSpriteVariant` - the `<img>` component itself.
+- `AvatarStage` - the mini (corner, idle) surface: the clickable portrait that
+  doubles as the assistant's only open/close trigger, its first-visit nudge
+  bubble, and the floating speech balloon. Takes `open`/`onOpenChange` from
+  the assistant widget's own `useState`.
 - `TypedText` - typewriter-reveal text component, used by both balloons below.
-- `AnswerBalloon` - the persistent answer balloon for the assistant panel's
-  open state (see "Typing engine" below).
+- `AnswerBalloon` - the persistent answer text for the assistant dialogue
+  bar's open state (see "Typing engine" below).
 - `useTypingSpeech` - starts/stops/skips the shared typing engine.
 - `useSpeechPlayer` / `useBlipPreferences` - audio preferences.
 - `classifyTone` / `Tone` - text -> tone classification.
@@ -45,9 +49,14 @@ sprite has nothing to point a camera at.
   under `web/public/avatar/sprites/` and preloads all of them.
 - `avatar-sprite.tsx` is the actual `<img>` component - reads the signal bus,
   thresholds `mouthOpen` at `0.15` into open/closed, and swaps `src`.
+  Also owns the "mini" variant's hover-to-smile: local `useState`, not the
+  signal bus (a hover only affects the one instance the cursor is over),
+  forces `expression` to `"positive"` while hovered regardless of `tone`.
   Mounted twice, independently, coordinated only through the shared bus: once
-  as `variant="mini"` (idle corner) by `avatar-stage.tsx`, once as
-  `variant="bust"` directly in the assistant overlay's header slot.
+  as `variant="mini"` (idle corner, and the assistant's click-to-open
+  trigger) by `avatar-stage.tsx`, once as `variant="bust"` inside the
+  assistant dialogue bar's stage
+  (`modules/portfolio/assistant/assistant-stage.tsx`).
 - `blink-timer.ts` is a single ref-counted, module-scope timer (not one per
   mounted instance) so both surfaces blink in sync. Paused while the tab is
   hidden, never started under `prefers-reduced-motion`. Blink frames only
@@ -81,19 +90,19 @@ per-message later needs zero changes here, in the bus, or in `AvatarSprite`.
 - `typing-speech-state.ts` / `use-typing-speech.ts` - small React-friendly
   store wrapping the engine, tracking which message id is currently typing.
   `speech-balloon.tsx` (mounted by `avatar-stage.tsx`, a different component
-  tree than the assistant panel) and `assistant-widget.tsx` both read this
-  same store - that's *why* it's a module-scope store and not just local
+  tree than the assistant dialogue bar) and `assistant-widget.tsx` both read
+  this same store - that's *why* it's a module-scope store and not just local
   React state.
 - `speech-balloon.tsx` - floating balloon anchored above the mini avatar,
-  visible only while the panel is closed and there's something to show
+  visible only while the dialogue bar is closed and there's something to show
   (typing, or lingering ~6s after it finished). Click skips to the end.
-- `answer-balloon.tsx` - the panel-open counterpart, mounted by
-  `modules/portfolio/assistant/assistant-stage.tsx`. Not `fixed`, no
-  `LINGER_MS` auto-hide - a normal block that fills the panel's "stage" and
-  keeps showing the last answer until the next question clears `fullText`.
-  Also the only consumer of the `thinking` signal so far - shows a `Skeleton`
-  placeholder while `avatarSignal.thinking` is true and nothing has started
-  typing yet.
+- `answer-balloon.tsx` - the dialogue-bar-open counterpart, mounted by
+  `modules/portfolio/assistant/assistant-stage.tsx`. No bubble chrome of its
+  own (it sits directly on the dialogue bar's surface) and no `LINGER_MS`
+  auto-hide - a normal block that keeps showing the last answer until the
+  next question clears `fullText`. Also the only consumer of the `thinking`
+  signal so far - shows a `Skeleton` placeholder while `avatarSignal.thinking`
+  is true and nothing has started typing yet.
 - Under `prefers-reduced-motion`, `typing-speech-state.ts` skips the reveal
   entirely - text appears whole immediately, no blips, no mouth movement.
 

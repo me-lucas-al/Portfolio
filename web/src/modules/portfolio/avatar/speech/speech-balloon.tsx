@@ -23,11 +23,14 @@ interface SpeechBalloonProps {
 
 /**
  * Floating speech balloon anchored above the mini avatar, mounted by
- * `../avatar-stage.tsx`. Visible only while the panel is closed AND there is
- * something to show (typing in progress, or lingering shortly after it
- * finished). Reads `typing-speech-state.ts` directly - a sibling of the
- * assistant panel's own component tree, not a descendant of it, so this
- * module-scope store (not props) is what the two share.
+ * `../avatar-stage.tsx`. Visible only while the dialogue bar is closed AND
+ * there is something to show (typing in progress, or lingering shortly after
+ * it finished) - `avatar-stage.tsx` itself already unmounts this the moment
+ * the bar opens, this `overlayOpen` check is a second line of defense in
+ * case that ever changes. Reads `typing-speech-state.ts` directly - a
+ * sibling of the assistant dialogue bar's own component tree, not a
+ * descendant of it, so this module-scope store (not props) is what the two
+ * share.
  */
 export function SpeechBalloon({ skipLabel }: SpeechBalloonProps) {
   const avatarSignal = useSyncExternalStore(subscribeAvatarSignal, getAvatarSignalSnapshot, getServerAvatarSnapshot)

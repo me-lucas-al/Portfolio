@@ -21,13 +21,13 @@ export interface AssistantStageProps {
   handleKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => void
 }
 
-// Visual-novel style "stage": the avatar bust + its current answer balloon
-// replace the panel's message list entirely - no scrollable history, each
-// answer replaces the last (see `../avatar/speech/answer-balloon.tsx`). The
-// visitor's own question never gets a balloon, it stays in the textarea
-// while typed and clears on send - only the model's answer renders here.
-// Free of any assumption about its container's size/position - fills
-// whatever shell renders it, same as the list it replaces.
+// Body of the bottom-docked "dialogue box" (see `assistant-dialogue-bar.tsx`
+// for the shell around this): bust portrait + name tag on the left, current
+// answer/greeting/suggestions to its right, question prompt pinned to the
+// bottom - a JRPG/visual-novel layout, not a scrollable message list. Each
+// answer replaces the last (`../avatar/speech/answer-balloon.tsx`); the
+// visitor's own question never gets a bubble, it just clears from the
+// prompt on send.
 export function AssistantStage({
   dict,
   messages,
@@ -41,65 +41,76 @@ export function AssistantStage({
   handleKeyDown,
 }: AssistantStageProps) {
   return (
-    <div className="flex flex-1 flex-col min-h-0 p-4">
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 min-h-0 overflow-y-auto py-2">
-        <AvatarSprite variant="bust" className="size-28 shrink-0 rounded-full object-cover" />
+    <div className="flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto px-4 pb-4 pt-1 sm:px-5">
+      <div className="flex items-start gap-3">
+        <AvatarSprite
+          variant="bust"
+          className="size-12 shrink-0 rounded-full object-cover ring-2 ring-brand/60 sm:size-16"
+        />
+        <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
+          <span className="w-fit rounded-full bg-brand px-3 py-0.5 text-xs font-bold text-brand-ink">
+            {dict.title}
+          </span>
 
-        <AnswerBalloon skipLabel={dict.skipTyping} thinkingLabel={dict.thinking} />
+          <AnswerBalloon skipLabel={dict.skipTyping} thinkingLabel={dict.thinking} />
 
-        {messages.length === 0 && (
-          <div className="flex w-full flex-col gap-2">
-            {dict.suggestions.map((suggestion) => (
-              <button
-                key={suggestion}
-                type="button"
-                onClick={() => void handleSend(suggestion)}
-                className="text-left text-sm px-3 py-2 rounded-lg bg-surface-2/80 border border-line text-fg-muted hover:text-fg hover:border-line-strong transition-colors"
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
-        )}
+          {messages.length === 0 && !loading && <p className="text-sm text-fg-muted">{dict.subtitle}</p>}
 
-        {error && (
-          <div className="flex w-full flex-col gap-1.5">
-            <p className="text-sm text-danger">{error}</p>
-            {canRetry && (
-              <button
-                type="button"
-                onClick={handleRetry}
-                className="self-start text-xs font-medium text-brand transition-colors hover:text-brand-strong"
-              >
-                {dict.retry}
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+          {messages.length === 0 && (
+            <div className="flex flex-wrap gap-2">
+              {dict.suggestions.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => void handleSend(suggestion)}
+                  className="rounded-full border border-line bg-surface-2/80 px-3 py-1.5 text-left text-xs text-fg-muted transition-colors hover:border-brand/60 hover:text-fg"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          )}
 
-      <div className="pt-3 border-t border-line flex flex-col gap-2">
-        <div className="flex items-end gap-2">
-          <Textarea
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={dict.placeholder}
-            maxLength={600}
-            className="min-h-10 max-h-32 resize-none bg-surface-2/60 border-line text-sm text-fg placeholder:text-muted-2"
-          />
-          <Button
-            size="icon"
-            onClick={() => void handleSend()}
-            disabled={loading || !input.trim()}
-            aria-label={dict.send}
-            className="bg-brand text-brand-ink hover:bg-brand-strong disabled:opacity-50"
-          >
-            <Send className="size-4" />
-          </Button>
+          {error && (
+            <div className="flex flex-col gap-1.5">
+              <p className="text-sm text-danger">{error}</p>
+              {canRetry && (
+                <button
+                  type="button"
+                  onClick={handleRetry}
+                  className="self-start text-xs font-medium text-brand transition-colors hover:text-brand-strong"
+                >
+                  {dict.retry}
+                </button>
+              )}
+            </div>
+          )}
         </div>
-        <p className="text-[11px] text-muted-2">{dict.disclaimer}</p>
       </div>
+
+      <div className="flex items-end gap-2 border-t border-line pt-3">
+        <span className="pb-2 text-brand" aria-hidden="true">
+          ▸
+        </span>
+        <Textarea
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={dict.placeholder}
+          maxLength={600}
+          className="min-h-9 max-h-28 flex-1 resize-none rounded-2xl border-line bg-ink/50 px-3 py-2 text-sm text-fg placeholder:text-muted-2 focus-visible:border-brand focus-visible:ring-brand/30"
+        />
+        <Button
+          size="icon"
+          onClick={() => void handleSend()}
+          disabled={loading || !input.trim()}
+          aria-label={dict.send}
+          className="shrink-0 rounded-full bg-brand text-brand-ink hover:bg-brand-strong disabled:opacity-50"
+        >
+          <Send className="size-4" />
+        </Button>
+      </div>
+      <p className="text-[11px] text-muted-2">{dict.disclaimer}</p>
     </div>
   )
 }

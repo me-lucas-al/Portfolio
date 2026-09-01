@@ -20,13 +20,14 @@ interface AnswerBalloonProps {
 }
 
 /**
- * Persistent "answer" balloon for the assistant panel's open state (mounted
- * by `../../assistant/assistant-stage.tsx`). Unlike `speech-balloon.tsx`
- * (`fixed`-positioned, auto-hides ~6s after typing ends, visible only while
- * the panel is closed) this one is a normal block in the panel's layout and
- * keeps showing the last answer until the next question replaces it -
- * `stopTypingSpeech()` (called from `assistant-widget.tsx`'s `onBeforeSend`)
- * clears `fullText` right as a new question goes out.
+ * Persistent "answer" text for the assistant dialogue bar's open state
+ * (mounted by `../../assistant/assistant-stage.tsx`). Unlike
+ * `speech-balloon.tsx` (`fixed`-positioned, its own bubble chrome, auto-hides
+ * ~6s after typing ends, visible only while the bar is closed) this one is a
+ * normal block sitting directly on the dialogue bar's own surface - no
+ * nested bubble - and keeps showing the last answer until the next question
+ * replaces it - `stopTypingSpeech()` (called from `assistant-widget.tsx`'s
+ * `onBeforeSend`) clears `fullText` right as a new question goes out.
  */
 export function AnswerBalloon({ skipLabel, thinkingLabel }: AnswerBalloonProps) {
   const avatarSignal = useSyncExternalStore(subscribeAvatarSignal, getAvatarSignalSnapshot, getServerAvatarSnapshot)
@@ -37,11 +38,7 @@ export function AnswerBalloon({ skipLabel, thinkingLabel }: AnswerBalloonProps) 
   const isThinking = avatarSignal.thinking && !typingSnapshot.fullText
   if (isThinking) {
     return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="flex w-full max-w-[min(320px,calc(100vw-3rem))] flex-col gap-2 rounded-2xl rounded-bl-sm border border-line bg-surface/95 px-4 py-3 shadow-lg shadow-black/20"
-      >
+      <div role="status" aria-live="polite" className="flex w-full flex-col gap-2">
         <span className="sr-only">{thinkingLabel}</span>
         <Skeleton className="h-3 w-32 bg-surface-2" />
         <Skeleton className="h-3 w-48 bg-surface-2" />
@@ -58,7 +55,7 @@ export function AnswerBalloon({ skipLabel, thinkingLabel }: AnswerBalloonProps) 
       aria-label={skipLabel}
       title={skipLabel}
       aria-live="polite"
-      className="w-full max-w-[min(320px,calc(100vw-3rem))] rounded-2xl rounded-bl-sm border border-line bg-surface/95 px-4 py-3 text-left text-sm text-fg shadow-lg shadow-black/20"
+      className="w-full text-left text-sm leading-relaxed text-fg transition-opacity hover:opacity-80"
     >
       <TypedText fullText={typingSnapshot.fullText} isTyping={typingSnapshot.isTyping} />
     </button>

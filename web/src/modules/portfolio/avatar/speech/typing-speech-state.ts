@@ -6,9 +6,10 @@ import { writeTypingSurfaces } from "./typing-surface-registry"
  * Module-scope store for "which message is currently typing, and its full
  * text" - read by both `use-typing-speech.ts` (so `assistant-widget.tsx` can
  * pass `isTyping` down to the right message bubble) and `speech-balloon.tsx`
- * directly (a sibling component tree mounted by `avatar-stage.tsx`, with no
- * React ancestor in common with the assistant panel - a module-scope store
- * is what lets both read the same "is typing" flag without prop drilling).
+ * directly (mounted by `avatar-stage.tsx`, a sibling of the assistant
+ * dialogue bar rather than an ancestor/descendant of it - a module-scope
+ * store is what lets both read the same "is typing" flag without prop
+ * drilling).
  *
  * This is a small, React-friendly (`useSyncExternalStore`-subscribable)
  * store OVER `typing-engine.ts`, not a replacement for it - the engine still

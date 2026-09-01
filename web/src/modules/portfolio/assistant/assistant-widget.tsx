@@ -1,10 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { AssistantMiniDock } from "./assistant-mini-dock"
-import { AssistantOverlay } from "./assistant-overlay"
+import { AssistantDialogueBar } from "./assistant-dialogue-bar"
 import { useAssistantChat } from "./use-assistant-chat"
 import {
+  AvatarStage,
   classifyTone,
   setAvatarOverlayState,
   setAvatarThinking,
@@ -99,8 +99,8 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
 
   return (
     <>
-      <AssistantMiniDock dict={dict} open={open} onOpenChange={setOpen} />
-      <AssistantOverlay
+      <AvatarStage dict={dict} open={open} onOpenChange={setOpen} />
+      <AssistantDialogueBar
         dict={dict}
         open={open}
         onOpenChange={setOpen}
