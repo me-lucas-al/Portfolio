@@ -53,7 +53,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
     setKeptImages(prev => prev.filter(u => u !== url))
   }
 
-  const handleProjectImageFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const appendSelectedProjectImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
     setNewImages(prev => [...prev, ...files.map(file => ({ id: URL.createObjectURL(file), file, preview: URL.createObjectURL(file) }))])
@@ -222,7 +222,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
           accept="image/*"
           multiple
           disabled={isPending || !!user}
-          onChange={handleProjectImageFileInputChange}
+          onChange={appendSelectedProjectImages}
           className="sr-only"
         />
         <p className="text-xs text-muted-2 ml-1">A primeira imagem é usada como capa.</p>

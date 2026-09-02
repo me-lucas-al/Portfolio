@@ -46,7 +46,7 @@ export function CreateProjectForm() {
     }
   }, [state])
 
-  const handleProjectImageFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const appendSelectedProjectImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
     setNewImages(prev => [...prev, ...files.map(file => ({ id: URL.createObjectURL(file), file, preview: URL.createObjectURL(file) }))])
@@ -196,7 +196,7 @@ export function CreateProjectForm() {
           accept="image/*"
           multiple
           disabled={isPending}
-          onChange={handleProjectImageFileInputChange}
+          onChange={appendSelectedProjectImages}
           className="sr-only"
         />
       </div>
