@@ -29,36 +29,36 @@ function clearPendingFade(): void {
   }
 }
 
-function snapshot(): SpeechPlayerSnapshot {
+function createSpeechPlayerSnapshot(): SpeechPlayerSnapshot {
   return { state: playbackState, unlocked }
 }
 
-function emit(): void {
-  const current = snapshot()
+function notifySpeechPlayerSubscribers(): void {
+  const current = createSpeechPlayerSnapshot()
   listeners.forEach((listener) => listener(current))
 }
 
 function setPlaybackState(next: SpeechPlaybackState): void {
   if (playbackState === next) return
   playbackState = next
-  emit()
+  notifySpeechPlayerSubscribers()
 }
 
 export function subscribeSpeechPlayer(listener: Listener): () => void {
   listeners.add(listener)
-  listener(snapshot())
+  listener(createSpeechPlayerSnapshot())
   return () => {
     listeners.delete(listener)
   }
 }
 
 export function getSpeechPlayerSnapshot(): SpeechPlayerSnapshot {
-  return snapshot()
+  return createSpeechPlayerSnapshot()
 }
 
-function handleUnlockGesture(): void {
+function unlockAudioPlaybackOnUserGesture(): void {
   unlocked = true
-  emit()
+  notifySpeechPlayerSubscribers()
 
   const { audioElement, audioContext } = getAudioGraph()
 
@@ -92,17 +92,17 @@ export function initSpeechPlayer(): void {
     startLipSyncAnalyser()
   })
 
-  const handleStopped = () => {
+  const handleAudioPlaybackStopped = () => {
     stopLipSyncAnalyser()
     setPlaybackState("idle")
   }
 
-  audioElement.addEventListener("pause", handleStopped)
-  audioElement.addEventListener("ended", handleStopped)
-  audioElement.addEventListener("error", handleStopped)
-  audioElement.addEventListener("abort", handleStopped)
+  audioElement.addEventListener("pause", handleAudioPlaybackStopped)
+  audioElement.addEventListener("ended", handleAudioPlaybackStopped)
+  audioElement.addEventListener("error", handleAudioPlaybackStopped)
+  audioElement.addEventListener("abort", handleAudioPlaybackStopped)
 
-  onAudioUnlockGesture(handleUnlockGesture)
+  onAudioUnlockGesture(unlockAudioPlaybackOnUserGesture)
 }
 
 export function play(url: string): void {

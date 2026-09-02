@@ -14,7 +14,7 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [isPending, startTransition] = useTransition()
 
-  const confirmDelete = () => {
+  const executeExperienceDeletion = () => {
     if (deletingId) {
       startTransition(async () => {
         await deleteExperienceAction(deletingId)
@@ -24,7 +24,7 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
     }
   }
 
-  const handleReorder = (id: number, direction: 'up' | 'down') => {
+  const reorderExperiencePosition = (id: number, direction: 'up' | 'down') => {
     startTransition(async () => {
       const result = await reorderExperienceAction(id, direction)
       if (result.error) {
@@ -49,7 +49,7 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
             <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
               <button
                 disabled={isPending}
-                onClick={() => handleReorder(exp.id, 'up')}
+                onClick={() => reorderExperiencePosition(exp.id, 'up')}
                 className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
                 title="Mover para cima"
               >
@@ -57,7 +57,7 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
               </button>
               <button
                 disabled={isPending}
-                onClick={() => handleReorder(exp.id, 'down')}
+                onClick={() => reorderExperiencePosition(exp.id, 'down')}
                 className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
                 title="Mover para baixo"
               >
@@ -96,7 +96,7 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
             <button onClick={() => setDeletingId(null)} disabled={isPending} className="px-4 py-2 rounded-lg text-sm font-medium border border-line text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer">
               Cancelar
             </button>
-            <button onClick={confirmDelete} disabled={isPending} className="px-4 py-2 rounded-lg text-sm font-medium bg-danger/20 border border-danger/40 text-danger hover:bg-danger/30 hover:text-fg transition-colors flex items-center justify-center gap-2 min-w-[100px] cursor-pointer">
+            <button onClick={executeExperienceDeletion} disabled={isPending} className="px-4 py-2 rounded-lg text-sm font-medium bg-danger/20 border border-danger/40 text-danger hover:bg-danger/30 hover:text-fg transition-colors flex items-center justify-center gap-2 min-w-[100px] cursor-pointer">
               {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Deletar"}
             </button>
           </Modal.Footer>

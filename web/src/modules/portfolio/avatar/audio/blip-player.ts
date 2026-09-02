@@ -19,7 +19,7 @@ let loadPromise: Promise<void> | null = null
 let lastPlayedIndex = -1
 let activeVoiceCount = 0
 
-function getContext(): { context: AudioContext; gain: GainNode } {
+function getOrCreateAudioContextAndGain(): { context: AudioContext; gain: GainNode } {
   if (audioContext && blipGain) return { context: audioContext, gain: blipGain }
 
   const AudioContextCtor =
@@ -40,7 +40,7 @@ function getContext(): { context: AudioContext; gain: GainNode } {
 export function preloadBlips(): Promise<void> {
   if (loadPromise) return loadPromise
 
-  const { context } = getContext()
+  const { context } = getOrCreateAudioContextAndGain()
 
   loadPromise = Promise.all(
     BLIP_URLS.map((url) =>
@@ -71,7 +71,7 @@ export function playBlip(): void {
   if (!isBlipReady()) return
   if (activeVoiceCount >= MAX_CONCURRENT_VOICES) return
 
-  const { context, gain } = getContext()
+  const { context, gain } = getOrCreateAudioContextAndGain()
   if (context.state === "suspended") return
 
   const index = pickNextIndex()
@@ -101,6 +101,6 @@ export function playBlip(): void {
 }
 
 export function setBlipVolume(value: number): void {
-  const { gain } = getContext()
+  const { gain } = getOrCreateAudioContextAndGain()
   gain.gain.value = Math.max(0, Math.min(1, value))
 }

@@ -14,7 +14,7 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [isPending, startTransition] = useTransition()
 
-  const confirmDelete = () => {
+  const executeEducationDeletion = () => {
     if (deletingId) {
       startTransition(async () => {
         await deleteEducationAction(deletingId)
@@ -24,7 +24,7 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
     }
   }
 
-  const handleReorder = (id: number, direction: 'up' | 'down') => {
+  const reorderEducationPosition = (id: number, direction: 'up' | 'down') => {
     startTransition(async () => {
       const result = await reorderEducationAction(id, direction)
       if (result.error) {
@@ -49,7 +49,7 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
             <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
               <button
                 disabled={isPending}
-                onClick={() => handleReorder(edu.id, 'up')}
+                onClick={() => reorderEducationPosition(edu.id, 'up')}
                 className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
                 title="Mover para cima"
               >
@@ -57,7 +57,7 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
               </button>
               <button
                 disabled={isPending}
-                onClick={() => handleReorder(edu.id, 'down')}
+                onClick={() => reorderEducationPosition(edu.id, 'down')}
                 className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
                 title="Mover para baixo"
               >
@@ -96,7 +96,7 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
             <button onClick={() => setDeletingId(null)} disabled={isPending} className="px-4 py-2 rounded-lg text-sm font-medium border border-line text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer">
               Cancelar
             </button>
-            <button onClick={confirmDelete} disabled={isPending} className="px-4 py-2 rounded-lg text-sm font-medium bg-danger/20 border border-danger/40 text-danger hover:bg-danger/30 hover:text-fg transition-colors flex items-center justify-center gap-2 min-w-[100px] cursor-pointer">
+            <button onClick={executeEducationDeletion} disabled={isPending} className="px-4 py-2 rounded-lg text-sm font-medium bg-danger/20 border border-danger/40 text-danger hover:bg-danger/30 hover:text-fg transition-colors flex items-center justify-center gap-2 min-w-[100px] cursor-pointer">
               {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Deletar"}
             </button>
           </Modal.Footer>

@@ -159,7 +159,7 @@ export function useAssistantChat(
     }
   }
 
-  async function handleSend(text?: string) {
+  async function sendChatMessage(text?: string) {
     const message = (text ?? input).trim()
     if (!message || loading) return
 
@@ -168,15 +168,15 @@ export function useAssistantChat(
     await sendToApi(message)
   }
 
-  function handleRetry() {
+  function retryLastFailedMessage() {
     if (!failedMessage || loading) return
     void sendToApi(failedMessage)
   }
 
-  function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+  function handleChatInputKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault()
-      void handleSend()
+      void sendChatMessage()
     }
   }
 
@@ -195,9 +195,9 @@ export function useAssistantChat(
     loading,
     error,
     canRetry: failedMessage !== null,
-    handleSend,
-    handleRetry,
-    handleKeyDown,
+    sendChatMessage,
+    retryLastFailedMessage,
+    handleChatInputKeyDown,
     cancelPending,
     clearChat,
   }

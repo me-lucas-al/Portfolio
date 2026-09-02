@@ -35,22 +35,22 @@ function isWhitespace(char: string): boolean {
   return /\s/.test(char)
 }
 
-function finish(): void {
-  cancelFrame()
+function finishTypingAnimation(): void {
+  cancelScheduledTypingFrame()
   deactivateMouthSource("typing")
   onDoneCallback?.()
   onDoneCallback = null
   onBlipCallback = null
 }
 
-function cancelFrame(): void {
+function cancelScheduledTypingFrame(): void {
   if (rafId !== null) {
-    window.cancelAnimationFrame(rafId)
+    cancelAnimationFrame(rafId)
     rafId = null
   }
 }
 
-function tick(nowMs: number): void {
+function processTypingAnimationFrame(nowMs: number): void {
   const lastMs = lastFrameTimeMs ?? nowMs
   const deltaMs = Math.min(Math.max(nowMs - lastMs, 0), MAX_DELTA_MS)
   lastFrameTimeMs = nowMs
@@ -88,15 +88,15 @@ function tick(nowMs: number): void {
   writeMouthOpen("typing", mouthCurrent < DEADZONE ? 0 : mouthCurrent)
 
   if (cursor >= text.length && mouthCurrent < DEADZONE) {
-    finish()
+    finishTypingAnimation()
     return
   }
 
-  rafId = window.requestAnimationFrame(tick)
+  rafId = requestAnimationFrame(processTypingAnimationFrame)
 }
 
 export function startTyping(nextText: string, callbacks: TypingEngineCallbacks): void {
-  cancelFrame()
+  cancelScheduledTypingFrame()
   text = nextText
   cursor = 0
   budgetMs = 0
@@ -110,11 +110,11 @@ export function startTyping(nextText: string, callbacks: TypingEngineCallbacks):
 
   writeTypingSurfaces("")
   activateMouthSource("typing")
-  rafId = window.requestAnimationFrame(tick)
+  rafId = requestAnimationFrame(processTypingAnimationFrame)
 }
 
 export function stopTyping(): void {
-  cancelFrame()
+  cancelScheduledTypingFrame()
   deactivateMouthSource("typing")
   onBlipCallback = null
   onDoneCallback = null
@@ -122,7 +122,7 @@ export function stopTyping(): void {
 
 export function skipTyping(): void {
   if (rafId === null && cursor >= text.length) return
-  cancelFrame()
+  cancelScheduledTypingFrame()
   writeTypingSurfaces(text)
   deactivateMouthSource("typing")
   const callback = onDoneCallback

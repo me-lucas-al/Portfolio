@@ -49,11 +49,11 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
     }
   }, [state, onCancel])
 
-  const handleRemoveExisting = (url: string) => {
+  const removeExistingProjectImage = (url: string) => {
     setKeptImages(prev => prev.filter(u => u !== url))
   }
 
-  const handleNewFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProjectImageFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
     setNewImages(prev => [...prev, ...files.map(file => ({ id: URL.createObjectURL(file), file, preview: URL.createObjectURL(file) }))])
@@ -61,7 +61,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
 
-  const handleRemoveNew = (id: string) => {
+  const removePendingProjectImage = (id: string) => {
     setNewImages(prev => {
       const removed = prev.find(img => img.id === id)
       if (removed) URL.revokeObjectURL(removed.preview)
@@ -69,7 +69,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
     })
   }
 
-  const handleKeptDragEnd = (event: DragEndEvent) => {
+  const reorderExistingProjectImagesOnDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
     setKeptImages(items => {
@@ -79,7 +79,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
     })
   }
 
-  const handleNewDragEnd = (event: DragEndEvent) => {
+  const reorderPendingProjectImagesOnDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
     setNewImages(items => {
@@ -89,7 +89,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
     })
   }
 
-  const handleSubmit = async (formData: FormData) => {
+  const submitEditProjectForm = async (formData: FormData) => {
 
     keptImages.forEach(url => formData.append("keptImages", url))
 
@@ -100,7 +100,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
   const hasImages = keptImages.length > 0 || newImages.length > 0
 
   return (
-    <form action={handleSubmit} className="space-y-5 p-4">
+    <form action={submitEditProjectForm} className="space-y-5 p-4">
       <input type="hidden" name="id" value={project.id} />
 
       <Tabs defaultValue="pt" className="w-full">
@@ -159,7 +159,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
         {hasImages && (
           <>
             {keptImages.length > 0 && (
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleKeptDragEnd}>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={reorderExistingProjectImagesOnDragEnd}>
                 <SortableContext items={keptImages} strategy={rectSortingStrategy}>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                     {keptImages.map((url, i) => (
@@ -169,7 +169,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
                         disabled={!!user}
                         badge={i === 0 ? "Capa" : undefined}
                         badgeClassName="bg-brand/20 text-brand border-brand/40"
-                        onRemove={() => handleRemoveExisting(url)}
+                        onRemove={() => removeExistingProjectImage(url)}
                       >
                         <Image src={url} alt={`Imagem ${i + 1}`} fill className="object-cover pointer-events-none" sizes="(max-width: 640px) 33vw, 25vw" />
                       </SortableImageItem>
@@ -180,7 +180,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
             )}
 
             {newImages.length > 0 && (
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleNewDragEnd}>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={reorderPendingProjectImagesOnDragEnd}>
                 <SortableContext items={newImages.map(img => img.id)} strategy={rectSortingStrategy}>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2">
                     {newImages.map((img, i) => (
@@ -190,7 +190,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
                         disabled={!!user}
                         badge={keptImages.length === 0 && i === 0 ? "Capa" : "Nova"}
                         badgeClassName={keptImages.length === 0 && i === 0 ? "bg-brand/20 text-brand border-brand/40" : "bg-prompt/20 text-prompt border-prompt/40"}
-                        onRemove={() => handleRemoveNew(img.id)}
+                        onRemove={() => removePendingProjectImage(img.id)}
                       >
                         <img src={img.preview} alt={`Nova imagem ${i + 1}`} className="w-full h-full object-cover pointer-events-none" />
                       </SortableImageItem>
@@ -222,7 +222,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
           accept="image/*"
           multiple
           disabled={isPending || !!user}
-          onChange={handleNewFiles}
+          onChange={handleProjectImageFileInputChange}
           className="sr-only"
         />
         <p className="text-xs text-muted-2 ml-1">A primeira imagem é usada como capa.</p>

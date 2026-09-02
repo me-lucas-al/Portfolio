@@ -19,13 +19,13 @@ let snapshot: AvatarSignalState = {
 
 const listeners = new Set<Listener>()
 
-function emit(): void {
+function notifyAvatarSignalListeners(): void {
   listeners.forEach((listener) => listener())
 }
 
-function commit(patch: Partial<AvatarSignalState>): void {
+function updateAvatarSignalState(patch: Partial<AvatarSignalState>): void {
   snapshot = { ...snapshot, ...patch }
-  emit()
+  notifyAvatarSignalListeners()
 }
 
 export function subscribeAvatarSignal(listener: Listener): () => void {
@@ -41,20 +41,20 @@ export function getAvatarSignalSnapshot(): Readonly<AvatarSignalState> {
 
 export function setOverlayState(open: boolean): void {
   if (snapshot.overlayOpen === open) return
-  commit({ overlayOpen: open })
+  updateAvatarSignalState({ overlayOpen: open })
 }
 
 export function setMouthOpen(value: number): void {
   if (snapshot.mouthOpen === value) return
-  commit({ mouthOpen: value })
+  updateAvatarSignalState({ mouthOpen: value })
 }
 
 export function setTone(value: Tone): void {
   if (snapshot.tone === value) return
-  commit({ tone: value })
+  updateAvatarSignalState({ tone: value })
 }
 
 export function setThinking(value: boolean): void {
   if (snapshot.thinking === value) return
-  commit({ thinking: value })
+  updateAvatarSignalState({ thinking: value })
 }

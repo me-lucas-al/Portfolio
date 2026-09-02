@@ -10,7 +10,7 @@ export function CreateExperienceForm() {
   const [isPending, startTransition] = useTransition()
   const formRef = useRef<HTMLFormElement>(null)
 
-  const handleSubmit = (formData: FormData) => {
+  const submitCreateExperienceForm = (formData: FormData) => {
     startTransition(async () => {
       const result = await createExperienceAction(null, formData)
       if (result?.success) {
@@ -23,7 +23,7 @@ export function CreateExperienceForm() {
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="space-y-6 max-w-2xl">
+    <form ref={formRef} action={submitCreateExperienceForm} className="space-y-6 max-w-2xl">
       <div className="space-y-2">
         <label className="text-sm font-medium text-fg-muted">Empresa</label>
         <input required name="company" placeholder="Ex: Star Seg" className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" />

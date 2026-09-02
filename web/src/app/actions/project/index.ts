@@ -31,7 +31,7 @@ async function uploadProjectImages(files: File[]) {
   return storageProvider.uploadMultipleFiles(uploads, "projects");
 }
 
-export async function createProjectAction(prevState: any, formData: FormData) {
+export async function createProjectAction(_prevState: unknown, formData: FormData) {
   try {
     const admin = await getUserRole("ADMIN");
     if (!admin) return { error: "Não autorizado" };
@@ -91,7 +91,18 @@ export async function reorderProjectAction(id: number, direction: 'up' | 'down')
 
     await Promise.all(
       newProjects.map((project, i) =>
-        makeProjectService().updateProjectById({ ...project, order: i } as any)
+        makeProjectService().updateProjectById({
+          id: project.id,
+          title: project.title,
+          titleEn: project.titleEn ?? undefined,
+          description: project.description,
+          descriptionEn: project.descriptionEn ?? undefined,
+          technologies: project.technologies,
+          deployUrl: project.deployUrl ?? undefined,
+          githubUrl: project.githubUrl ?? undefined,
+          imagesUrl: project.imagesUrl,
+          order: i,
+        })
       )
     );
 
@@ -104,7 +115,7 @@ export async function reorderProjectAction(id: number, direction: 'up' | 'down')
   }
 }
 
-export async function updateProjectAction(prevState: any, formData: FormData) {
+export async function updateProjectAction(_prevState: unknown, formData: FormData) {
   try {
     const admin = await getUserRole("ADMIN");
 

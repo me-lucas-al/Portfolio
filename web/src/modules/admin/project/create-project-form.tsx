@@ -46,14 +46,14 @@ export function CreateProjectForm() {
     }
   }, [state])
 
-  const handleNewFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProjectImageFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
     setNewImages(prev => [...prev, ...files.map(file => ({ id: URL.createObjectURL(file), file, preview: URL.createObjectURL(file) }))])
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
 
-  const handleRemoveNew = (id: string) => {
+  const removePendingProjectImage = (id: string) => {
     setNewImages(prev => {
       const removed = prev.find(img => img.id === id)
       if (removed) URL.revokeObjectURL(removed.preview)
@@ -61,7 +61,7 @@ export function CreateProjectForm() {
     })
   }
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const reorderProjectImagesOnDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
     setNewImages(items => {
@@ -71,7 +71,7 @@ export function CreateProjectForm() {
     })
   }
 
-  const handleSubmit = async (formData: FormData) => {
+  const submitCreateProjectForm = async (formData: FormData) => {
     newImages.forEach(({ file }) => formData.append("images", file))
     return formAction(formData)
   }
@@ -79,7 +79,7 @@ export function CreateProjectForm() {
   const hasImages = newImages.length > 0
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={submitCreateProjectForm} className="space-y-6">
       <Tabs defaultValue="pt" className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-surface border border-line">
           <TabsTrigger value="pt" className="data-[state=active]:bg-brand/10 data-[state=active]:text-brand text-fg-muted">
@@ -159,7 +159,7 @@ export function CreateProjectForm() {
         <label className="text-sm font-medium text-fg-muted ml-1">Imagens do Projeto</label>
 
         {hasImages && (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={reorderProjectImagesOnDragEnd}>
             <SortableContext items={newImages.map(img => img.id)} strategy={rectSortingStrategy}>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {newImages.map((img, i) => (
@@ -168,7 +168,7 @@ export function CreateProjectForm() {
                     id={img.id}
                     badge={i === 0 ? "Capa" : undefined}
                     badgeClassName="bg-brand/20 text-brand border-brand/40"
-                    onRemove={() => handleRemoveNew(img.id)}
+                    onRemove={() => removePendingProjectImage(img.id)}
                   >
                     <img src={img.preview} alt={`Nova imagem ${i + 1}`} className="w-full h-full object-cover pointer-events-none" />
                   </SortableImageItem>
@@ -196,7 +196,7 @@ export function CreateProjectForm() {
           accept="image/*"
           multiple
           disabled={isPending}
-          onChange={handleNewFiles}
+          onChange={handleProjectImageFileInputChange}
           className="sr-only"
         />
       </div>

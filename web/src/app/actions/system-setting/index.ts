@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { makeSystemSettingService } from "@portfolio/core/src/factories/_index";
 import { revalidatePath } from "next/cache";
@@ -14,7 +14,7 @@ export async function getAllSystemSettingsAction() {
   return settings.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {} as Record<string, string>);
 }
 
-export async function updateSystemSettingAction(prevState: any, formData: FormData) {
+export async function updateSystemSettingAction(_prevState: unknown, formData: FormData) {
   try {
     const admin = await getUserRole("ADMIN");
     if (!admin) return { error: "Não autorizado" };
@@ -37,7 +37,7 @@ export async function updateSystemSettingAction(prevState: any, formData: FormDa
   }
 }
 
-export async function updateMultipleSystemSettingsAction(prevState: any, formData: FormData) {
+export async function updateMultipleSystemSettingsAction(_prevState: unknown, formData: FormData) {
   try {
     const admin = await getUserRole("ADMIN");
     if (!admin) return { error: "Não autorizado" };

@@ -16,7 +16,7 @@ const formatMonthForInput = (date: Date | string | null | undefined) => {
 export function EditExperienceForm({ experience, onSuccess }: { experience: ExperienceType, onSuccess?: () => void }) {
   const [isPending, startTransition] = useTransition()
 
-  const handleSubmit = (formData: FormData) => {
+  const submitEditExperienceForm = (formData: FormData) => {
     formData.append("id", experience.id.toString())
     startTransition(async () => {
       const result = await updateExperienceAction(null, formData)
@@ -30,7 +30,7 @@ export function EditExperienceForm({ experience, onSuccess }: { experience: Expe
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={submitEditExperienceForm} className="space-y-6">
       <div className="space-y-2">
         <label className="text-sm text-fg-muted">Empresa</label>
         <input required name="company" defaultValue={experience.company} className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all" />

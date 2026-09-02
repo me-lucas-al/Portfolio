@@ -4,7 +4,7 @@ import { makeLinkService } from "@portfolio/core/src/factories/_index";
 import { revalidatePath } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
-export async function createLinkAction(prevState: any, formData: FormData) {
+export async function createLinkAction(_prevState: unknown, formData: FormData) {
   try {
     const admin = await getUserRole("ADMIN");
     if (!admin) return { error: "Não autorizado" };
@@ -47,7 +47,13 @@ export async function reorderLinkAction(id: number, direction: 'up' | 'down') {
 
     await Promise.all(
       newLinks.map((link, i) =>
-        makeLinkService().updateLinkById({ ...link, order: i } as any)
+        makeLinkService().updateLinkById({
+          id: link.id,
+          title: link.title,
+          url: link.url,
+          icon: link.icon,
+          order: i,
+        })
       )
     );
 
@@ -60,7 +66,7 @@ export async function reorderLinkAction(id: number, direction: 'up' | 'down') {
   }
 }
 
-export async function updateLinkAction(prevState: any, formData: FormData) {
+export async function updateLinkAction(_prevState: unknown, formData: FormData) {
   try {
     const admin = await getUserRole("ADMIN");
 

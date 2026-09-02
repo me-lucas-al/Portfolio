@@ -30,9 +30,9 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
     loading,
     error,
     canRetry,
-    handleSend,
-    handleRetry,
-    handleKeyDown,
+    sendChatMessage,
+    retryLastFailedMessage,
+    handleChatInputKeyDown,
     cancelPending,
     clearChat,
   } = useAssistantChat(dict, locale, {
@@ -86,9 +86,9 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
         loading={loading}
         error={error}
         canRetry={canRetry}
-        handleSend={handleSend}
-        handleRetry={handleRetry}
-        handleKeyDown={handleKeyDown}
+        sendChatMessage={sendChatMessage}
+        retryLastFailedMessage={retryLastFailedMessage}
+        handleChatInputKeyDown={handleChatInputKeyDown}
       />
     </>
   )

@@ -32,7 +32,7 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
     { href: "#contatos", label: dict.nav.contact },
   ]
 
-  const handleLinkClick = () => {
+  const closeMobileNavigationMenu = () => {
     setOpen(false)
   }
 
@@ -69,7 +69,7 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={handleLinkClick}
+                  onClick={closeMobileNavigationMenu}
                   className="group flex items-center gap-1.5 px-3.5 py-3 rounded-xl text-fg-muted hover:text-fg hover:bg-surface-2/80 border border-transparent hover:border-line transition-all text-sm font-medium"
                 >
                   <span className="w-0 opacity-0 overflow-hidden text-brand transition-all duration-200 group-hover:w-3 group-hover:opacity-100">
@@ -85,7 +85,7 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
             {hasSession && (
               <Link
                 href="/control-painel"
-                onClick={handleLinkClick}
+                onClick={closeMobileNavigationMenu}
                 className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-brand/10 text-brand-strong border border-brand/30 text-xs font-medium hover:bg-brand hover:text-brand-ink transition-all shadow-sm"
               >
                 <LayoutDashboard className="w-4 h-4" />

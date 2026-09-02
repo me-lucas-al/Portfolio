@@ -83,7 +83,7 @@ const Carousel = React.forwardRef<
       api?.scrollNext()
     }, [api])
 
-    const handleKeyDown = React.useCallback(
+    const handleCarouselKeyboardNavigation = React.useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "ArrowLeft") {
           event.preventDefault()
@@ -133,7 +133,7 @@ const Carousel = React.forwardRef<
       >
         <div
           ref={ref}
-          onKeyDownCapture={handleKeyDown}
+          onKeyDownCapture={handleCarouselKeyboardNavigation}
           className={cn("relative", className)}
           role="region"
           aria-roledescription="carousel"

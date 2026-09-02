@@ -15,7 +15,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const handleDelete = () => {
+  const executeProjectDeletion = () => {
     startTransition(async () => {
       await deleteProjectAction(project.id)
       toast.success("Projeto deletado com sucesso!")
@@ -23,7 +23,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
     })
   }
 
-  const handleReorder = (direction: 'up' | 'down') => {
+  const reorderProjectPosition = (direction: 'up' | 'down') => {
     startTransition(async () => {
       const result = await reorderProjectAction(project.id, direction)
       if (result.error) {
@@ -58,7 +58,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
         <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
           <button
             disabled={isPending}
-            onClick={() => handleReorder('up')}
+            onClick={() => reorderProjectPosition('up')}
             className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
             title="Mover para cima"
           >
@@ -66,7 +66,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
           </button>
           <button
             disabled={isPending}
-            onClick={() => handleReorder('down')}
+            onClick={() => reorderProjectPosition('down')}
             className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
             title="Mover para baixo"
           >
@@ -108,7 +108,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
                 </button>
               </DialogClose>
               <button
-                onClick={handleDelete}
+                onClick={executeProjectDeletion}
                 disabled={isPending}
                 className="flex items-center justify-center min-w-[100px] px-4 py-2 rounded-lg bg-danger/20 border border-danger/40 text-danger hover:bg-danger/30 hover:text-fg transition-all text-sm font-medium disabled:opacity-50 cursor-pointer"
               >

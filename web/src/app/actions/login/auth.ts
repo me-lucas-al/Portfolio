@@ -2,7 +2,7 @@
 import { signIn, signOut } from "@/auth"
 import { AuthError } from "next-auth"
 
-export async function loginAction(prevState: any, formData: FormData) {
+export async function loginAction(_prevState: unknown, formData: FormData) {
   try {
     await signIn("credentials", {
       ...Object.fromEntries(formData),

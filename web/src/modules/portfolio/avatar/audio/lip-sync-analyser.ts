@@ -20,7 +20,7 @@ let rafId: number | null = null
 let lastTimeMs: number | null = null
 let current = 0
 
-function tick(timeMs: number): void {
+function analyzeAudioLipSyncFrame(timeMs: number): void {
   const { analyserNode, timeDomainBuffer } = getAudioGraph()
   analyserNode.getFloatTimeDomainData(timeDomainBuffer)
 
@@ -43,14 +43,14 @@ function tick(timeMs: number): void {
 
   writeMouthOpen("audio", current < DEADZONE ? 0 : current * CEILING)
 
-  rafId = window.requestAnimationFrame(tick)
+  rafId = window.requestAnimationFrame(analyzeAudioLipSyncFrame)
 }
 
 export function startLipSyncAnalyser(): void {
   if (rafId !== null) return
   activateMouthSource("audio")
   lastTimeMs = null
-  rafId = window.requestAnimationFrame(tick)
+  rafId = window.requestAnimationFrame(analyzeAudioLipSyncFrame)
 }
 
 export function stopLipSyncAnalyser(): void {

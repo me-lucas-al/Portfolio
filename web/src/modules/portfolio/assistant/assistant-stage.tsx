@@ -16,9 +16,9 @@ export interface AssistantStageProps {
   loading: boolean
   error: string | null
   canRetry: boolean
-  handleSend: (text?: string) => void | Promise<void>
-  handleRetry: () => void
-  handleKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => void
+  sendChatMessage: (text?: string) => void | Promise<void>
+  retryLastFailedMessage: () => void
+  handleChatInputKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => void
 }
 
 export function AssistantStage({
@@ -29,9 +29,9 @@ export function AssistantStage({
   loading,
   error,
   canRetry,
-  handleSend,
-  handleRetry,
-  handleKeyDown,
+  sendChatMessage,
+  retryLastFailedMessage,
+  handleChatInputKeyDown,
 }: AssistantStageProps) {
   const { typingMessageId } = useTypingSpeech()
   const transcriptRef = useRef<HTMLDivElement | null>(null)
@@ -80,7 +80,7 @@ export function AssistantStage({
                   <button
                     key={suggestion}
                     type="button"
-                    onClick={() => void handleSend(suggestion)}
+                    onClick={() => void sendChatMessage(suggestion)}
                     className="rounded-full border border-line bg-surface-2/80 px-3 py-1.5 text-left text-xs text-fg-muted transition-colors hover:border-brand/60 hover:text-fg"
                   >
                     {suggestion}
@@ -96,7 +96,7 @@ export function AssistantStage({
               {canRetry && (
                 <button
                   type="button"
-                  onClick={handleRetry}
+                  onClick={retryLastFailedMessage}
                   className="self-start text-xs font-medium text-brand transition-colors hover:text-brand-strong"
                 >
                   {dict.retry}
@@ -114,14 +114,14 @@ export function AssistantStage({
         <Textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
-          onKeyDown={handleKeyDown}
+          onKeyDown={handleChatInputKeyDown}
           placeholder={dict.placeholder}
           maxLength={600}
           className="min-h-9 max-h-28 flex-1 resize-none rounded-2xl border-line bg-ink/50 px-3 py-2 text-sm text-fg placeholder:text-muted-2 focus-visible:border-brand focus-visible:ring-brand/30"
         />
         <Button
           size="icon"
-          onClick={() => void handleSend()}
+          onClick={() => void sendChatMessage()}
           disabled={loading || !input.trim()}
           aria-label={dict.send}
           className="shrink-0 rounded-full bg-brand text-brand-ink hover:bg-brand-strong disabled:opacity-50"

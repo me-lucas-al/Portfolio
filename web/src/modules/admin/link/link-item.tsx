@@ -15,7 +15,7 @@ export function LinkItem({ link }: { link: DefaultLinkType & { id: number } }) {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const handleDelete = () => {
+  const executeLinkDeletion = () => {
     startTransition(async () => {
       await deleteLinkAction(link.id)
       toast.success("Link deletado com sucesso!")
@@ -23,7 +23,7 @@ export function LinkItem({ link }: { link: DefaultLinkType & { id: number } }) {
     })
   }
 
-  const handleReorder = (direction: 'up' | 'down') => {
+  const reorderLinkPosition = (direction: 'up' | 'down') => {
     startTransition(async () => {
       const result = await reorderLinkAction(link.id, direction)
       if (result.error) {
@@ -53,7 +53,7 @@ export function LinkItem({ link }: { link: DefaultLinkType & { id: number } }) {
         <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
           <button
             disabled={isPending}
-            onClick={() => handleReorder('up')}
+            onClick={() => reorderLinkPosition('up')}
             className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
             title="Mover para cima"
           >
@@ -61,7 +61,7 @@ export function LinkItem({ link }: { link: DefaultLinkType & { id: number } }) {
           </button>
           <button
             disabled={isPending}
-            onClick={() => handleReorder('down')}
+            onClick={() => reorderLinkPosition('down')}
             className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
             title="Mover para baixo"
           >
@@ -103,7 +103,7 @@ export function LinkItem({ link }: { link: DefaultLinkType & { id: number } }) {
                 </button>
               </DialogClose>
               <button
-                onClick={handleDelete}
+                onClick={executeLinkDeletion}
                 disabled={isPending}
                 className="flex items-center justify-center min-w-[100px] px-4 py-2 rounded-lg bg-danger/20 border border-danger/40 text-danger hover:bg-danger/30 hover:text-fg transition-all text-sm font-medium disabled:opacity-50 cursor-pointer"
               >

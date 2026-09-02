@@ -10,7 +10,7 @@ export function CreateEducationForm() {
   const [isPending, startTransition] = useTransition()
   const formRef = useRef<HTMLFormElement>(null)
 
-  const handleSubmit = (formData: FormData) => {
+  const submitCreateEducationForm = (formData: FormData) => {
     startTransition(async () => {
       const result = await createEducationAction(null, formData)
       if (result?.success) {
@@ -23,7 +23,7 @@ export function CreateEducationForm() {
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="space-y-6 max-w-2xl">
+    <form ref={formRef} action={submitCreateEducationForm} className="space-y-6 max-w-2xl">
       <Tabs defaultValue="pt" className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-surface border border-line">
           <TabsTrigger value="pt" className="data-[state=active]:bg-brand/10 data-[state=active]:text-brand text-fg-muted">

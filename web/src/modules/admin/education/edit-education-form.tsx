@@ -16,7 +16,7 @@ const formatMonthForInput = (date: Date | string | null | undefined) => {
 export function EditEducationForm({ education, onSuccess }: { education: EducationType, onSuccess?: () => void }) {
   const [isPending, startTransition] = useTransition()
 
-  const handleSubmit = (formData: FormData) => {
+  const submitEditEducationForm = (formData: FormData) => {
     formData.append("id", education.id.toString())
     startTransition(async () => {
       const result = await updateEducationAction(null, formData)
@@ -30,7 +30,7 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={submitEditEducationForm} className="space-y-6">
       <Tabs defaultValue="pt" className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-surface border border-line">
           <TabsTrigger value="pt" className="data-[state=active]:bg-brand/10 data-[state=active]:text-brand text-fg-muted">

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
 export async function createExperienceAction(
-  prevState: any,
+  _prevState: unknown,
   formData: FormData,
 ) {
   try {
@@ -25,7 +25,7 @@ export async function createExperienceAction(
       roleEn: (formData.get("roleEn") as string) || undefined,
       company: formData.get("company") as string,
       startDate: new Date(formData.get("startDate") as string),
-      endDate: endDate as any,
+      endDate,
       description: formData.get("description") as string,
       descriptionEn: (formData.get("descriptionEn") as string) || undefined,
       techs: techs
@@ -65,7 +65,18 @@ export async function reorderExperienceAction(id: number, direction: 'up' | 'dow
 
     await Promise.all(
       newExperiences.map((experience, i) =>
-        makeExperienceService().updateExperienceById({ ...experience, order: i } as any)
+        makeExperienceService().updateExperienceById({
+          id: experience.id,
+          role: experience.role,
+          roleEn: experience.roleEn ?? undefined,
+          company: experience.company,
+          startDate: experience.startDate,
+          endDate: experience.endDate,
+          description: experience.description,
+          descriptionEn: experience.descriptionEn ?? undefined,
+          techs: experience.techs,
+          order: i,
+        })
       )
     );
 
@@ -79,7 +90,7 @@ export async function reorderExperienceAction(id: number, direction: 'up' | 'dow
 }
 
 export async function updateExperienceAction(
-  prevState: any,
+  _prevState: unknown,
   formData: FormData,
 ) {
   try {
@@ -99,7 +110,7 @@ export async function updateExperienceAction(
       roleEn: (formData.get("roleEn") as string) || undefined,
       company: formData.get("company") as string,
       startDate: new Date(formData.get("startDate") as string),
-      endDate: endDate as any,
+      endDate,
       description: formData.get("description") as string,
       descriptionEn: (formData.get("descriptionEn") as string) || undefined,
       techs: techs

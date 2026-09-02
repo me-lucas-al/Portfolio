@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
 export async function createEducationAction(
-  prevState: any,
+  _prevState: unknown,
   formData: FormData,
 ) {
   try {
@@ -24,7 +24,7 @@ export async function createEducationAction(
       courseEn: (formData.get("courseEn") as string) || undefined,
       institution: formData.get("institution") as string,
       startDate: new Date(formData.get("startDate") as string),
-      endDate: endDate as any,
+      endDate,
       type: formData.get("type") as string,
       order: nextOrder
     });
@@ -57,7 +57,16 @@ export async function reorderEducationAction(id: number, direction: 'up' | 'down
 
     await Promise.all(
       newEducations.map((education, i) =>
-        makeEducationService().updateEducationById({ ...education, order: i } as any)
+        makeEducationService().updateEducationById({
+          id: education.id,
+          course: education.course,
+          courseEn: education.courseEn ?? undefined,
+          institution: education.institution,
+          startDate: education.startDate,
+          endDate: education.endDate,
+          type: education.type,
+          order: i,
+        })
       )
     );
 
@@ -71,7 +80,7 @@ export async function reorderEducationAction(id: number, direction: 'up' | 'down
 }
 
 export async function updateEducationAction(
-  prevState: any,
+  _prevState: unknown,
   formData: FormData,
 ) {
   try {
@@ -89,7 +98,7 @@ export async function updateEducationAction(
       courseEn: (formData.get("courseEn") as string) || undefined,
       institution: formData.get("institution") as string,
       startDate: new Date(formData.get("startDate") as string),
-      endDate: endDate as any,
+      endDate,
       type: formData.get("type") as string,
     });
 
