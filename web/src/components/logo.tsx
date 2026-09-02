@@ -2,10 +2,6 @@ interface LogoMarkProps {
   className?: string
 }
 
-// A terminal prompt ("›") followed by a cursor bar — the same "waiting to
-// type" glyph the avatar's own typewriter effect renders mid-response. This
-// mark is the site's one deliberate signature, so it's kept out of every
-// other component: no gradients, no brand color splashed elsewhere.
 export function LogoMark({ className }: LogoMarkProps) {
   return (
     <svg viewBox="0 0 100 100" className={className} aria-hidden focusable="false">

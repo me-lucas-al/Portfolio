@@ -20,4 +20,3 @@ export class ProjectService {
     return this.projectRepository.update(data);
   }
 }
-

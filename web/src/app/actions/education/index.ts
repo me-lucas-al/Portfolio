@@ -29,7 +29,6 @@ export async function createEducationAction(
       order: nextOrder
     });
 
-
     revalidatePath("/");
     revalidatePath("/control-painel");
 
@@ -57,7 +56,7 @@ export async function reorderEducationAction(id: number, direction: 'up' | 'down
     newEducations.splice(targetIndex, 0, movedEducation);
 
     await Promise.all(
-      newEducations.map((education, i) => 
+      newEducations.map((education, i) =>
         makeEducationService().updateEducationById({ ...education, order: i } as any)
       )
     );

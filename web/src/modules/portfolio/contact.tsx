@@ -3,10 +3,6 @@ import { Github, Linkedin, Mail, Smartphone, Link as LinkIcon } from "lucide-rea
 import Link from "next/link"
 import { getDictionary, type Locale } from "@/i18n"
 
-// Icon brands intentionally reference each platform's own brand color
-// (GitHub neutral, LinkedIn blue, WhatsApp green, email red) rather than the
-// site's own amber brand - a deliberate exception, not the "brand color
-// splashed everywhere" pattern the rest of the UI avoids.
 const contactVisuals: Record<string, { icon: React.ReactNode; hoverClass: string; iconClass: string }> = {
   github: {
     icon: <Github className="w-6 h-6" />,

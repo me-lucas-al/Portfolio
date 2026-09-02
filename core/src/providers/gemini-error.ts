@@ -1,7 +1,3 @@
-// Duck-typed on purpose: pnpm can resolve two distinct instances of
-// `@google/genai` across `web` and `core` (divergent peer deps), so
-// `error instanceof ApiError` is unreliable across that boundary — an error
-// thrown from inside `core` fails an `instanceof` check done in `web`.
 
 function getStatusFromApiErrorShape(error: unknown): number | undefined {
   if (!error || typeof error !== "object") return undefined;

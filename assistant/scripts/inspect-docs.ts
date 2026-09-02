@@ -1,7 +1,4 @@
-// Zero-cost feedback loop for calibrating PDF/DOCX/CSV extraction: no dotenv,
-// no database, no Gemini calls. chunk-source.interface.ts imports RawChunkInput
-// as `import type`, so nothing from @portfolio/core's runtime dependency graph
-// (which needs env vars) is pulled in here.
+
 import { DocsSource } from "../src/sources/docs-source";
 
 const source = new DocsSource();

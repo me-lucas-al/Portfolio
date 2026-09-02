@@ -13,7 +13,7 @@ export async function createExperienceAction(
     if (!admin) return { error: "Não autorizado" };
 
     const techs = formData.get("techs") as string;
-    
+
     const experiences = await makeExperienceService().getAllExperiences();
     const nextOrder = experiences.length > 0 ? Math.max(...experiences.map(e => e.order ?? 0)) + 1 : 0;
 
@@ -64,7 +64,7 @@ export async function reorderExperienceAction(id: number, direction: 'up' | 'dow
     newExperiences.splice(targetIndex, 0, movedExperience);
 
     await Promise.all(
-      newExperiences.map((experience, i) => 
+      newExperiences.map((experience, i) =>
         makeExperienceService().updateExperienceById({ ...experience, order: i } as any)
       )
     );

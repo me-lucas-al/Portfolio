@@ -16,7 +16,7 @@ export function EditLinkForm({ link, onCancel }: { link: DefaultLinkType & { id:
         toast.error(state.error)
         onCancel()
       }
-      
+
       if (state?.success && state?.message) {
         toast.success(state.message)
       }

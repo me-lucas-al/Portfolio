@@ -8,10 +8,6 @@ import {
 import { hashContent } from "../ingest/hash";
 import { ChunkSource, RawChunk } from "./chunk-source.interface";
 
-// Explicit allowlist rather than "index every key": SystemSetting is a
-// free-form key/value store edited from the admin panel, and any future key
-// added there (a webhook, an internal flag) must opt in to being embedded
-// and made retrievable by anonymous visitors instead of being indexed by default.
 const INDEXABLE_SYSTEM_SETTING_KEYS = new Set([
   "about_me",
   "about_me_en",

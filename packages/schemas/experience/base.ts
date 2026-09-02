@@ -13,4 +13,4 @@ export const ExperienceSchema = z.object({
   order: z.number().int().default(0),
 })
 
-export type ExperienceType = z.infer<typeof ExperienceSchema>
+export type ExperienceType = z.infer<typeof ExperienceSchema>

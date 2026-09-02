@@ -9,9 +9,7 @@ import { activateMouthSource, deactivateMouthSource, getActiveMouthSource, write
 
 describe("mouth-source", () => {
   beforeEach(() => {
-    // Reset module-scope state between tests by deactivating whatever might be active,
-    // THEN clear the mock's call history - otherwise these cleanup calls themselves
-    // would count toward the assertions inside the test that follows.
+
     deactivateMouthSource("typing")
     deactivateMouthSource("audio")
     vi.clearAllMocks()

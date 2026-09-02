@@ -93,20 +93,20 @@ export function CreateProjectForm() {
         <TabsContent value="pt" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-fg-muted ml-1">Título do Projeto</label>
-            <input 
-              name="title" 
-              required 
+            <input
+              name="title"
+              required
               disabled={isPending}
-              className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50" 
+              className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50"
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-fg-muted ml-1">Descrição</label>
-            <textarea 
-              name="description" 
-              rows={4} 
+            <textarea
+              name="description"
+              rows={4}
               disabled={isPending}
-              className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all resize-none disabled:opacity-50" 
+              className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all resize-none disabled:opacity-50"
             />
           </div>
         </TabsContent>
@@ -114,21 +114,21 @@ export function CreateProjectForm() {
         <TabsContent value="en" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm font-medium text-fg-muted ml-1">Project Title <span className="text-muted-2">(English)</span></label>
-            <input 
-              name="titleEn" 
+            <input
+              name="titleEn"
               disabled={isPending}
               placeholder="English title (optional)"
-              className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50" 
+              className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50"
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-fg-muted ml-1">Description <span className="text-muted-2">(English)</span></label>
-            <textarea 
-              name="descriptionEn" 
-              rows={4} 
+            <textarea
+              name="descriptionEn"
+              rows={4}
               disabled={isPending}
               placeholder="English description (optional)"
-              className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all resize-none disabled:opacity-50" 
+              className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all resize-none disabled:opacity-50"
             />
           </div>
         </TabsContent>
@@ -137,20 +137,20 @@ export function CreateProjectForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-fg-muted ml-1">URL do GitHub</label>
-          <input 
-            name="githubUrl" 
-            type="url" 
+          <input
+            name="githubUrl"
+            type="url"
             disabled={isPending}
-            className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50" 
+            className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50"
           />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-fg-muted ml-1">URL do Deploy</label>
-          <input 
-            name="deployUrl" 
-            type="url" 
+          <input
+            name="deployUrl"
+            type="url"
             disabled={isPending}
-            className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50" 
+            className="w-full px-4 py-3 rounded-xl bg-surface border border-line text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all disabled:opacity-50"
           />
         </div>
       </div>
@@ -217,8 +217,8 @@ export function CreateProjectForm() {
         <p className="text-sm text-danger ml-1">{state.error}</p>
       )}
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         disabled={isPending}
         className="w-full py-4 rounded-xl bg-brand hover:bg-brand-strong text-brand-ink text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50 flex justify-center items-center cursor-pointer"
       >
@@ -226,4 +226,4 @@ export function CreateProjectForm() {
       </button>
     </form>
   )
-}
+}

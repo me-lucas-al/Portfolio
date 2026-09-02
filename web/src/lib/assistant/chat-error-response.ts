@@ -20,9 +20,6 @@ export function toChatErrorResponse(error: unknown, deadline: Deadline): Respons
     });
   }
 
-  // Our own deadline firing looks identical to a client-initiated abort
-  // (both surface as AbortError/TimeoutError) — only report "timeout" when the
-  // shared budget is actually exhausted, otherwise fall through to "unknown".
   if (isAbortError(error) && deadline.remainingMs() <= 0) {
     return Response.json(chatError("Request timed out", "timeout"), { status: 504 });
   }

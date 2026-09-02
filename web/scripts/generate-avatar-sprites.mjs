@@ -1,20 +1,3 @@
-// One-off generation script for `web/public/avatar/sprites/*.png` - NOT part
-// of the app (see `../src/modules/portfolio/avatar/README.md`, "Assets").
-// Uses the Gemini image model (`@google/genai`, already a dependency for the
-// assistant's chat/TTS calls - see `../src/lib/assistant/tts-provider.ts` for
-// the sibling pattern this mirrors) with `dados-pessoais/avatar_lucas.jpg` as
-// a reference image, so the generated bust resembles the portfolio's owner.
-//
-// Run from `web/`: `node scripts/generate-avatar-sprites.mjs`
-// Requires `GEMINI_API_KEY` (read from `web/.env.local` if present, else the
-// environment - same variable `/api/chat` and `/api/tts` already use).
-//
-// The model is asked for a flat chroma-key background (`CHROMA_KEY_RGB`)
-// instead of a real transparent background, because none of the response
-// formats this SDK version's `interactions.create` accepts for images
-// (`ImageResponseFormatMimeType` on this SDK is jpeg-only - see
-// `node_modules/@google/genai/dist/genai.d.ts`) reliably preserves alpha.
-// `removeChromaKeyAndResize` below does the alpha punch-out locally instead.
 
 import { GoogleGenAI } from "@google/genai"
 import sharp from "sharp"
@@ -29,23 +12,13 @@ const REPO_ROOT = path.resolve(WEB_ROOT, "..")
 const REFERENCE_IMAGE_PATH = path.resolve(REPO_ROOT, "dados-pessoais/avatar_lucas.jpg")
 const OUTPUT_DIR = path.resolve(WEB_ROOT, "public/avatar/sprites")
 const ENV_LOCAL_PATH = path.resolve(WEB_ROOT, ".env.local")
-// Raw (pre-chroma-key) bytes straight off the model, keyed by frame name -
-// so tuning `removeChromaKeyAndResize` doesn't need a fresh (paid, and
-// non-deterministic) generation call every time. `--force` bypasses it.
+
 const RAW_CACHE_DIR = path.resolve(WEB_ROOT, ".cache/avatar-sprites-raw")
 
-// Same dimensions as the placeholders it replaces - `sprite-frames.ts` has
-// no idea (nor cares) what size the PNGs are, but keeping it identical means
-// no layout/CSS anywhere needs to change.
 const SPRITE_SIZE = 512
 
-// Matches the `#00FF00` chroma-key color requested in every prompt below.
 const CHROMA_KEY_RGB = { r: 0, g: 255, b: 0 }
-// Below this Euclidean RGB distance from the key color, a pixel is
-// background - fully transparent. Above it, fully opaque. Between the two,
-// alpha is interpolated (feathered) instead of a hard cutoff, which is what
-// actually gets rid of the thin bright-green fringe a binary threshold
-// leaves behind on anti-aliased edges (hair strands, jacket collar).
+
 const CHROMA_FULLY_TRANSPARENT_DISTANCE = 120
 const CHROMA_FULLY_OPAQUE_DISTANCE = 220
 
@@ -65,8 +38,6 @@ const MOUTH_PROMPTS = {
   open: "the mouth open mid-speech, as if talking, teeth barely visible",
 }
 
-// The 8 combinations `sprite-frames.ts` reads by file name - this list IS
-// the contract, matching `FRAME_URLS` there exactly.
 const FRAMES = [
   { name: "neutral-closed", expression: "neutral", mouth: "closed", blink: false },
   { name: "neutral-open", expression: "neutral", mouth: "open", blink: false },
@@ -97,7 +68,7 @@ async function loadApiKey() {
   try {
     process.loadEnvFile(ENV_LOCAL_PATH)
   } catch {
-    // No web/.env.local (e.g. CI) - fall back to whatever's already in the environment.
+
   }
 
   const apiKey = process.env.GEMINI_API_KEY
@@ -111,10 +82,6 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-// Mirrors `steps[0].content[0]` extraction in `../src/lib/assistant/tts-provider.ts`,
-// but scans every `model_output` step for an image content item instead of
-// assuming position 0 - image responses aren't verified against this SDK
-// version the way that TTS call already was.
 function extractImageContent(response) {
   const steps = response?.steps ?? []
   for (const step of steps) {
@@ -155,11 +122,6 @@ function clamp01(value) {
   return Math.max(0, Math.min(1, value))
 }
 
-// Punches the chroma-key background to transparency (feathered, not a hard
-// cutoff - see the two DISTANCE constants above), suppresses green spill on
-// the remaining edge pixels, then resizes to the sprites' fixed 512x512 -
-// same post-processing every frame gets, so there's nothing left to do to a
-// batch by hand before it's droppable straight into `public/avatar/sprites/`.
 async function removeChromaKeyAndResize(inputBuffer) {
   const { data, info } = await sharp(inputBuffer)
     .resize(SPRITE_SIZE, SPRITE_SIZE, { fit: "cover" })
@@ -183,11 +145,6 @@ async function removeChromaKeyAndResize(inputBuffer) {
     )
     data[i + 3] = Math.round(opacity * 255)
 
-    // Green-screen spill: edge pixels blended with the key color read as a
-    // sickly green tint even once alpha is punched out. Gated to the
-    // feathered (not fully opaque) zone only - a fully-opaque interior pixel
-    // is definitely real character art, never background bleed, and could
-    // legitimately be green (e.g. a green prop) without this being spill.
     if (opacity < 1) {
       const maxRb = Math.max(r, b)
       if (g > maxRb) data[i + 1] = maxRb
@@ -214,9 +171,6 @@ async function main() {
   await mkdir(OUTPUT_DIR, { recursive: true })
   await mkdir(RAW_CACHE_DIR, { recursive: true })
 
-  // Only touched if at least one frame is missing from the cache (or
-  // `--force` is passed) - re-running purely to tune post-processing never
-  // needs an API key at all.
   let ai = null
 
   for (const frame of FRAMES) {

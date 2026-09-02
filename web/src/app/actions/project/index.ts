@@ -42,7 +42,7 @@ export async function createProjectAction(prevState: any, formData: FormData) {
       .filter((value): value is File => value instanceof File && value.size > 0);
 
     const imagesUrl = imageFiles.length > 0 ? await uploadProjectImages(imageFiles) : [];
-    
+
     const projects = await makeProjectService().getAllProjects();
     const nextOrder = projects.length > 0 ? Math.max(...projects.map(p => p.order ?? 0)) + 1 : 0;
 
@@ -90,7 +90,7 @@ export async function reorderProjectAction(id: number, direction: 'up' | 'down')
     newProjects.splice(targetIndex, 0, movedProject);
 
     await Promise.all(
-      newProjects.map((project, i) => 
+      newProjects.map((project, i) =>
         makeProjectService().updateProjectById({ ...project, order: i } as any)
       )
     );
@@ -113,17 +113,14 @@ export async function updateProjectAction(prevState: any, formData: FormData) {
     const id = Number(formData.get("id"));
     const techs = formData.get("technologies") as string;
 
-    // Images already kept by the user (not removed via X button)
     const keptImages = formData.getAll("keptImages").filter((v): v is string => typeof v === "string");
 
-    // New files uploaded in this edit
     const imageFiles = formData
       .getAll("images")
       .filter((value): value is File => value instanceof File && value.size > 0);
 
     const uploadedUrls = imageFiles.length > 0 ? await uploadProjectImages(imageFiles) : [];
 
-    // Merge: kept first (preserves order/cover), then newly uploaded
     const imagesUrl = [...keptImages, ...uploadedUrls];
 
     await makeProjectService().updateProjectById({

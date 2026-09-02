@@ -27,25 +27,10 @@ function markCtaSeen() {
   try {
     window.localStorage.setItem(CTA_SEEN_KEY, "1")
   } catch {
-    // localStorage unavailable (private browsing, quota) - the bubble may reappear next visit
+
   }
 }
 
-/**
- * Mounts the avatar's mini (corner, idle) surface - now the assistant's only
- * entry point, exported through `../contract.ts` and rendered by
- * `modules/portfolio/assistant/assistant-widget.tsx` (the sole consumer of
- * `open`/`onOpenChange`, its own `useState`). Clicking the portrait itself
- * opens the dialogue bar; there is no separate "chat bubble" trigger button
- * anymore. A first-visit nudge bubble (former `assistant-mini-dock.tsx`
- * responsibility, moved here since it's part of the same corner surface)
- * points at it once, then never again (`localStorage`-gated).
- *
- * No canvas, no portal, no rect measuring - `AvatarSprite` reads everything
- * it needs off the shared signal bus; the "bust" variant is mounted
- * separately, inside the dialogue bar itself
- * (`modules/portfolio/assistant/assistant-stage.tsx`).
- */
 export function AvatarStage({ dict, open, onOpenChange }: AvatarStageProps) {
   const [showCta, setShowCta] = useState(false)
 
@@ -65,8 +50,6 @@ export function AvatarStage({ dict, open, onOpenChange }: AvatarStageProps) {
     if (!open) dismissCta()
   }
 
-  // The dialogue bar renders its own bust portrait - showing this corner
-  // trigger underneath it would just be a dead click target.
   if (open) return null
 
   return (

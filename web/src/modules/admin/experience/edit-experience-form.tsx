@@ -7,7 +7,6 @@ import { Loader2 } from "lucide-react"
 import { toast } from "react-toastify"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-// Função para converter o Date do banco para formato "YYYY-MM" do input type="month"
 const formatMonthForInput = (date: Date | string | null | undefined) => {
   if (!date) return "";
   const d = new Date(date);
@@ -90,4 +89,4 @@ export function EditExperienceForm({ experience, onSuccess }: { experience: Expe
       </button>
     </form>
   )
-}
+}

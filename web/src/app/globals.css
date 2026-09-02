@@ -63,12 +63,7 @@
 }
 
 :root {
-  /* Portfolio visual identity — warm off-black + a single restrained amber
-     brand color (named --brand, not --accent, so it never collides with
-     shadcn's own --accent/--sidebar-accent tokens used internally by
-     dropdown/select/tabs hover states), plus a violet "prompt" tone used
-     only inside the logo mark (never exposed as a Tailwind utility) so the
-     site's own UI never splashes more than one brand hue around. */
+  
   --ink: #0d0b12;
   --surface: #17131f;
   --surface-2: #201a2c;

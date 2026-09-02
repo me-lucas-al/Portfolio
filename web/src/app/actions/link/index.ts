@@ -46,7 +46,7 @@ export async function reorderLinkAction(id: number, direction: 'up' | 'down') {
     newLinks.splice(targetIndex, 0, movedLink);
 
     await Promise.all(
-      newLinks.map((link, i) => 
+      newLinks.map((link, i) =>
         makeLinkService().updateLinkById({ ...link, order: i } as any)
       )
     );

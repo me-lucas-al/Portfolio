@@ -131,7 +131,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       lang={locale === "en" ? "en" : "pt-BR"}
       className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}
     >
-      <body>  
+      <body>
         <Provider>{children}</Provider>
         <ToastContainer position="bottom-right" autoClose={2500} theme="colored" aria-label="Toast container" />
       </body>

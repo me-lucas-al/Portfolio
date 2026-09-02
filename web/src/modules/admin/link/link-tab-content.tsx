@@ -30,4 +30,3 @@ export function LinkTabContent({ activeView, links, cvUrlPt, cvUrlEn }: LinkTabC
     </div>
   )
 }
-

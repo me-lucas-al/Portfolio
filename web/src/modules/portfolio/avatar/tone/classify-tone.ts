@@ -1,43 +1,6 @@
 import type { Locale } from "@/i18n"
 import type { Tone } from "./tone"
 
-/**
- * Pure, client-side, testable heuristic: response text + locale -> `Tone`.
- * No DOM, no `three`, no network - see `classify-tone.spec.ts`.
- *
- * Text reaching this function is always plain paragraphs (no markdown, no
- * emoji - `system-instruction.ts` rule 10 forbids both), so these heuristics
- * only need to handle sentence/punctuation-level signals, not markup.
- *
- * Precedence (checked top to bottom, first match wins - documented here
- * because a couple of these categories deliberately overlap):
- *
- *  1. apologetic - checked first, unconditionally, so an error/fallback
- *     string is never reclassified by a coincidental "!" or "?" elsewhere in
- *     these heuristics (none of the current known strings contain either,
- *     but a future copy change might).
- *  2. surprised - starts with a surprise marker, or contains a "?". Checked
- *     before enthusiastic/positive so a surprised question that happens to
- *     also contain "!" isn't misread as enthusiastic.
- *  3. enthusiastic - positive's more intense sibling. Checked *before* plain
- *     positive so its narrower, stronger condition (short + "!" + a
- *     positive/superlative marker) gets first refusal; execution only
- *     reaches plain "positive" below when enthusiastic's extra conditions
- *     (length, marker) aren't met - this ordering is what keeps "positive"
- *     from being permanently shadowed by "enthusiastic" (or vice versa).
- *  4. positive - a positive marker anywhere, or a bare "!" with nothing
- *     negative-sounding nearby.
- *  5. explanatory - long, multi-sentence, or carries multiple technical
- *     markers.
- *  6. neutral - default.
- */
-
-// Verified against this project's actual copy as of this phase:
-// `src/i18n/pt.ts` / `src/i18n/en.ts` (assistant.error/rateLimited/
-// quotaExceeded/overloaded/timeout) and `src/lib/assistant/agent.ts`
-// (FALLBACK_MESSAGE). If that copy changes, update this list too - it is
-// intentionally NOT imported live from those modules, so this stays a
-// zero-dependency, three-less, pure function.
 const KNOWN_APOLOGETIC_STRINGS: Record<Locale, string[]> = {
   pt: [
     "Não foi possível responder agora. Tente novamente em instantes.",
@@ -92,11 +55,6 @@ const EXPLANATORY_MIN_LENGTH = 350
 const EXPLANATORY_MIN_SENTENCES = 3
 const EXPLANATORY_MIN_TECHNICAL_MARKERS = 2
 
-// A generic "word/phrase boundary" check that's safe for accented
-// characters (`\p{L}` matches any Unicode letter, unlike the ASCII-only
-// `\w`/`\b` combo, which silently fails to find a boundary next to a
-// letter like "o" in "ótimo" - verified this actually breaks `\b` before
-// picking this approach).
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
@@ -144,12 +102,10 @@ export function classifyTone(text: string, locale: Locale): Tone {
   const normalized = text.trim()
   if (!normalized) return "neutral"
 
-  // 1. Apologetic
   if (containsAny(normalized, APOLOGETIC_MARKERS[locale]) || matchesKnownApologeticString(normalized, locale)) {
     return "apologetic"
   }
 
-  // 2. Surprised
   if (startsWithAny(normalized, SURPRISED_STARTERS[locale]) || normalized.includes("?")) {
     return "surprised"
   }
@@ -159,17 +115,14 @@ export function classifyTone(text: string, locale: Locale): Tone {
   const hasSuperlativeMarker = containsAny(normalized, SUPERLATIVE_MARKERS[locale])
   const hasNegativeMarker = containsAny(normalized, NEGATIVE_MARKERS[locale])
 
-  // 3. Enthusiastic (positive's more intense sibling - see precedence note above)
   if (hasExclamation && normalized.length < ENTHUSIASTIC_MAX_LENGTH && (hasPositiveMarker || hasSuperlativeMarker)) {
     return "enthusiastic"
   }
 
-  // 4. Positive
   if (hasPositiveMarker || (hasExclamation && !hasNegativeMarker)) {
     return "positive"
   }
 
-  // 5. Explanatory
   const technicalMarkerCount = countTechnicalMarkers(normalized, locale)
   if (
     normalized.length > EXPLANATORY_MIN_LENGTH ||
@@ -179,6 +132,5 @@ export function classifyTone(text: string, locale: Locale): Tone {
     return "explanatory"
   }
 
-  // 6. Neutral
   return "neutral"
 }

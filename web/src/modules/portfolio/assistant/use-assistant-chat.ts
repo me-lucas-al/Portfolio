@@ -13,8 +13,7 @@ const MAX_HISTORY_TURNS = 6
 const MAX_HISTORY_CONTENT_CHARS = 6000
 const STORAGE_KEY = "assistant_chat_v1"
 const STORAGE_TTL_MS = 24 * 60 * 60 * 1000
-// Above the server's own 60s maxDuration so a slow-but-real response is never
-// cut off client-side first, leaving the visitor stuck on a spinner forever.
+
 const REQUEST_TIMEOUT_MS = 65_000
 
 interface PersistedChat {
@@ -43,9 +42,6 @@ function loadPersistedChat(): PersistedChat | null {
   }
 }
 
-// Only called from pushMessage (on real activity) so that reopening/reloading the
-// tab never rewrites `savedAt` on its own - otherwise the 24h TTL would never expire
-// as long as the user occasionally revisits the page without sending anything.
 function persistChat(messages: ChatMessage[], savedAt: number) {
   if (typeof window === "undefined") return
 
@@ -58,31 +54,18 @@ function persistChat(messages: ChatMessage[], savedAt: number) {
     const payload: PersistedChat = { messages, savedAt }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
   } catch {
-    // localStorage unavailable (private browsing, quota) - degrade to in-memory only
+
   }
 }
 
-// Defensive against payloads already sitting in a visitor's localStorage from
-// before the server-side history limit was raised alongside MAX_OUTPUT_TOKENS.
 function truncateHistoryContent(content: string): string {
   return content.length > MAX_HISTORY_CONTENT_CHARS ? content.slice(0, MAX_HISTORY_CONTENT_CHARS) : content
 }
 
 export interface UseAssistantChatOptions {
-  /**
-   * Fired right after a *live* `/api/chat` response is parsed, with the full
-   * payload (text + optional speech). Never fired by the localStorage
-   * rehydration effect below - reloading a tab must not auto-speak
-   * yesterday's last answer, so that effect calls `setMessages` directly
-   * instead of going through `pushMessage`/this callback.
-   */
+
   onModelMessage?: (message: { text: string; speech?: ChatSpeechType }, messageId: number) => void
-  /**
-   * Fired at the very top of `sendToApi`, before anything else - both a
-   * fresh send and a retry call `sendToApi`, so this is the hook a consumer
-   * uses to interrupt whatever's currently speaking because a new question
-   * is being asked.
-   */
+
   onBeforeSend?: () => void
 }
 
@@ -133,10 +116,6 @@ export function useAssistantChat(
     abortControllerRef.current = controller
     const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(REQUEST_TIMEOUT_MS)])
 
-    // On a fresh send `messages` (from this closure) doesn't include the just-pushed
-    // user turn yet, so it's naturally excluded here. On retry it's already committed,
-    // so drop it explicitly - otherwise the message being (re)sent would also show up
-    // as the last history entry, duplicated.
     const lastMessage = messages[messages.length - 1]
     const priorMessages = lastMessage?.role === "user" && lastMessage.content === message ? messages.slice(0, -1) : messages
     const history = priorMessages
@@ -168,8 +147,7 @@ export function useAssistantChat(
       setFailedMessage(null)
       setInput("")
     } catch (err) {
-      // A stale request being superseded (cancelPending) or the panel closing
-      // aborts in flight - not a user-facing failure, so no error/retry state.
+
       if (err instanceof DOMException && err.name === "AbortError") return
 
       console.error("[assistant] request failed:", err)

@@ -34,7 +34,6 @@ function allFrameUrls(): string[] {
 
 let preloadPromise: Promise<void[]> | null = null
 
-/** Warms the browser's HTTP cache for every sprite frame so the first expression/mouth change never pops in late. Safe to call from every mounted `AvatarSprite` instance - only the first call actually fetches anything. */
 export function preloadAllSpriteFrames(): Promise<void[]> {
   if (preloadPromise) return preloadPromise
 

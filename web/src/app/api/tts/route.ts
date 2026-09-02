@@ -7,9 +7,7 @@ import { createDeadline } from "@/lib/assistant/deadline";
 import { findCachedSpeech, synthesizeAndCacheSpeech } from "@/lib/assistant/speech-cache";
 
 export const runtime = "nodejs";
-// A single unary synthesis of MAX_TTS_CHARS (800) of PT text measured at
-// ~38s wall-clock for ~700 chars against gemini-2.5-flash-preview-tts - this
-// leaves comfortable headroom over the worst case, plus room for retries.
+
 export const maxDuration = 75;
 export const preferredRegion = "gru1";
 
@@ -75,12 +73,6 @@ export async function GET(request: NextRequest) {
     return Response.json(errorBody("Rate limit exceeded", "rate_limited"), { status: 429 });
   }
 
-  // Checked before the daily synthesis budget, mirroring /api/chat's own
-  // answer-cache-before-budget ordering: a cache hit costs nothing to
-  // regenerate (no Gemini call, no Cloudinary upload), so it should keep
-  // working even once the day's synthesis budget is exhausted. It still runs
-  // after the per-IP rate limit above, since that caps abuse regardless of
-  // cache status.
   try {
     const cached = await findCachedSpeech(verified.text);
     if (cached) {
@@ -99,9 +91,7 @@ export async function GET(request: NextRequest) {
   const deadline = createDeadline(TOTAL_BUDGET_MS, request.signal);
 
   try {
-    // The very first requester gets the bytes directly - no reason to make
-    // them wait an extra round-trip to Cloudinary and back for their own
-    // request. Only later requesters hit the cache and get redirected.
+
     const { wav } = await synthesizeAndCacheSpeech(apiKey, verified.text, deadline.signal);
 
     logMetric({ ip: ipHashPrefix, status: 200, cacheHit: 0, bytes: wav.length, durationMs: Date.now() - startedAt });

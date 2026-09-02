@@ -11,4 +11,4 @@ export const EducationSchema = z.object({
   order: z.number().int().default(0),
 })
 
-export type EducationType = z.infer<typeof EducationSchema>
+export type EducationType = z.infer<typeof EducationSchema>

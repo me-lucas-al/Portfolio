@@ -38,4 +38,4 @@ export function ProjectGrid({ projects, locale }: ProjectGridProps) {
       </div>
     </section>
   )
-}
+}

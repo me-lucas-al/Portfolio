@@ -13,4 +13,4 @@ export const ProjectSchema = z.object({
   order: z.number().int().default(0),
 })
 
-export type ProjectType = z.infer<typeof ProjectSchema>
+export type ProjectType = z.infer<typeof ProjectSchema>

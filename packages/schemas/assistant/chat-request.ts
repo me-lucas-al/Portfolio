@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-// The model's own turns are stored back into history and can run up to
-// MAX_OUTPUT_TOKENS of generated text (~4 chars/token in pt/en), well beyond
-// the 600-char cap that applies to the user's own input message.
 const MAX_HISTORY_CONTENT_CHARS = 6000;
 
 export const ChatHistoryMessageSchema = z.object({

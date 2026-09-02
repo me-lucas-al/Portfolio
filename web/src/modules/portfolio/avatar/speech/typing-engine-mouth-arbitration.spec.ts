@@ -1,9 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-// Uses the REAL `mouth-source.ts` (unlike `typing-engine.spec.ts`, which
-// mocks it) - this test is specifically about the interaction between the
-// two modules: does the typing engine reclaim the mouth on its own once a
-// higher-priority "audio" source that preempted it goes away mid-typing.
 vi.mock("./typing-surface-registry", () => ({
   writeTypingSurfaces: vi.fn(),
 }))
@@ -51,22 +47,20 @@ describe("typing-engine / mouth-source arbitration", () => {
 
   it("reclaims the mouth automatically once a preempting audio source deactivates", () => {
     startTyping("hello world", { onBlip: vi.fn() })
-    raf.step(0) // reveals "h" - typing owns the mouth, writes a nonzero target
+    raf.step(0)
 
-    // Real TTS audio starts mid-typing and preempts (audio > typing priority).
     activateMouthSource("audio")
     vi.mocked(setMouthOpen).mockClear()
 
     raf.step(32)
-    // While audio owns the mouth, the typing engine's writes must be discarded.
+
     expect(setMouthOpen).not.toHaveBeenCalled()
 
-    // Audio playback ends.
     deactivateMouthSource("audio")
     vi.mocked(setMouthOpen).mockClear()
 
     raf.step(64)
-    // Typing reclaims the mouth on its very next frame - no permanent lockout.
+
     expect(setMouthOpen).toHaveBeenCalled()
   })
 })

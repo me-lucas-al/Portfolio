@@ -1,10 +1,4 @@
-// A discriminated union so every quality problem the extractors can hit is
-// reported the same way, instead of each extractor inventing its own shape.
-// None of these mark the whole ingest run as errored — they're collected in
-// docs-source.ts and printed once at the end of collect(). The one exception
-// is PII detection, which deliberately throws instead of going through this
-// union (see PiiDetectedError in docs-source.ts): it must abort the whole
-// run loudly, not just get logged and skipped like everything else here.
+
 export type DocumentIssue =
   | { kind: "no_text_layer"; file: string }
   | { kind: "low_text_layer"; file: string; charsPerPage: number }

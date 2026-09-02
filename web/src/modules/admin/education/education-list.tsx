@@ -47,7 +47,7 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
-              <button 
+              <button
                 disabled={isPending}
                 onClick={() => handleReorder(edu.id, 'up')}
                 className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
@@ -55,7 +55,7 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
               >
                 <ChevronUp className="w-4 h-4" />
               </button>
-              <button 
+              <button
                 disabled={isPending}
                 onClick={() => handleReorder(edu.id, 'down')}
                 className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
@@ -67,9 +67,9 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
             <button onClick={() => setEditingEdu(edu)} className="p-2 text-fg-muted hover:text-brand hover:bg-brand/10 rounded-lg transition-colors cursor-pointer">
               <Pencil className="w-4 h-4" />
             </button>
-            <button 
-              disabled={isPending && deletingId === edu.id} 
-              onClick={() => setDeletingId(edu.id)} 
+            <button
+              disabled={isPending && deletingId === edu.id}
+              onClick={() => setDeletingId(edu.id)}
               className="p-2 text-fg-muted hover:text-danger hover:bg-danger/10 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
@@ -79,8 +79,8 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
       ))}
 
       <SideSheet.Root open={!!editingEdu} onOpenChange={(open) => !open && setEditingEdu(null)}>
-        <SideSheet.Content 
-          title="Editar Formação" 
+        <SideSheet.Content
+          title="Editar Formação"
           description="Atualize os detalhes da sua formação académica ou curso."
         >
           {editingEdu && <EditEducationForm education={editingEdu} onSuccess={() => setEditingEdu(null)} />}
@@ -88,8 +88,8 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
       </SideSheet.Root>
 
       <Modal.Root open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
-        <Modal.Content 
-          title="Confirmar deleção" 
+        <Modal.Content
+          title="Confirmar deleção"
           description="Tem a certeza de que deseja deletar esta formação? Esta ação não pode ser desfeita."
         >
           <Modal.Footer className="flex gap-2 sm:justify-end mt-4">

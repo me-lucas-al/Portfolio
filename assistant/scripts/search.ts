@@ -2,8 +2,6 @@ import { config } from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Loaded via dynamic import below so this runs before @portfolio/database
-// (imported transitively) reads process.env.DATABASE_URL at module load time.
 config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.env") });
 
 const { makeKnowledgeService } = await import("@portfolio/core/src/factories/_index");

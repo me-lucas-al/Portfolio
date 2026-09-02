@@ -17,18 +17,11 @@ const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const MAX_EXTRACTED_CHARS = 400_000;
 const MAX_CHUNKS_PER_DOC = 60;
 const MAX_CSV_ROWS = 5_000;
-// Below this, a PDF has SOME text (so it's not no_text_layer) but likely lost
-// most of a scanned page's content — worth a human look, not worth blocking.
+
 const MIN_CHARS_PER_PAGE_DENSITY = 100;
 
 const ALLOWED_EXTENSIONS: Record<string, "pdf" | "docx" | "csv"> = { ".pdf": "pdf", ".docx": "docx", ".csv": "csv" };
 
-// PDF/DOCX/CSV occasionally carry PII (personal résumés, exported contact
-// info) even though the folder's curation policy says they shouldn't. This
-// is the last line of defense, not the primary control — it deliberately
-// throws and escapes the per-file try/catch below so the whole run aborts
-// loudly, mirroring ENV_PATH_GUARD in code-source.ts. Only the pattern NAME
-// is ever reported, never the matched value.
 const PII_PATTERNS: { name: string; pattern: RegExp; mask: string }[] = [
   { name: "email", pattern: /[\w.+-]+@[\w-]+\.[\w.-]+/g, mask: "[EMAIL REDACTED]" },
   { name: "cpf", pattern: /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, mask: "[CPF REDACTED]" },
@@ -45,14 +38,8 @@ function sanitizePii(text: string): string {
   return result;
 }
 
-// Strips diacritics and anything outside [a-z0-9/._-] so the same file
-// produces the same source identifier on Windows and Linux/macOS regardless
-// of accents or NFC/NFD normalization differences.
 function slugify(posixRelPath: string): string {
-  // NFD decomposes accented characters into base + combining mark; the
-  // whitelist replace below then drops the combining mark along with
-  // anything else outside [a-z0-9/._-], which is what actually strips
-  // accents — no separate diacritics-only step is needed.
+
   return posixRelPath
     .normalize("NFD")
     .toLowerCase()

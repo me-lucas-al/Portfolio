@@ -13,11 +13,7 @@ export interface IngestReport {
 }
 
 export interface IngestOptions {
-  // Escape hatch for the legitimate case of clearing a namespace entirely
-  // (all files moved/removed). Without it, a source that collects zero
-  // chunks while the index still holds entries for it is treated as a
-  // probable misconfiguration (empty checkout, missing REPOS_TO_INDEX, etc.)
-  // rather than an intentional wipe.
+
   allowEmpty?: boolean;
 }
 

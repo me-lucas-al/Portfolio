@@ -15,7 +15,7 @@ export interface Dictionary {
   about: { title: string }
   skills: { title: string; tools: string }
   projects: { title: string }
-  experience: { title: string; current: string }
+  experience: { title: string; current: string; showMore: string; showLess: string }
   education: { title: string; current: string }
   contact: {
     title: string
@@ -78,7 +78,7 @@ export const pt: Dictionary = {
   about: { title: "Quem Sou" },
   skills: { title: "Tecnologias", tools: "Ferramentas" },
   projects: { title: "Projetos Desenvolvidos" },
-  experience: { title: "Experiências", current: "Atual" },
+  experience: { title: "Experiências", current: "Atual", showMore: "Ver mais", showLess: "Ver menos" },
   education: { title: "Formação Acadêmica", current: "Atual" },
   contact: {
     title: "Contatos",
@@ -127,5 +127,3 @@ export const pt: Dictionary = {
     skipTyping: "Pular para o fim",
   },
 }
-
-

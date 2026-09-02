@@ -27,7 +27,7 @@ export async function Header() {
           <Logo wordmarkClassName="text-lg sm:text-xl" />
         </Link>
 
-        {/* Desktop Navigation & Controls */}
+        {}
         <div className="hidden lg:flex items-center gap-4 xl:gap-6">
           <nav className="flex items-center gap-3 xl:gap-6">
             {navItems.map((item) => (
@@ -58,7 +58,7 @@ export async function Header() {
           )}
         </div>
 
-        {/* Mobile Menu & Language Toggle */}
+        {}
         <MobileNav dict={dict} locale={locale} hasSession={!!session} />
       </div>
     </header>

@@ -20,9 +20,6 @@ export async function isDailyBudgetExceeded(): Promise<boolean> {
   return makeRateLimitService().isDailyBudgetExceeded(dailyBudget, "chat");
 }
 
-// Separate budget from chat generations: one chat answer can now cost one
-// chat-generation call AND one tts-synthesis call, so both are tracked (and
-// capped) independently in the same chat_usage table via `kind`.
 export async function checkTtsRateLimit(ip: string): Promise<RateLimitResult> {
   const ipHash = hashIp(ip);
   return makeRateLimitService().checkAndRecord(ipHash, "tts");

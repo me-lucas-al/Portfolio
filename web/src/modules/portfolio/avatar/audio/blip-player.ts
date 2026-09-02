@@ -1,19 +1,5 @@
 import { onAudioUnlockGesture } from "./audio-unlock"
 
-/**
- * Plays short "blip" syllable clips in sync with `typing-engine.ts`'s
- * character reveal - its own `AudioContext` graph, deliberately NOT the one
- * in `audio-graph.ts`: that graph's `AnalyserNode` drives lip-sync off real
- * TTS audio, and mixing blips into it would have two arbiters fighting over
- * the same `mouthOpen` signal (mitigated anyway by `../mouth/mouth-source.ts`,
- * but there's no reason to route blips through an analyser that has nothing
- * to do with them).
- *
- *   AudioBufferSourceNode --shotGain--> blipGain --> destination
- *
- * `shotGain` is a short-lived per-play node (ramped 0->1 over ~2ms to avoid
- * a click), `blipGain` is the shared, user-controllable volume.
- */
 const BLIP_URLS = [
   "/avatar/blips/blip-01.wav",
   "/avatar/blips/blip-02.wav",
@@ -51,7 +37,6 @@ function getContext(): { context: AudioContext; gain: GainNode } {
   return { context: audioContext, gain: blipGain }
 }
 
-/** Decodes all blip clips once. Safe to call more than once - subsequent calls return the same in-flight/completed promise. */
 export function preloadBlips(): Promise<void> {
   if (loadPromise) return loadPromise
 
@@ -82,7 +67,6 @@ function pickNextIndex(): number {
   return index
 }
 
-/** Plays one randomly-chosen (never immediately repeated) blip clip, pitch-jittered. Silent no-op if buffers haven't decoded yet or the voice cap is hit. */
 export function playBlip(): void {
   if (!isBlipReady()) return
   if (activeVoiceCount >= MAX_CONCURRENT_VOICES) return

@@ -1,22 +1,15 @@
 import { getAudioGraph } from "./audio-graph"
 import { activateMouthSource, deactivateMouthSource, writeMouthOpen } from "../mouth/mouth-source"
 
-// Typical speech RMS (time-domain, `getFloatTimeDomainData`) sits roughly in
-// 0.01..0.25 for the kind of audio this pipeline plays. `getByteTimeDomainData`
-// would lose exactly the resolution weak consonants need, and
-// `getByteFrequencyData` measures the wrong axis entirely (dB magnitude, not
-// volume) - hence `getFloatTimeDomainData` here.
 const RMS_FLOOR = 0.01
 const RMS_CEILING = 0.18
 const SHAPE_EXPONENT = 0.6
 
-// Attack ~4.5x faster than release: a decisive open on onset, a gentler
-// close so consonant gaps don't make the jaw chatter.
 const ATTACK_TAU_SECONDS = 0.02
 const RELEASE_TAU_SECONDS = 0.09
 
 const DEADZONE = 0.05
-// jawOpen=1.0 distorts most rigs - never actually reach it.
+
 const CEILING = 0.85
 
 function clamp01(value: number): number {
@@ -53,18 +46,6 @@ function tick(timeMs: number): void {
   rafId = window.requestAnimationFrame(tick)
 }
 
-/**
- * Per-frame amplitude -> `mouthOpen` driver, running its own `rAF` loop
- * independent of the three.js render loop (the avatar canvas may be idle-
- * throttled or not even booted yet when speech starts, and this needs to
- * keep sampling regardless). Idempotent - calling `start()` while already
- * running is a no-op.
- *
- * `stop()` immediately cancels the loop AND forces `mouthOpen` back to `0`
- * in `avatar-signal-bus.ts` - never leaves a stale nonzero value hanging
- * after speech ends, per this module's own "always write zeros, never just
- * stop writing" mixer convention (see `engine/layers/viseme-layer.ts`).
- */
 export function startLipSyncAnalyser(): void {
   if (rafId !== null) return
   activateMouthSource("audio")

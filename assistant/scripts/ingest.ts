@@ -2,8 +2,6 @@ import { config } from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Loaded via dynamic import below so this runs before @portfolio/database
-// (imported transitively) reads process.env.DATABASE_URL at module load time.
 config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.env") });
 
 const { DbSource } = await import("../src/sources/db-source");
@@ -30,8 +28,7 @@ const sourcesByName: Record<string, SourceFactory> = {
   md: () => [new MarkdownSource()],
   code: () => [new CodeSource()],
   docs: () => [new DocsSource()],
-  // DocsSource last: a throw from a missing documentos/ directory must not
-  // prevent db/md/code from having already run and printed their reports.
+
   all: () => [new DbSource(), new MarkdownSource(), new CodeSource(), new DocsSource()],
 };
 
@@ -44,13 +41,7 @@ if (!factory) {
 let hadAnyErrors = false;
 let changedAnything = false;
 const failedNamespaces: string[] = [];
-// A source can throw outright (docs-source.ts does this on purpose for a
-// missing directory or a detected PII pattern, mirroring code-source.ts's
-// ENV_PATH_GUARD). That must still abort the run loudly, but it must NOT
-// skip the cache invalidation below for sources that already changed the
-// index earlier in this same loop - otherwise a successful md/code
-// reindex followed by a docs-source abort would leave stale cached answers
-// in place indefinitely (no TTL on that cache).
+
 let fatalError: unknown = null;
 
 for (const source of factory()) {

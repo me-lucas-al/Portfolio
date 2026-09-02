@@ -20,4 +20,3 @@ export class EducationService {
     return this.educationRepository.update(data);
   }
 }
-

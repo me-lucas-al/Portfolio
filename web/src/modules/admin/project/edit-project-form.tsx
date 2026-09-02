@@ -57,7 +57,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
     setNewImages(prev => [...prev, ...files.map(file => ({ id: URL.createObjectURL(file), file, preview: URL.createObjectURL(file) }))])
-    // Reset input so same file can be re-selected if needed
+
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
 
@@ -90,9 +90,9 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
   }
 
   const handleSubmit = async (formData: FormData) => {
-    // Append kept images so the action knows what to preserve
+
     keptImages.forEach(url => formData.append("keptImages", url))
-    // Append new files for upload, in the order set by the user
+
     newImages.forEach(({ file }) => formData.append("images", file))
     return formAction(formData)
   }
@@ -152,7 +152,7 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
         </div>
       </div>
 
-      {/* Images section */}
+      {}
       <div className="space-y-3">
         <label className="text-sm font-medium text-fg-muted ml-1">Imagens do Projeto</label>
 
@@ -238,4 +238,4 @@ export function EditProjectForm({ project, onCancel }: { project: ProjectType, o
       </div>
     </form>
   )
-}
+}

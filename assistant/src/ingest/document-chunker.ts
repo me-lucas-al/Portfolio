@@ -1,10 +1,6 @@
 import type { MarkdownChunk } from "./markdown-chunker";
 import { windowText } from "./text-windower";
 
-// A page below this length (a cover page, a single-line certificate footer)
-// produces a chunk that's nearly all breadcrumb and almost no content, which
-// embeds poorly and wastes a slot in the retrieval limit=8. Merged into a
-// neighboring page instead of standing alone.
 const MIN_PAGE_CHARS = 400;
 
 interface PageGroup {
@@ -31,9 +27,7 @@ function mergeShortPages(pages: string[]): PageGroup[] {
   }
 
   if (current) {
-    // A trailing short page never reached the threshold on its own — fold it
-    // into the previous group rather than let it stand alone (the last page
-    // is the common place for a short signature/footer page).
+
     const previous = groups.pop();
     groups.push(
       previous
@@ -69,11 +63,7 @@ export function chunkPdfPages(displayName: string, pages: string[]): MarkdownChu
 }
 
 const CSV_ROWS_PER_CHUNK = 20;
-// Tabular text (digits, punctuation-heavy) tokenizes far worse than prose —
-// close to 1 token per 1-3 chars instead of ~4 — so a chunk near the prose
-// hard cap can exceed gemini-embedding-001's 2048-token limit and fail the
-// whole embedding batch. A dedicated, smaller cap keeps CSV chunks safely
-// under that regardless of row count.
+
 const CSV_HARD_CAP_CHARS = 4096;
 const CSV_SOFT_SPLIT_CHARS = 3200;
 

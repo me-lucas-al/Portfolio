@@ -1,18 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { isUpstreamOverloaded, isAbortError } from "@portfolio/core/src/providers/gemini-error";
 
-// Verified by a live smoke test against the real API (2026-08-25): the
-// interactions API's `response_format: { type: "audio", mime_type: "audio/ogg_opus",
-// delivery: "inline" }` combo from the original plan is rejected outright
-// ("Audio delivery mode is not supported" / "Audio MIME type ... is not
-// supported for models/...") on every TTS-capable model tried. Streaming
-// (`stream: true`) is also accepted but silently ignored - the SDK returns a
-// single already-`status: "completed"` interaction object, not an async
-// iterable. What *does* work: a bare `response_format: { type: "audio" }`
-// (no explicit mime_type/delivery), which always comes back as raw 16-bit
-// PCM (`audio/L16;codec=pcm;rate=<n>`), delivered whole. This is the
-// documented fallback path for this phase: unary request, full audio file,
-// no progressive streaming.
 const DEFAULT_MODEL = "gemini-2.5-flash-preview-tts";
 const DEFAULT_VOICE = "Achird";
 
@@ -24,11 +12,6 @@ export interface SynthesizedSpeech {
   sampleRate: number;
 }
 
-// Exported so the speech cache key (computed both on /api/tts's cache-miss
-// path and on /api/chat's prewarm path) always resolves to the exact same
-// model/voice this module will actually use to synthesize - a mismatch here
-// would either miss a valid cache entry or, worse, key two different
-// renditions under the same hash.
 export function resolveModel(): string {
   return process.env.ASSISTANT_TTS_MODEL || DEFAULT_MODEL;
 }
@@ -54,10 +37,6 @@ function extractAudioContent(response: unknown): RawAudioContent | undefined {
   return content?.type === "audio" ? content : undefined;
 }
 
-// Retries only wrap the initial (and, here, only) call: once bytes have been
-// handed back to the caller there is nothing left to retry - a mid-flight
-// retry would splice two different renditions of the same sentence
-// together, which is worse than just failing outright.
 export async function synthesizeSpeech(apiKey: string, text: string, signal: AbortSignal): Promise<SynthesizedSpeech> {
   const ai = new GoogleGenAI({ apiKey });
   let lastError: unknown;
@@ -101,8 +80,6 @@ export async function synthesizeSpeech(apiKey: string, text: string, signal: Abo
   throw lastError;
 }
 
-// Gemini's TTS output is headerless 16-bit PCM; a plain <audio src> needs a
-// real container to play it, so a minimal WAV header is prepended server-side.
 export function pcmToWav(pcm: Buffer, sampleRate: number, channels = 1): Buffer {
   const byteRate = sampleRate * channels * 2;
   const blockAlign = channels * 2;

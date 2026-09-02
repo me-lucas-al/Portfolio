@@ -21,16 +21,6 @@ export interface AssistantStageProps {
   handleKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => void
 }
 
-// Body of the bottom-docked "dialogue box" (see `assistant-dialogue-bar.tsx`
-// for the shell around this): bust portrait + name tag pinned on the left,
-// a scrolling transcript of every past question/answer to its right, question
-// prompt pinned to the bottom. Only the transcript column scrolls - the
-// avatar stays put. The visitor's own questions render as `▸`-prefixed
-// lines (echoing the input row's own prompt glyph) rather than a full chat
-// bubble, keeping the JRPG/visual-novel text-log feel; the live answer (still
-// typing, or waiting on `dict.thinking`) is rendered by
-// `../avatar/speech/answer-balloon.tsx` at the tail of the transcript, every
-// earlier answer by `TypedText` with `isTyping` forced to `false`.
 export function AssistantStage({
   dict,
   messages,

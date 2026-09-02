@@ -2,7 +2,7 @@ import z from "zod"
 import { UserSchema } from "./base"
 
 export const CreateUserSchema = UserSchema.pick({
-    username: true, 
+    username: true,
     password: true,
 })
 

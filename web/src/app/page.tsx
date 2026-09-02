@@ -29,7 +29,6 @@ export default async function HomePage() {
 
   const dict = getDictionary(locale)
 
-
   const cvUrlPt = systemSettings["cvUrlPt"] || "https://drive.google.com/file/d/1qWlAyq4ZBnSw0q_iuMWRIGcO7tezJ0w8/view"
   const cvUrlEn = systemSettings["cvUrlEn"] || "https://drive.google.com/file/d/186wXOZukhbBw6P13pB850Mqgb-NCKtaA/view"
   const aboutMe = systemSettings["about_me"]
@@ -140,4 +139,4 @@ export default async function HomePage() {
       <AssistantWidget dict={dict.assistant} locale={locale} />
     </main>
   )
-}
+}

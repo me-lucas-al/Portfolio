@@ -18,7 +18,7 @@ export const en: Dictionary = {
   about: { title: 'About Me' },
   skills: { title: 'Skills', tools: 'Tools' },
   projects: { title: 'Projects' },
-  experience: { title: 'Experience', current: 'Present' },
+  experience: { title: 'Experience', current: 'Present', showMore: 'Show more', showLess: 'Show less' },
   education: { title: 'Academic Background', current: 'Present' },
   contact: {
     title: 'Contact',

@@ -47,7 +47,7 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
-              <button 
+              <button
                 disabled={isPending}
                 onClick={() => handleReorder(exp.id, 'up')}
                 className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
@@ -55,7 +55,7 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
               >
                 <ChevronUp className="w-4 h-4" />
               </button>
-              <button 
+              <button
                 disabled={isPending}
                 onClick={() => handleReorder(exp.id, 'down')}
                 className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
@@ -67,9 +67,9 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
             <button onClick={() => setEditingExp(exp)} className="p-2 text-fg-muted hover:text-brand hover:bg-brand/10 rounded-lg transition-colors cursor-pointer">
               <Pencil className="w-4 h-4" />
             </button>
-            <button 
-              disabled={isPending && deletingId === exp.id} 
-              onClick={() => setDeletingId(exp.id)} 
+            <button
+              disabled={isPending && deletingId === exp.id}
+              onClick={() => setDeletingId(exp.id)}
               className="p-2 text-fg-muted hover:text-danger hover:bg-danger/10 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
@@ -79,8 +79,8 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
       ))}
 
       <SideSheet.Root open={!!editingExp} onOpenChange={(open) => !open && setEditingExp(null)}>
-        <SideSheet.Content 
-          title="Editar Experiência" 
+        <SideSheet.Content
+          title="Editar Experiência"
           description="Atualize as informações da sua experiência profissional abaixo."
         >
           {editingExp && <EditExperienceForm experience={editingExp} onSuccess={() => setEditingExp(null)} />}
@@ -88,8 +88,8 @@ export function ExperienceList({ experiences }: { experiences: ExperienceType[] 
       </SideSheet.Root>
 
       <Modal.Root open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
-        <Modal.Content 
-          title="Confirmar deleção" 
+        <Modal.Content
+          title="Confirmar deleção"
           description="Tem a certeza de que deseja deletar esta experiência? Esta ação não pode ser desfeita."
         >
           <Modal.Footer className="flex gap-2 sm:justify-end mt-4">

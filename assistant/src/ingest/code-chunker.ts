@@ -1,4 +1,4 @@
-const HARD_CAP_CHARS = 8192; // ~2048 tokens at ~4 chars/token
+const HARD_CAP_CHARS = 8192;
 
 const EXPORT_BOUNDARY = /^export\s+(default\s+)?(async\s+)?(function|class|const|interface|type|enum)\b/;
 

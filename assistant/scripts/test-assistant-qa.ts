@@ -27,7 +27,7 @@ async function main() {
 
   console.log("\n=== 2. TESTANDO PERGUNTAS DIRETAS NA IA (AGENT END-TO-END) ===");
   const apiKey = process.env.GEMINI_API_KEY!;
-  
+
   const testQuestions = [
     "O que o Lucas fez no projeto BNR System e qual era a stack?",
     "Qual foi a participação do Lucas no MedSea Connect e qual reconhecimento o projeto teve?",

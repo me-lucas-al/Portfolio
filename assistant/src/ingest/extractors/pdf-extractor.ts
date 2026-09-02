@@ -10,8 +10,7 @@ export interface PdfExtractionResult {
 
 const HEADER_FOOTER_MIN_PAGES = 3;
 const HEADER_FOOTER_MIN_RATIO = 0.6;
-// Below this, a page's median line length suggests two columns were
-// extracted interleaved as short alternating fragments rather than prose.
+
 const LOW_MEDIAN_LINE_LENGTH = 25;
 const MIN_LINES_FOR_COLUMN_HEURISTIC = 10;
 
@@ -19,9 +18,6 @@ function normalizeLineEndings(text: string): string {
   return text.replace(/\r\n/g, "\n").normalize("NFC");
 }
 
-// Restricted to lowercase-lowercase so a real hyphen like "Full-Stack\nDeveloper"
-// is left alone — only a hyphen that broke a single word across the line wrap
-// is a de-hyphenation candidate.
 function dehyphenate(text: string): string {
   return text.replace(/(\p{Ll})-\n(\p{Ll})/gu, "$1$2");
 }

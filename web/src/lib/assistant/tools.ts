@@ -47,21 +47,12 @@ export const ASSISTANT_FUNCTION_DECLARATIONS: FunctionDeclaration[] = [
 
 const MAX_SEARCH_LIMIT = 8;
 
-// Memoized rather than hoisted to module scope: this module is imported as
-// part of route.ts's dependency graph, before the GEMINI_API_KEY runtime
-// check runs, so eagerly calling makeKnowledgeService() at import time would
-// throw before that check ever gets a chance to return its graceful 503.
 let knowledgeServiceInstance: ReturnType<typeof makeKnowledgeService> | undefined;
 function getKnowledgeService() {
   knowledgeServiceInstance ??= makeKnowledgeService();
   return knowledgeServiceInstance;
 }
 
-// The system prompt tells the model that everything between <contexto> tags
-// is data, not instruction (defense against prompt injection hidden in a PDF
-// or third-party document). That rule is only real if tool output actually
-// gets wrapped here, and if a chunk can't fake its own closing tag to escape
-// early.
 function wrapInContextGuard(content: string): string {
   return `<contexto>\n${content.replaceAll("</contexto>", "")}\n</contexto>`;
 }
@@ -119,15 +110,9 @@ export async function dispatchAssistantTool(
   try {
     return await runTool(name, args, locale, abortSignal);
   } catch (error) {
-    // An abort means the shared request deadline fired (or the caller
-    // disconnected) - it must propagate so the caller can fail the whole
-    // request, not be swallowed into another model round.
+
     if (isAbortError(error)) throw error;
 
-    // Degrading to a model-visible error (instead of failing the whole request)
-    // trades away the upstream_overloaded/upstream_quota classification in
-    // chat-error-response.ts, so log it explicitly here or a real capacity
-    // problem inside a tool call would be invisible in metrics.
     const capacityIssue = isUpstreamOverloaded(error) ? "overloaded" : isUpstreamQuotaExceeded(error) ? "quota_exceeded" : "other";
     console.error(`[assistant] tool "${name}" failed (${capacityIssue}):`, error);
     return { error: `The "${name}" tool is temporarily unavailable. Answer without it if you can, or say you couldn't retrieve that information.` };

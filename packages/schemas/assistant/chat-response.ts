@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-// Additive, optional field: when ASSISTANT_VOICE_ENABLED is off (or a client
-// predates this field), `speech` is simply absent and the response shape is
-// identical to what existing client code already expects.
 export const ChatSpeechSchema = z.object({
   url: z.string(),
   text: z.string(),

@@ -15,4 +15,4 @@ export const UpdateExperienceSchema = ExperienceSchema.pick({
     order: z.number().optional()
 })
 
-export type UpdateExperienceType = z.infer<typeof UpdateExperienceSchema>
+export type UpdateExperienceType = z.infer<typeof UpdateExperienceSchema>

@@ -20,4 +20,3 @@ export class ExperienceService {
     return this.experienceRepository.update(data);
   }
 }
-

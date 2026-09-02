@@ -12,7 +12,7 @@ export default function UnauthorizedPage() {
               Acesso não autorizado
             </h1>
             <p className="text-sm text-fg-muted">
-              Você não tem permissão para acessar esta página. 
+              Você não tem permissão para acessar esta página.
             </p>
             <p className="text-xs text-muted-2">
               Caso acredite que isso seja um engano, contate o administrador do sistema.
@@ -31,4 +31,3 @@ export default function UnauthorizedPage() {
     </main>
   );
 }
-

@@ -1,11 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-// A signed, self-contained token that carries the (already-truncated) speech
-// text itself, so /api/tts needs no DB/state lookup on the hot path: the
-// text travels in the URL, authenticated by an HMAC keyed with a secret only
-// the server knows. Deliberately a *different* secret from IP_HASH_SALT
-// (SPEECH_TOKEN_SECRET) - the two have very different blast radii if leaked:
-// one hashes IPs, the other authorizes arbitrary text-to-speech generation.
 const DEFAULT_TTL_MS = 10 * 60_000;
 
 interface SpeechTokenPayload {

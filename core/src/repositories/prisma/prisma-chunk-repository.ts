@@ -10,10 +10,6 @@ function toVectorLiteral(embedding: number[]): string {
   return `[${embedding.join(",")}]`;
 }
 
-// A public, unauthenticated endpoint calls get_source; without a cap a large
-// source (e.g. a multi-chunk CSV) could balloon into ~1M+ tokens of tool
-// output, which the daily budget check does not see because it counts
-// messages, not tokens.
 const GET_BY_SOURCE_CHUNK_LIMIT = 60;
 const GET_BY_SOURCE_MAX_CHARS = 24_000;
 
@@ -39,9 +35,6 @@ export class PrismaChunkRepository implements IChunkRepository {
     `;
   }
 
-  // A batch failing partway through must not leave the source in a mixed
-  // state (some chunks on the new version, some on the old) — the whole
-  // batch commits or none of it does.
   async upsertManyWithEmbedding(inputs: UpsertChunkInput[]): Promise<void> {
     if (inputs.length === 0) return;
 

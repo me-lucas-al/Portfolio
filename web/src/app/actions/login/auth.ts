@@ -6,7 +6,7 @@ export async function loginAction(prevState: any, formData: FormData) {
   try {
     await signIn("credentials", {
       ...Object.fromEntries(formData),
-      redirectTo: "/control-painel", 
+      redirectTo: "/control-painel",
     })
   } catch (error) {
     if (error instanceof AuthError) {

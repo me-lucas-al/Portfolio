@@ -1,10 +1,10 @@
 import type { ElementType } from "react";
-import { 
-  SiReact, 
-  SiTypescript, 
+import {
+  SiReact,
+  SiTypescript,
   SiJavascript,
-  SiTailwindcss, 
-  SiNextdotjs, 
+  SiTailwindcss,
+  SiNextdotjs,
   SiJest,
   SiPostgresql,
   SiMongodb,
@@ -33,9 +33,8 @@ import { FaJava } from "react-icons/fa6";
 import { Layers, TerminalSquare } from "lucide-react";
 import { getDictionary, type Locale } from "@/i18n";
 
-// Mapping of common skill names to their icons and hover colors
 const skillIconMap: Record<string, { icon: ElementType, hoverColor: string }> = {
-  // Frontend
+
   "react": { icon: SiReact, hoverColor: "group-hover:text-[#61DAFB]" },
   "react.js": { icon: SiReact, hoverColor: "group-hover:text-[#61DAFB]" },
   "reactjs": { icon: SiReact, hoverColor: "group-hover:text-[#61DAFB]" },
@@ -62,7 +61,6 @@ const skillIconMap: Record<string, { icon: ElementType, hoverColor: string }> = 
   "tailwind": { icon: SiTailwindcss, hoverColor: "group-hover:text-[#06B6D4]" },
   "jest": { icon: SiJest, hoverColor: "group-hover:text-[#C21325]" },
 
-  // Java & Spring ecosystem
   "java": { icon: FaJava, hoverColor: "group-hover:text-[#ED8B00]" },
   "java 17": { icon: FaJava, hoverColor: "group-hover:text-[#ED8B00]" },
   "java 21": { icon: FaJava, hoverColor: "group-hover:text-[#ED8B00]" },
@@ -76,7 +74,6 @@ const skillIconMap: Record<string, { icon: ElementType, hoverColor: string }> = 
   "spring security": { icon: SiSpringsecurity, hoverColor: "group-hover:text-[#6DB33F]" },
   "hibernate": { icon: SiHibernate, hoverColor: "group-hover:text-[#59666C]" },
 
-  // Node & Backend
   "node.js": { icon: SiNodedotjs, hoverColor: "group-hover:text-[#339933]" },
   "nodejs": { icon: SiNodedotjs, hoverColor: "group-hover:text-[#339933]" },
   "node": { icon: SiNodedotjs, hoverColor: "group-hover:text-[#339933]" },
@@ -87,7 +84,6 @@ const skillIconMap: Record<string, { icon: ElementType, hoverColor: string }> = 
   "clean architecture": { icon: Layers, hoverColor: "group-hover:text-white" },
   "graphql": { icon: SiGraphql, hoverColor: "group-hover:text-[#E10098]" },
 
-  // Databases & ORMs
   "prisma orm": { icon: SiPrisma, hoverColor: "group-hover:text-white" },
   "prisma": { icon: SiPrisma, hoverColor: "group-hover:text-white" },
   "postgresql": { icon: SiPostgresql, hoverColor: "group-hover:text-[#4169E1]" },
@@ -97,7 +93,6 @@ const skillIconMap: Record<string, { icon: ElementType, hoverColor: string }> = 
   "mongo": { icon: SiMongodb, hoverColor: "group-hover:text-[#47A248]" },
   "redis": { icon: SiRedis, hoverColor: "group-hover:text-[#DC382D]" },
 
-  // DevOps & Tools
   "docker": { icon: SiDocker, hoverColor: "group-hover:text-[#2496ED]" },
   "git": { icon: SiGit, hoverColor: "group-hover:text-[#F05032]" },
   "ci/cd": { icon: SiGithubactions, hoverColor: "group-hover:text-[#2088FF]" },

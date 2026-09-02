@@ -1,4 +1,4 @@
-"use client" // Error components must be Client Components
+"use client"
 
 import { useEffect } from "react"
 import { AlertCircle, RotateCcw } from "lucide-react"
@@ -11,7 +11,7 @@ export default function GlobalError({
   reset: () => void
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
+
     console.error("Global Error Caught:", error)
   }, [error])
 
@@ -21,7 +21,7 @@ export default function GlobalError({
         <div className="w-16 h-16 bg-red-950/30 rounded-full flex items-center justify-center border border-red-900/50">
           <AlertCircle className="w-8 h-8 text-red-500" />
         </div>
-        
+
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-white tracking-tight">Ops! Algo deu errado</h2>
           <p className="text-neutral-400 text-sm leading-relaxed">

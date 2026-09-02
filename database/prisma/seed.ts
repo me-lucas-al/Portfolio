@@ -5,17 +5,14 @@ import bcrypt from 'bcryptjs';
 async function main() {
   console.log('🌱 A iniciar o seed da base de dados...');
 
-  // ==========================================
-  // 1. SEED DE USUÁRIOS (ADMIN E TESTE)
-  // ==========================================
   const username = process.env.SEED_ADMIN_USERNAME!;
   const password = process.env.SEED_ADMIN_PASSWORD!;
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  
+
   const admin = await prisma.user.upsert({
     where: { username: username },
-    update: {}, 
+    update: {},
     create: {
       username: username,
       password: hashedPassword,
@@ -25,7 +22,7 @@ async function main() {
 
   const user = await prisma.user.upsert({
     where: { username: 'teste' },
-    update: {}, 
+    update: {},
     create: {
       username: 'teste',
       password:  await bcrypt.hash('teste123', 10),
@@ -35,10 +32,6 @@ async function main() {
   console.log(`✅ Admin criado/verificado com sucesso: ${admin.username}`);
   console.log(`✅ User criado/verificado com sucesso: ${user.username}`);
 
-
-  // ==========================================
-  // 2. SEED DE PROJETOS
-  // ==========================================
   const projetos = [
     {
       title: 'Self Checkout',
@@ -53,7 +46,7 @@ async function main() {
       description: 'Sistema de Agenda de Contatos com CRUD de contatos, tags e grupos.',
       githubUrl: 'https://github.com/me-lucas-al/Agenda-de-Contatos',
       technologies: ['Next.js', 'Node.js','Prisma', 'PostgreSQL', 'Tailwind CSS'],
-      deployUrl: 'https://agenda-de-contatos-starseg.vercel.app', 
+      deployUrl: 'https://agenda-de-contatos-starseg.vercel.app',
       imagesUrl: [],
     },
     {
@@ -74,16 +67,12 @@ async function main() {
     }
   }
 
-
-  // ==========================================
-  // 3. SEED DE EXPERIÊNCIAS
-  // ==========================================
   const experiencias = [
     {
       role: "Desenvolvedor Full Stack",
       company: "Star Seg",
       startDate: new Date("2025-08-01"),
-      endDate: null, // "Atual"
+      endDate: null,
       description: "Desenvolvimento e modernização de sistemas de monitoramento e segurança utilizados por +40 condomínios e +4.000 usuários ativos. Alcancei uma melhora de 91% no tempo de carregamento da plataforma. Aplicação de Clean Architecture, CI/CD e correções críticas de segurança.",
       techs: ["Next.js", "TypeScript", "Node.js", "Docker", "PostgreSQL", "Tailwind CSS"]
     },
@@ -106,8 +95,8 @@ async function main() {
   ];
 
   for (const exp of experiencias) {
-    const existe = await prisma.experience.findFirst({ 
-      where: { company: exp.company, role: exp.role } 
+    const existe = await prisma.experience.findFirst({
+      where: { company: exp.company, role: exp.role }
     });
     if (!existe) {
       await prisma.experience.create({ data: exp });
@@ -115,10 +104,6 @@ async function main() {
     }
   }
 
-
-  // ==========================================
-  // 4. SEED DE FORMAÇÕES ACADÊMICAS
-  // ==========================================
   const formacoes = [
     {
       course: "Análise e Desenvolvimento de Sistemas",
@@ -137,8 +122,8 @@ async function main() {
   ];
 
   for (const form of formacoes) {
-    const existe = await prisma.education.findFirst({ 
-      where: { course: form.course, institution: form.institution } 
+    const existe = await prisma.education.findFirst({
+      where: { course: form.course, institution: form.institution }
     });
     if (!existe) {
       await prisma.education.create({ data: form });
@@ -146,9 +131,6 @@ async function main() {
     }
   }
 
-  // ==========================================
-  // 5. SEED DE LINKS / CONTATOS
-  // ==========================================
   const links = [
     {
       title: "GitHub",
@@ -173,8 +155,8 @@ async function main() {
   ];
 
   for (const linkData of links) {
-    const existe = await prisma.link.findFirst({ 
-      where: { url: linkData.url } 
+    const existe = await prisma.link.findFirst({
+      where: { url: linkData.url }
     });
     if (!existe) {
       await prisma.link.create({ data: linkData });

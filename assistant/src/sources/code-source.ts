@@ -18,15 +18,10 @@ const MAX_FILE_BYTES = 100 * 1024;
 const ALLOWED_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".prisma", ".sql", ".css", ".md", ".yaml", ".yml"]);
 const ALLOWED_FILENAMES = new Set(["package.json", "turbo.json", "next.config.ts"]);
 
-// Filenames that are known-safe boilerplate and simply carry no useful signal for
-// retrieval. Skipped silently, before the .env guard below, so a legitimate
-// ".env.example" template never trips it.
 const SKIP_FILENAMES = new Set(["pnpm-lock.yaml", "package-lock.json", "yarn.lock", ".env.example"]);
 
 const DENYLIST_DIR_NAMES = new Set(["node_modules", ".next", "dist", ".git", ".turbo", "public", ".cache", "dados-pessoais"]);
 
-// Defense in depth: never trust the extension allowlist alone to keep secrets out.
-// Any remaining path segment matching ".env" aborts the whole ingest run loudly.
 const ENV_PATH_GUARD = /\.env/i;
 
 interface RepoRef {

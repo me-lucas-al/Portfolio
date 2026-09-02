@@ -29,4 +29,4 @@ export function ProjectCard({ title, description, technologies, deployUrl, githu
       <ProjectLinks githubUrl={githubUrl} deployUrl={deployUrl} locale={locale} />
     </div>
   )
-}
+}

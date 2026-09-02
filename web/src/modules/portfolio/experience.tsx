@@ -1,5 +1,6 @@
 import { ExperienceType } from "@portfolio/packages";
 import { getDictionary, type Locale } from "@/i18n";
+import { ExperienceDescription } from "./experience-description";
 
 function formatPeriod(
   startDate: Date | string,
@@ -33,7 +34,8 @@ interface ExperienceProps {
 export function Experience({ experiences, locale }: ExperienceProps) {
   if (!experiences?.length) return null;
 
-  const title = getDictionary(locale).experience.title;
+  const dict = getDictionary(locale).experience;
+  const title = dict.title;
 
   return (
     <section id="experiencia" className="py-24 scroll-mt-20">
@@ -62,9 +64,11 @@ export function Experience({ experiences, locale }: ExperienceProps) {
                     {exp.company}
                   </span>
                 </h4>
-                <p className="text-fg-muted leading-relaxed text-sm">
-                  {description}
-                </p>
+                <ExperienceDescription
+                  text={description}
+                  showMoreLabel={dict.showMore}
+                  showLessLabel={dict.showLess}
+                />
                 <div className="flex flex-wrap gap-2 pt-2">
                   {exp.techs?.map((tech) => (
                     <span
@@ -82,4 +86,4 @@ export function Experience({ experiences, locale }: ExperienceProps) {
       </div>
     </section>
   );
-}
+}

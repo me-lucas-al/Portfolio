@@ -3,9 +3,9 @@ import { punctuationHold } from "./punctuation-cadence"
 import { writeTypingSurfaces } from "./typing-surface-registry"
 
 export interface TypingEngineCallbacks {
-  /** Called once per revealed non-whitespace character, throttled by `MIN_BLIP_INTERVAL_MS`. */
+
   onBlip: () => void
-  /** Called once the full text has been revealed (not called if the engine is stopped/superseded first). */
+
   onDone?: () => void
 }
 
@@ -16,8 +16,7 @@ const ATTACK_TAU = 0.02
 const RELEASE_TAU = 0.07
 const DEADZONE = 0.05
 const MIN_BLIP_INTERVAL_MS = 60
-// Never dump more than this much sim time in one frame - prevents a burst of
-// characters/blips when the tab returns from being backgrounded/throttled.
+
 const MAX_DELTA_MS = 50
 
 let rafId: number | null = null
@@ -84,11 +83,7 @@ function tick(nowMs: number): void {
   mouthTarget *= Math.exp(-deltaSeconds / TARGET_DECAY_TAU)
   const tau = mouthTarget > mouthCurrent ? ATTACK_TAU : RELEASE_TAU
   mouthCurrent += (mouthTarget - mouthCurrent) * (1 - Math.exp(-deltaSeconds / tau))
-  // Re-asserts "typing" every frame (not just once in `startTyping`) so that
-  // if `audio` preempted it and later deactivates mid-typing, this engine
-  // reclaims the mouth on its very next frame instead of leaving it stuck
-  // closed for the rest of the reveal - `activateMouthSource` is a no-op
-  // when `audio` is still active, so this costs nothing today.
+
   activateMouthSource("typing")
   writeMouthOpen("typing", mouthCurrent < DEADZONE ? 0 : mouthCurrent)
 
@@ -100,7 +95,6 @@ function tick(nowMs: number): void {
   rafId = window.requestAnimationFrame(tick)
 }
 
-/** Starts revealing `text` one character at a time. Supersedes (aborts) any typing already in progress. */
 export function startTyping(nextText: string, callbacks: TypingEngineCallbacks): void {
   cancelFrame()
   text = nextText
@@ -119,7 +113,6 @@ export function startTyping(nextText: string, callbacks: TypingEngineCallbacks):
   rafId = window.requestAnimationFrame(tick)
 }
 
-/** Aborts typing immediately, wherever it was - does not finish revealing the text. Forces the mouth closed. */
 export function stopTyping(): void {
   cancelFrame()
   deactivateMouthSource("typing")
@@ -127,7 +120,6 @@ export function stopTyping(): void {
   onDoneCallback = null
 }
 
-/** Reveals the rest of the text instantly (click-to-skip, or `prefers-reduced-motion`). */
 export function skipTyping(): void {
   if (rafId === null && cursor >= text.length) return
   cancelFrame()

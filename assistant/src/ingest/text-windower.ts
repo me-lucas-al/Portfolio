@@ -1,10 +1,6 @@
-// Shared by markdown, docx and pdf chunking: takes a breadcrumb line plus a
-// body of arbitrary length and produces overlapping windows under the hard
-// cap. Content is never discarded — a paragraph too long for one window is
-// split by line, and a line still too long is sliced with overlap, but every
-// character of input ends up in some window.
+
 export const SOFT_SPLIT_CHARS = 6000;
-export const HARD_CAP_CHARS = 8192; // ~2048 tokens at ~4 chars/token
+export const HARD_CAP_CHARS = 8192;
 export const OVERLAP_RATIO = 0.15;
 
 function sliceWithOverlap(text: string, hardCap: number, overlapRatio: number): string[] {
@@ -20,9 +16,6 @@ function sliceWithOverlap(text: string, hardCap: number, overlapRatio: number): 
   return pieces;
 }
 
-// A single "paragraph" (no blank line inside it) that still exceeds the hard
-// cap is split by line, then any line still too long is sliced with overlap.
-// This is the cascade that replaces the old slice-and-discard behavior.
 function splitOverlongParagraph(paragraph: string, hardCap: number, overlapRatio: number): string[] {
   if (paragraph.length <= hardCap) return [paragraph];
 
@@ -92,9 +85,6 @@ export function windowText(
 
   pushWindow();
 
-  // A single overlong paragraph/line can still leave a window above the hard
-  // cap even after the cascade above (e.g. one already-sliced piece plus
-  // carried-over overlap); re-slice defensively instead of ever truncating.
   return windows.flatMap((window) =>
     window.length > hardCapChars ? sliceWithOverlap(window, hardCapChars, overlapRatio) : [window],
   );

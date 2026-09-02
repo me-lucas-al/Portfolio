@@ -1,8 +1,6 @@
 import { IAssistantAnswerRepository } from "../../repositories/assistant-answer-repository.interface";
 import { IEmbeddingProvider } from "../../@types/embedding-provider";
 
-// Above this cosine similarity, a new question is treated as a rephrasing of
-// one already answered, so the cached answer is reused instead of calling the model again.
 const SIMILARITY_THRESHOLD = 0.93;
 
 export class AssistantAnswerService {
@@ -29,9 +27,6 @@ export class AssistantAnswerService {
     await this.assistantAnswerRepository.create({ locale, question, answer, embedding: questionEmbedding });
   }
 
-  // Called after an ingest run changes the index: cached answers recorded
-  // before new content was indexed may be stale "I don't know that" answers
-  // that would otherwise be served forever (no TTL on this cache).
   async clearCache(): Promise<number> {
     return this.assistantAnswerRepository.deleteAll();
   }

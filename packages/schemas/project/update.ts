@@ -15,4 +15,4 @@ export const UpdateProjectSchema = ProjectSchema.pick({
     order: z.number().optional()
 })
 
-export type UpdateProjectType = z.infer<typeof UpdateProjectSchema>
+export type UpdateProjectType = z.infer<typeof UpdateProjectSchema>

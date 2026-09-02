@@ -20,4 +20,3 @@ export class LinkService {
     return this.linkRepository.update(data);
   }
 }
-

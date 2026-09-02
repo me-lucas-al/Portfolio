@@ -14,7 +14,6 @@ import { deactivateMouthSource } from "../mouth/mouth-source"
 import { writeTypingSurfaces } from "./typing-surface-registry"
 import { skipTyping, startTyping, stopTyping } from "./typing-engine"
 
-/** Captures the single pending rAF callback instead of auto-scheduling, so tests drive frames with exact timestamps. */
 function installManualRaf() {
   let pending: FrameRequestCallback | null = null
   vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
@@ -25,7 +24,7 @@ function installManualRaf() {
     pending = null
   })
   return {
-    /** Invokes the pending callback (if any) with `nowMs`, capturing whatever it schedules next. */
+
     step(nowMs: number) {
       const cb = pending
       pending = null
@@ -52,11 +51,9 @@ describe("typing-engine", () => {
     const onBlip = vi.fn()
     startTyping("ab", { onBlip })
 
-    // The first character reveals on the very first frame (no delay to wait out yet).
     raf.step(0)
     expect(writeTypingSurfaces).toHaveBeenLastCalledWith("a")
 
-    // 32ms elapses - exactly one character's worth of budget (BASE_CHAR_MS) - reveals the next.
     raf.step(32)
     expect(writeTypingSurfaces).toHaveBeenLastCalledWith("ab")
   })
@@ -66,9 +63,9 @@ describe("typing-engine", () => {
     startTyping("abc", { onBlip })
 
     raf.step(0)
-    raf.step(32) // reveals "a" - first blip, allowed (msSinceLastBlip starts at Infinity)
-    raf.step(64) // reveals "b" - only 32ms since last blip (< 60ms) - throttled
-    raf.step(96) // reveals "c" - 64ms since last blip (>= 60ms) - allowed
+    raf.step(32)
+    raf.step(64)
+    raf.step(96)
 
     expect(onBlip).toHaveBeenCalledTimes(2)
   })
@@ -78,9 +75,9 @@ describe("typing-engine", () => {
     startTyping("a b", { onBlip })
 
     raf.step(0)
-    raf.step(32) // "a"
-    raf.step(64) // " "
-    raf.step(96) // "b"
+    raf.step(32)
+    raf.step(64)
+    raf.step(96)
 
     expect(onBlip).toHaveBeenCalledTimes(2)
   })
@@ -89,10 +86,8 @@ describe("typing-engine", () => {
     const onBlip = vi.fn()
     startTyping("abcdefghij", { onBlip })
 
-    raf.step(0) // reveals "a" immediately
-    // A huge gap (tab was backgrounded) - clamped to MAX_DELTA_MS=50, so at
-    // most one extra character's worth of budget (32ms of the 50ms) is
-    // actually consumed, not all ten characters at once.
+    raf.step(0)
+
     raf.step(5000)
 
     expect(writeTypingSurfaces).toHaveBeenLastCalledWith("ab")

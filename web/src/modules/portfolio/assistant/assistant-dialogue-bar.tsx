@@ -9,28 +9,17 @@ interface AssistantDialogueBarProps extends AssistantStageProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   clearChat: () => void
-  /** TTS is dormant (see `../avatar/README.md`) - these stay wired for when it's re-enabled per-message. */
+
   isSpeaking: boolean
   isPreparingVoice: boolean
   onStopSpeaking: () => void
 }
 
-// Neutralizes DialogContent's default pop-in zoom (zoom-in-95/zoom-out-95)
-// via inline style - see the former `assistant-overlay.tsx` for the original
-// rationale (twMerge can't dedupe tw-animate-css's scale vars against an
-// override class). The bar should only slide up from the bottom edge.
 const noZoomStyle: CSSProperties = {
   ["--tw-enter-scale" as string]: 1,
   ["--tw-exit-scale" as string]: 1,
 } as CSSProperties
 
-// Replaces the former right-edge sliding chat panel (`assistant-overlay.tsx`)
-// with a bottom-docked "dialogue box" in the avatar's own visual-novel
-// language (see `../avatar/README.md`) - the assistant's only surface once
-// open. Radix's `Dialog` primitive is kept for its focus trap / ESC-to-close
-// / aria wiring; only its positioning is restyled here. `DialogTitle`/
-// `DialogDescription` stay mounted but screen-reader-only - the visible name
-// tag now lives on the avatar's bust portrait inside `AssistantStage`.
 export function AssistantDialogueBar({
   open,
   onOpenChange,

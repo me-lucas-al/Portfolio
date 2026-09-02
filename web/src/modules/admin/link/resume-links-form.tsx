@@ -37,7 +37,7 @@ export function ResumeLinksForm({ cvUrlPt, cvUrlEn }: ResumeLinksFormProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {/* CV PT */}
+        {}
         <form action={formActionPt} className="space-y-3">
           <input type="hidden" name="key" value="cvUrlPt" />
           <label className="flex items-center gap-2 text-sm font-medium text-fg-muted">
@@ -69,7 +69,7 @@ export function ResumeLinksForm({ cvUrlPt, cvUrlEn }: ResumeLinksFormProps) {
           )}
         </form>
 
-        {/* CV EN */}
+        {}
         <form action={formActionEn} className="space-y-3">
           <input type="hidden" name="key" value="cvUrlEn" />
           <label className="flex items-center gap-2 text-sm font-medium text-fg-muted">

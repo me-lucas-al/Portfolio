@@ -19,22 +19,10 @@ interface AnswerBalloonProps {
   thinkingLabel: string
 }
 
-/**
- * Persistent "answer" text for the assistant dialogue bar's open state
- * (mounted by `../../assistant/assistant-stage.tsx`). Unlike
- * `speech-balloon.tsx` (`fixed`-positioned, its own bubble chrome, auto-hides
- * ~6s after typing ends, visible only while the bar is closed) this one is a
- * normal block sitting directly on the dialogue bar's own surface - no
- * nested bubble - and keeps showing the last answer until the next question
- * replaces it - `stopTypingSpeech()` (called from `assistant-widget.tsx`'s
- * `onBeforeSend`) clears `fullText` right as a new question goes out.
- */
 export function AnswerBalloon({ skipLabel, thinkingLabel }: AnswerBalloonProps) {
   const avatarSignal = useSyncExternalStore(subscribeAvatarSignal, getAvatarSignalSnapshot, getServerAvatarSnapshot)
   const typingSnapshot = useSyncExternalStore(subscribeTypingSpeech, getTypingSpeechSnapshot, getServerTypingSnapshot)
 
-  // Only while there's nothing typed/typing yet - once `fullText` lands, the
-  // reveal itself is enough feedback, no need for a separate "thinking" state.
   const isThinking = avatarSignal.thinking && !typingSnapshot.fullText
   if (isThinking) {
     return (

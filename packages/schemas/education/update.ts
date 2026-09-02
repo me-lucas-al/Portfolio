@@ -13,4 +13,4 @@ export const UpdateEducationSchema = EducationSchema.pick({
     order: z.number().optional()
 })
 
-export type UpdateEducationType = z.infer<typeof UpdateEducationSchema>
+export type UpdateEducationType = z.infer<typeof UpdateEducationSchema>

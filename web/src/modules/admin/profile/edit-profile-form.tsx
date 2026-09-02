@@ -9,7 +9,6 @@ interface EditProfileFormProps {
   systemSettings: Record<string, string>
 }
 
-// Valores iniciais caso nunca tenha salvo no banco
 const DEFAULT_ABOUT = `Sou um Desenvolvedor Full Stack com foco em arquitetura de software, construindo aplicações web escaláveis e orientadas a resultados de negócios. Com experiência prática no ecossistema JavaScript e TypeScript, atuo diariamente com Node.js, React.js e Next.js.\n\nMinha experiência inclui a aplicação de Clean Architecture, refatoração de código, gerenciamento de bancos de dados relacionais e a estruturação de pipelines CI/CD com Docker para garantir entregas contínuas, estabilidade e segurança.`;
 
 const DEFAULT_SKILLS = {
@@ -29,13 +28,13 @@ export function EditProfileForm({ systemSettings }: EditProfileFormProps) {
 
   useEffect(() => {
     if (state?.success) {
-      // Opcional, pode mostrar um toast
+
     }
   }, [state])
 
   return (
     <form action={formAction} className="space-y-8 bg-surface-2/30 p-6 md:p-8 rounded-2xl border border-line">
-      {/* Quem Sou */}
+      {}
       <div className="space-y-4">
         <div className="border-b border-line pb-2">
           <h3 className="text-lg font-medium text-fg">Sobre Mim (Quem Sou)</h3>
@@ -76,7 +75,7 @@ export function EditProfileForm({ systemSettings }: EditProfileFormProps) {
         </Tabs>
       </div>
 
-      {/* Tecnologias */}
+      {}
       <div className="space-y-4">
         <div className="border-b border-line pb-2 pt-4">
           <h3 className="text-lg font-medium text-fg">Tecnologias (Skills)</h3>
@@ -129,8 +128,8 @@ export function EditProfileForm({ systemSettings }: EditProfileFormProps) {
           <p className="text-sm text-success">{state.message}</p>
         ) : <p></p>}
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={isPending}
           className="px-6 py-3 rounded-xl bg-brand hover:bg-brand-strong text-brand-ink text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50 flex items-center gap-2 cursor-pointer"
         >

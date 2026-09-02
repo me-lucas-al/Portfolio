@@ -1,6 +1,5 @@
 "use client"
 
-
 import Image from "next/image"
 import { useState, useTransition } from "react"
 import { Trash2, Edit2, Loader2, ChevronUp, ChevronDown, FolderGit2 } from "lucide-react"
@@ -57,7 +56,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
 
       <div className="flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
         <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
-          <button 
+          <button
             disabled={isPending}
             onClick={() => handleReorder('up')}
             className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
@@ -65,7 +64,7 @@ export function ProjectItem({ project }: { project: ProjectType }) {
           >
             <ChevronUp className="w-4 h-4" />
           </button>
-          <button 
+          <button
             disabled={isPending}
             onClick={() => handleReorder('down')}
             className="p-1.5 text-fg-muted hover:text-brand hover:bg-surface-2 rounded transition-all disabled:opacity-30 cursor-pointer"
