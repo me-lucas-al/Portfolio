@@ -1,8 +1,10 @@
 # 🚀 Lucas Almeida | Full Stack Developer Portfolio
 
-Este projeto é um portfólio moderno e interativo, desenvolvido para apresentar projetos, experiências profissionais e formação acadêmica de forma elegante e performática. 
+Este projeto é um portfólio moderno e interativo, desenvolvido para apresentar projetos, experiências profissionais e formação acadêmica de forma elegante e performática, com suporte bilíngue (PT-BR/EN-US) e um assistente de IA que responde perguntas sobre a trajetória do Lucas.
 
 O grande diferencial deste projeto é o seu **Painel de Controle Administrativo "Secreto"**, que permite gerenciar todo o conteúdo do site em tempo real, sem a necessidade de alterar o código-fonte manualmente para cada atualização.
+
+> 📄 Veja o [changelog detalhado da última grande reformulação](CHANGELOG_REDESIGN.md) — internacionalização, assistente de IA, avatar em visual novel e a nova identidade visual.
 
 ---
 
@@ -10,15 +12,18 @@ O grande diferencial deste projeto é o seu **Painel de Controle Administrativo 
 
 Diferente de portfólios estáticos, este projeto conta com uma área administrativa protegida por autenticação, onde o desenvolvedor pode gerenciar dinamicamente todas as informações exibidas no site.
 
-![Painel de Controle](web/public/control-painel.png)
+![Painel de Controle - Visualização de projetos publicados](web/public/control-painel.png)
+
+![Painel de Controle - Formulário de novo projeto com abas PT-BR/EN-US](web/public/add_new_control_panel.png)
 
 ### ⚙️ Funcionalidades do Painel:
 O painel de controle interage diretamente com o banco de dados via **Prisma ORM**, permitindo as seguintes operações de **CRUD** (Create, Read, Update, Delete):
 
-- **📁 Gerenciamento de Projetos**: Adicionar novos projetos, editar os existentes, atualizar links de Deploy/GitHub e gerenciar as tecnologias utilizadas.
+- **📁 Gerenciamento de Projetos**: Adicionar novos projetos, editar os existentes, atualizar links de Deploy/GitHub, gerenciar as tecnologias utilizadas e reordenar imagens via drag-and-drop.
 - **💼 Experiências Profissionais**: Cadastrar novas experiências, descrever responsabilidades e tecnologias aplicadas em cada cargo.
 - **🎓 Formação Acadêmica**: Manter o currículo acadêmico atualizado com cursos e instituições.
 - **🔗 Links e Redes Sociais**: Alterar links de contato e redes sociais de forma centralizada.
+- **🌐 Conteúdo Bilíngue**: Cada formulário possui abas PT-BR / EN-US para cadastrar título, descrição e demais campos nos dois idiomas simultaneamente.
 - **↕️ Ordenação Dinâmica**: Organizador de prioridade (Drag & Drop ou campos de ordem) para definir quais itens aparecem primeiro no site.
 
 ---
@@ -28,11 +33,13 @@ O painel de controle interage diretamente com o banco de dados via **Prisma ORM*
 O projeto utiliza o que há de mais moderno no ecossistema JavaScript/TypeScript, focado em performance, SEO e escalabilidade:
 
 - **Framework**: [Next.js 15+](https://nextjs.org/) (App Router & Server Actions)
-- **Internacionalização/UI**: React 19 & Tailwind CSS 4.0
+- **Internacionalização/UI**: React 19, Tailwind CSS 4.0 e i18n bilíngue (PT-BR/EN-US) com persistência de idioma via cookie
 - **Linguagem**: TypeScript
 - **Autenticação**: Next-Auth v5 (Auth.js)
-- **Banco de Dados**: PostgreSQL
+- **Banco de Dados**: PostgreSQL com **pgvector** (embeddings/busca semântica)
 - **ORM**: Prisma
+- **IA**: Google Gemini (chat + geração de imagem) com pipeline de RAG próprio
+- **Mídia**: Cloudinary (cache de imagens e áudio sintetizado)
 - **Gerenciamento de Monorepo**: Turborepo
 - **Ícones**: Lucide React & React Icons
 - **Notificações**: React Toastify
@@ -68,6 +75,10 @@ projetos, com busca semântica (RAG) via **pgvector** sobre três fontes:
 Workspace: **`assistant` (`@portfolio/assistant`)** — pipeline de ingestão,
 CLI de inspeção de retrieval e uma fachada MCP (`search_context`) para uso
 local no Claude Desktop / Cursor. Ver `assistant/README.md` para detalhes.
+
+Na interface, o assistente é apresentado como um **avatar em estilo visual
+novel** (sprite gerado com IA, barra de diálogo com efeito de digitação e
+voz sintetizada com lip-sync), não como um chat tradicional.
 
 ### Comandos de operação
 
