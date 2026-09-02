@@ -38,7 +38,7 @@ export function useTypingSpeech(): UseTypingSpeechResult {
   }, [])
 
   return {
-    typingMessageId: snapshot.isTyping ? snapshot.messageId : null,
+    typingMessageId: snapshot.messageId,
     isTyping: snapshot.isTyping,
     startTypingSpeech: start,
     stopTypingSpeech: stop,
