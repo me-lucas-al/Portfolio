@@ -15,13 +15,13 @@ function formatPeriod(
 
   const formatter = new Intl.DateTimeFormat(intlLocale, options);
 
-  const format = (date: Date | string) => {
+  const formatSingleDate = (date: Date | string) => {
     const str = formatter.format(new Date(date));
     return str.replace(/ de /g, " ").replace(/\./g, "").replace(/^\w/, (c) => c.toUpperCase());
   };
 
-  const start = format(startDate);
-  const end = endDate ? format(endDate) : getDictionary(locale).experience.current;
+  const start = formatSingleDate(startDate);
+  const end = endDate ? formatSingleDate(endDate) : getDictionary(locale).experience.current;
 
   return `${start} — ${end}`;
 }

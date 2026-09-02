@@ -49,6 +49,10 @@ export function ExperienceDescription({ text, showMoreLabel, showLessLabel }: Ex
 
   const blocks = parseBlocks(text)
 
+  const toggleDescriptionExpansion = () => {
+    setExpanded((prev) => !prev)
+  }
+
   return (
     <div>
       <div
@@ -71,7 +75,7 @@ export function ExperienceDescription({ text, showMoreLabel, showLessLabel }: Ex
       {overflowing && (
         <button
           type="button"
-          onClick={() => setExpanded((prev) => !prev)}
+          onClick={toggleDescriptionExpansion}
           className="mt-1 text-xs font-medium text-brand transition-colors hover:text-brand-strong"
         >
           {expanded ? showLessLabel : showMoreLabel}
