@@ -14,6 +14,7 @@ interface AvatarStageProps {
 
 const CTA_SEEN_KEY = "assistant_cta_seen"
 const CTA_DELAY_MS = 1500
+const CTA_AUTO_DISMISS_MS = 8000
 
 function hasSeenCta(): boolean {
   try {
@@ -40,12 +41,21 @@ export function AvatarStage({ dict, open, onOpenChange }: AvatarStageProps) {
     return () => window.clearTimeout(timeout)
   }, [])
 
+  useEffect(() => {
+    if (!showCta) return
+    const timeout = window.setTimeout(() => {
+      setShowCta(false)
+      markCtaSeen()
+    }, CTA_AUTO_DISMISS_MS)
+    return () => window.clearTimeout(timeout)
+  }, [showCta])
+
   function dismissCta() {
     setShowCta(false)
     markCtaSeen()
   }
 
-  function handleClick() {
+  function toggleAssistantDialog() {
     onOpenChange(!open)
     if (!open) dismissCta()
   }
@@ -79,7 +89,7 @@ export function AvatarStage({ dict, open, onOpenChange }: AvatarStageProps) {
 
       <button
         type="button"
-        onClick={handleClick}
+        onClick={toggleAssistantDialog}
         aria-label={dict.trigger}
         aria-expanded={open}
         className="fixed bottom-6 left-6 z-30 rounded-full transition-transform hover:scale-105 active:scale-95"
