@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { EducationSchema } from "./base";
+import { EducationCategoryEnum, EducationSchema } from "./base";
 
 export const UpdateEducationSchema = EducationSchema.pick({
     id: true,
@@ -10,6 +10,8 @@ export const UpdateEducationSchema = EducationSchema.pick({
     endDate: true,
     type: true,
 }).extend({
+    category: EducationCategoryEnum.optional(),
+    certificateUrl: z.string().max(500).optional().nullable(),
     order: z.number().optional()
 })
 

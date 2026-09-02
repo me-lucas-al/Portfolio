@@ -11,7 +11,7 @@ export function EducationTabContent({ activeView, educations }: EducationTabCont
   if (activeView === "view") {
     return (
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-        <h2 className="text-xl font-medium text-fg mb-6">Formações Acadêmicas</h2>
+        <h2 className="text-xl font-medium text-fg mb-6">Formação & Cursos</h2>
         <EducationList educations={educations} />
       </div>
     )
@@ -19,7 +19,7 @@ export function EducationTabContent({ activeView, educations }: EducationTabCont
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-      <h2 className="text-xl font-medium text-fg mb-6">Nova Formação</h2>
+      <h2 className="text-xl font-medium text-fg mb-6">Nova Formação ou Curso</h2>
       <CreateEducationForm />
     </div>
   )

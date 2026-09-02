@@ -1,29 +1,6 @@
 import { EducationType } from "@portfolio/packages";
 import { getDictionary, type Locale } from "@/i18n";
-
-function formatPeriod(
-  startDate: Date | string,
-  endDate?: Date | string | null,
-  locale: Locale = "pt",
-  showMonth: boolean = true
-) {
-  const intlLocale = locale === "en" ? "en-US" : "pt-BR";
-  const options: Intl.DateTimeFormatOptions = showMonth
-    ? { month: "short", year: "numeric" }
-    : { year: "numeric" };
-
-  const formatter = new Intl.DateTimeFormat(intlLocale, options);
-
-  const formatSingleDate = (date: Date | string) => {
-    const str = formatter.format(new Date(date));
-    return str.replace(/ de /g, " ").replace(/\./g, "").replace(/^\w/, (c) => c.toUpperCase());
-  };
-
-  const start = formatSingleDate(startDate);
-  const end = endDate ? formatSingleDate(endDate) : getDictionary(locale).education.current;
-
-  return `${start} — ${end}`;
-}
+import { EducationGroup } from "./education-group";
 
 interface EducationProps {
   educations: EducationType[]
@@ -33,37 +10,41 @@ interface EducationProps {
 export function Education({ educations, locale }: EducationProps) {
   if (!educations?.length) return null;
 
-  const title = getDictionary(locale).education.title;
+  const dict = getDictionary(locale).education;
+
+  const academicEducations = educations.filter(
+    (edu) => !edu.category || edu.category === "ACADEMIC"
+  );
+  const courseEducations = educations.filter(
+    (edu) => edu.category === "COURSE"
+  );
+
+  const hasAcademic = academicEducations.length > 0;
+  const hasCourses = courseEducations.length > 0;
+
+  if (!hasAcademic && !hasCourses) return null;
 
   return (
     <section id="formacao" className="py-24 scroll-mt-20">
-      <div className="flex items-center gap-6 mb-12">
-        <h3 className="font-display text-2xl font-bold text-fg">
-          {title}
-        </h3>
-        <div className="h-px bg-line flex-1" />
-      </div>
+      {hasAcademic && (
+        <EducationGroup
+          title={dict.academicTitle}
+          educations={academicEducations}
+          locale={locale}
+          viewCertificateLabel={dict.viewCertificate}
+        />
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {educations.map((edu) => {
-          const course = locale === "en" ? (edu.courseEn || edu.course) : edu.course;
-          return (
-            <div
-              key={edu.id}
-              className="p-6 rounded-2xl bg-surface border border-line hover:border-line-strong transition-colors flex flex-col"
-            >
-              <span className="text-muted-2 font-mono text-xs mb-4 block">
-                {edu.type}
-              </span>
-              <h4 className="text-lg font-bold text-fg mb-2">{course}</h4>
-              <p className="text-fg-muted text-sm mb-4">{edu.institution}</p>
-              <p className="text-muted-2 text-sm font-mono mt-auto">
-                {formatPeriod(edu.startDate, edu.endDate, locale, false)}
-              </p>
-            </div>
-          );
-        })}
-      </div>
+      {hasCourses && (
+        <div className={hasAcademic ? "mt-20" : ""}>
+          <EducationGroup
+            title={dict.coursesTitle}
+            educations={courseEducations}
+            locale={locale}
+            viewCertificateLabel={dict.viewCertificate}
+          />
+        </div>
+      )}
     </section>
   );
 }

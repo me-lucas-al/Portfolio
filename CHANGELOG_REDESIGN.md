@@ -151,6 +151,16 @@ ganhou:
   link.
 - Adoção do Radix Dialog para os wrappers de diálogo do assistente/avatar.
 
+## 8. Formação vs. Cursos e Certificações
+
+A seção pública `#formacao` antes agrupava tanto formação acadêmica formal quanto cursos livres num único grid genérico. A estrutura foi reformulada para separar semanticamente esses dois tipos de capacitação:
+
+- **Enum `EducationCategory` (`ACADEMIC` | `COURSE`)**: campo nativo no banco de dados e nos schemas Zod para classificar a entidade `Education`.
+- **Subseção pública "Cursos e Certificações"**: renderizada dentro da mesma `<section id="formacao">`, preservando o link único de navegação e sem alterar o menu.
+- **Anexo e visualizador de certificados**: suporte a upload de certificados para cursos livres (PNG, JPG, WEBP e PDF até 10MB) via Cloudinary, com renderização de thumbnails automáticos da página 1 de PDFs sem bibliotecas adicionais e abertura em modal fullscreen acessível (`MediaFullscreenDialog`).
+- **Painel de Controle atualizado**: formulários de criação e edição agora contam com o componente `Select` do shadcn para escolha da categoria, campo dedicado de upload/troca/remoção de certificado e badges visuais por tipo na listagem administrativa.
+- **Indexação RAG refinada**: o assistente de IA agora diferencia com precisão "Formação acadêmica" de "Curso / certificação" durante a coleta de contexto do banco.
+
 ---
 
 ## Resumo em números

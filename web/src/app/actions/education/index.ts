@@ -3,6 +3,40 @@
 import { makeEducationService } from "@portfolio/core/src/factories/_index";
 import { revalidatePath } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
+import { IUploadFileDTO } from "@portfolio/core/src/@types/storage-service";
+import { getStorageProvider } from "@/factories/storage-factory";
+import { EducationCategoryType } from "@portfolio/packages";
+
+const MAX_CERTIFICATE_SIZE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_MIME_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "application/pdf",
+]);
+
+async function uploadEducationCertificate(file: File): Promise<string> {
+  const isPdfByExt = file.name.toLowerCase().endsWith(".pdf");
+  const isValidMime = ALLOWED_MIME_TYPES.has(file.type) || (isPdfByExt && (file.type === "application/pdf" || file.type === ""));
+
+  if (!isValidMime) {
+    throw new Error("Apenas imagens (PNG, JPG, WEBP) ou documentos PDF são permitidos");
+  }
+
+  if (file.size > MAX_CERTIFICATE_SIZE_BYTES) {
+    throw new Error("O certificado deve ter no máximo 10MB");
+  }
+
+  const upload: IUploadFileDTO = {
+    buffer: Buffer.from(await file.arrayBuffer()),
+    mimeType: file.type || (isPdfByExt ? "application/pdf" : "application/octet-stream"),
+    originalName: file.name || "certificate",
+  };
+
+  const storageProvider = getStorageProvider();
+  const [url] = await storageProvider.uploadMultipleFiles([upload], "education-certificates");
+  return url;
+}
 
 export async function createEducationAction(
   _prevState: unknown,
@@ -16,6 +50,14 @@ export async function createEducationAction(
     const educations = await makeEducationService().getAllEducations();
     const nextOrder = educations.length > 0 ? Math.max(...educations.map(e => e.order ?? 0)) + 1 : 0;
 
+    const category = (formData.get("category") as EducationCategoryType) || "ACADEMIC";
+    const certificateFile = formData.get("certificateFile");
+
+    let certificateUrl: string | null = null;
+    if (category === "COURSE" && certificateFile instanceof File && certificateFile.size > 0) {
+      certificateUrl = await uploadEducationCertificate(certificateFile);
+    }
+
     const endDateRaw = formData.get("endDate") as string;
     const endDate = endDateRaw ? new Date(endDateRaw) : null;
 
@@ -26,6 +68,8 @@ export async function createEducationAction(
       startDate: new Date(formData.get("startDate") as string),
       endDate,
       type: formData.get("type") as string,
+      category,
+      certificateUrl,
       order: nextOrder
     });
 
@@ -34,7 +78,7 @@ export async function createEducationAction(
 
     return { success: true, message: "Formação criada com sucesso!" };
   } catch (error) {
-    return { error: "Erro ao criar formação acadêmica" };
+    return { error: error instanceof Error ? error.message : "Erro ao criar formação acadêmica" };
   }
 }
 
@@ -65,6 +109,8 @@ export async function reorderEducationAction(id: number, direction: 'up' | 'down
           startDate: education.startDate,
           endDate: education.endDate,
           type: education.type,
+          category: education.category,
+          certificateUrl: education.certificateUrl,
           order: i,
         })
       )
@@ -75,7 +121,7 @@ export async function reorderEducationAction(id: number, direction: 'up' | 'down
 
     return { success: true };
   } catch (error) {
-    return { error: "Erro ao reordenar formação" };
+    return { error: error instanceof Error ? error.message : "Erro ao reordenar formação" };
   }
 }
 
@@ -89,6 +135,19 @@ export async function updateEducationAction(
     if (!admin) return { error: "Não autorizado" };
 
     const id = Number(formData.get("id"));
+    const category = (formData.get("category") as EducationCategoryType) || "ACADEMIC";
+    const certificateFile = formData.get("certificateFile");
+    const keptCertificateUrl = formData.get("keptCertificateUrl") as string;
+
+    let certificateUrl: string | null = null;
+    if (category === "COURSE") {
+      if (certificateFile instanceof File && certificateFile.size > 0) {
+        certificateUrl = await uploadEducationCertificate(certificateFile);
+      } else if (keptCertificateUrl && keptCertificateUrl.trim() !== "") {
+        certificateUrl = keptCertificateUrl.trim();
+      }
+    }
+
     const endDateRaw = formData.get("endDate") as string;
     const endDate = endDateRaw ? new Date(endDateRaw) : null;
 
@@ -100,6 +159,8 @@ export async function updateEducationAction(
       startDate: new Date(formData.get("startDate") as string),
       endDate,
       type: formData.get("type") as string,
+      category,
+      certificateUrl,
     });
 
     revalidatePath("/");
@@ -107,7 +168,7 @@ export async function updateEducationAction(
 
     return { success: true, message: "Formação atualizada com sucesso!" };
   } catch (error) {
-    return { error: "Erro ao atualizar formação acadêmica" };
+    return { error: error instanceof Error ? error.message : "Erro ao atualizar formação acadêmica" };
   }
 }
 

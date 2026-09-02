@@ -1,7 +1,7 @@
 "use client"
 
 import { EducationType } from "@portfolio/packages"
-import { Pencil, Trash2, Loader2, ChevronUp, ChevronDown } from "lucide-react"
+import { Pencil, Trash2, Loader2, ChevronUp, ChevronDown, Paperclip } from "lucide-react"
 import { deleteEducationAction, reorderEducationAction } from "@/app/actions/education"
 import { useState, useTransition } from "react"
 import { SideSheet } from "@/components/side-sheet"
@@ -39,13 +39,35 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
     <div className="space-y-4">
       {educations.map((edu) => (
         <div key={edu.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-line bg-surface/80 hover:bg-surface-2 hover:border-line-strong transition-colors">
-          <div>
-            <h4 className="text-fg font-medium">{edu.course}</h4>
-            <p className="text-sm text-muted-2 mt-1">
-              {edu.institution} • {new Date(edu.startDate).getFullYear()} - {edu.endDate ? new Date(edu.endDate).getFullYear() : 'Presente'}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span
+                className={`text-[11px] font-medium px-2 py-0.5 rounded-md border ${
+                  edu.category === "COURSE"
+                    ? "bg-prompt/20 text-prompt border-prompt/40"
+                    : "bg-brand/20 text-brand border-brand/40"
+                }`}
+              >
+                {edu.category === "COURSE" ? "Curso / Certificação" : "Formação Acadêmica"}
+              </span>
+              <h4 className="text-fg font-medium">{edu.course}</h4>
+            </div>
+            <p className="text-sm text-muted-2">
+              {edu.institution} • {new Date(edu.startDate).getFullYear()} - {edu.endDate ? new Date(edu.endDate).getFullYear() : 'Presente'} • <span className="text-xs">{edu.type}</span>
             </p>
           </div>
           <div className="flex items-center gap-2">
+            {edu.certificateUrl && (
+              <a
+                href={edu.certificateUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-fg-muted hover:text-brand hover:bg-brand/10 rounded-lg transition-colors cursor-pointer"
+                title="Ver certificado original"
+              >
+                <Paperclip className="w-4 h-4" />
+              </a>
+            )}
             <div className="flex items-center gap-1 mr-2 border-r border-line pr-2">
               <button
                 disabled={isPending}
@@ -80,8 +102,8 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
 
       <SideSheet.Root open={!!editingEdu} onOpenChange={(open) => !open && setEditingEdu(null)}>
         <SideSheet.Content
-          title="Editar Formação"
-          description="Atualize os detalhes da sua formação académica ou curso."
+          title="Editar Formação / Curso"
+          description="Atualize os detalhes da sua formação acadêmica ou curso."
         >
           {editingEdu && <EditEducationForm education={editingEdu} onSuccess={() => setEditingEdu(null)} />}
         </SideSheet.Content>
@@ -90,7 +112,7 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
       <Modal.Root open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
         <Modal.Content
           title="Confirmar deleção"
-          description="Tem a certeza de que deseja deletar esta formação? Esta ação não pode ser desfeita."
+          description="Tem a certeza de que deseja deletar este registro? Esta ação não pode ser desfeita."
         >
           <Modal.Footer className="flex gap-2 sm:justify-end mt-4">
             <button onClick={() => setDeletingId(null)} disabled={isPending} className="px-4 py-2 rounded-lg text-sm font-medium border border-line text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer">

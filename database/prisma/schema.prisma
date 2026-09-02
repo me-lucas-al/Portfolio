@@ -50,16 +50,23 @@ model Experience {
 }
 
 model Education {
-  id          Int       @id @default(autoincrement())
-  course      String
-  courseEn    String?
-  institution String
-  startDate   DateTime
-  endDate     DateTime?
-  type        String
-  order       Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id             Int               @id @default(autoincrement())
+  course         String
+  courseEn       String?
+  institution    String
+  startDate      DateTime
+  endDate        DateTime?
+  type           String
+  category       EducationCategory @default(ACADEMIC)
+  certificateUrl String?
+  order          Int               @default(0)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+enum EducationCategory {
+  ACADEMIC
+  COURSE
 }
 
 enum Roles {

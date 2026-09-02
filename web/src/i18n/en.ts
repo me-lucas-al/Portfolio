@@ -1,4 +1,4 @@
-﻿import type { Dictionary } from './pt'
+import type { Dictionary } from './pt'
 
 export const en: Dictionary = {
   nav: {
@@ -19,7 +19,12 @@ export const en: Dictionary = {
   skills: { title: 'Skills', tools: 'Tools' },
   projects: { title: 'Projects' },
   experience: { title: 'Experience', current: 'Present', showMore: 'Show more', showLess: 'Show less' },
-  education: { title: 'Academic Background', current: 'Present' },
+  education: {
+    academicTitle: 'Academic Background',
+    coursesTitle: 'Courses & Certifications',
+    current: 'Present',
+    viewCertificate: 'View certificate',
+  },
   contact: {
     title: 'Contact',
     heading: 'Get in Touch',

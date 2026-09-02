@@ -16,7 +16,12 @@ export interface Dictionary {
   skills: { title: string; tools: string }
   projects: { title: string }
   experience: { title: string; current: string; showMore: string; showLess: string }
-  education: { title: string; current: string }
+  education: {
+    academicTitle: string
+    coursesTitle: string
+    current: string
+    viewCertificate: string
+  }
   contact: {
     title: string
     heading: string
@@ -79,7 +84,12 @@ export const pt: Dictionary = {
   skills: { title: "Tecnologias", tools: "Ferramentas" },
   projects: { title: "Projetos Desenvolvidos" },
   experience: { title: "Experiências", current: "Atual", showMore: "Ver mais", showLess: "Ver menos" },
-  education: { title: "Formação Acadêmica", current: "Atual" },
+  education: {
+    academicTitle: "Formação Acadêmica",
+    coursesTitle: "Cursos e Certificações",
+    current: "Atual",
+    viewCertificate: "Ver certificado",
+  },
   contact: {
     title: "Contatos",
     heading: "Entre em Contato",
