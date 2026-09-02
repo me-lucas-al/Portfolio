@@ -1,39 +1,12 @@
 "use client"
 
-import { useLayoutEffect, useRef, useState } from "react"
+import { useLayoutEffect, useMemo, useRef, useState } from "react"
+import { parseExperienceDescription } from "./parse-experience-description"
 
 interface ExperienceDescriptionProps {
   text: string
   showMoreLabel: string
   showLessLabel: string
-}
-
-interface Block {
-  type: "paragraph" | "list"
-  items: string[]
-}
-
-const BULLET_PATTERN = /^[•\-*]\s+/
-
-function parseBlocks(text: string): Block[] {
-  const blocks: Block[] = []
-
-  for (const rawLine of text.split("\n")) {
-    const line = rawLine.trim()
-    if (!line) continue
-
-    const isBullet = BULLET_PATTERN.test(line)
-    const content = isBullet ? line.replace(BULLET_PATTERN, "") : line
-    const last = blocks[blocks.length - 1]
-
-    if (isBullet && last?.type === "list") {
-      last.items.push(content)
-    } else {
-      blocks.push({ type: isBullet ? "list" : "paragraph", items: [content] })
-    }
-  }
-
-  return blocks
 }
 
 export function ExperienceDescription({ text, showMoreLabel, showLessLabel }: ExperienceDescriptionProps) {
@@ -44,10 +17,15 @@ export function ExperienceDescription({ text, showMoreLabel, showLessLabel }: Ex
   useLayoutEffect(() => {
     const node = contentRef.current
     if (!node) return
-    setOverflowing(node.scrollHeight - node.clientHeight > 1)
+
+    const measure = () => setOverflowing(node.scrollHeight - node.clientHeight > 1)
+    measure()
+
+    window.addEventListener("resize", measure)
+    return () => window.removeEventListener("resize", measure)
   }, [text])
 
-  const blocks = parseBlocks(text)
+  const blocks = useMemo(() => parseExperienceDescription(text), [text])
 
   const toggleDescriptionExpansion = () => {
     setExpanded((prev) => !prev)
@@ -67,7 +45,7 @@ export function ExperienceDescription({ text, showMoreLabel, showLessLabel }: Ex
               ))}
             </ul>
           ) : (
-            <p key={index}>{block.items[0]}</p>
+            <p key={index}>{block.text}</p>
           )
         )}
       </div>
