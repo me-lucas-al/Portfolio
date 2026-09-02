@@ -11,6 +11,7 @@ export const EducationSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date().nullable(),
   type: z.string().min(1).max(100),
+  typeEn: z.string().min(1).max(100).optional().nullable(),
   description: z.string().max(2000).optional().nullable(),
   descriptionEn: z.string().max(2000).optional().nullable(),
   category: EducationCategoryEnum.default("ACADEMIC"),

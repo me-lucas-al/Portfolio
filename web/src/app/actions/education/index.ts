@@ -62,6 +62,8 @@ export async function createEducationAction(
     const endDate = endDateRaw ? new Date(endDateRaw) : null;
     const description = (formData.get("description") as string)?.trim() || null;
     const descriptionEn = (formData.get("descriptionEn") as string)?.trim() || null;
+    const type = (formData.get("type") as string)?.trim();
+    const typeEn = (formData.get("typeEn") as string)?.trim() || null;
 
     await makeEducationService().createEducation({
       course: formData.get("course") as string,
@@ -71,7 +73,8 @@ export async function createEducationAction(
       endDate,
       description,
       descriptionEn,
-      type: formData.get("type") as string,
+      type,
+      typeEn,
       category,
       certificateUrl,
       order: nextOrder
@@ -115,6 +118,7 @@ export async function reorderEducationAction(id: number, direction: 'up' | 'down
           description: education.description ?? null,
           descriptionEn: education.descriptionEn ?? null,
           type: education.type,
+          typeEn: education.typeEn ?? null,
           category: education.category,
           certificateUrl: education.certificateUrl,
           order: i,
@@ -158,6 +162,8 @@ export async function updateEducationAction(
     const endDate = endDateRaw ? new Date(endDateRaw) : null;
     const description = (formData.get("description") as string)?.trim() || null;
     const descriptionEn = (formData.get("descriptionEn") as string)?.trim() || null;
+    const type = (formData.get("type") as string)?.trim();
+    const typeEn = (formData.get("typeEn") as string)?.trim() || null;
 
     await makeEducationService().updateEducationById({
       id,
@@ -168,7 +174,8 @@ export async function updateEducationAction(
       endDate,
       description,
       descriptionEn,
-      type: formData.get("type") as string,
+      type,
+      typeEn,
       category,
       certificateUrl,
     });

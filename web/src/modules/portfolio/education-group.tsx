@@ -1,6 +1,7 @@
 import { EducationType } from "@portfolio/packages";
 import { getDictionary, type Locale } from "@/i18n";
 import { EducationCertificateViewer } from "./education-certificate-viewer";
+import { EducationDescription } from "./education-description";
 
 function formatPeriod(
   startDate: Date | string,
@@ -41,6 +42,8 @@ export function EducationGroup({
 }: EducationGroupProps) {
   if (!educations || educations.length === 0) return null;
 
+  const dict = getDictionary(locale).education;
+
   return (
     <div>
       <div className="flex items-center gap-6 mb-12">
@@ -53,6 +56,7 @@ export function EducationGroup({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {educations.map((edu) => {
           const course = locale === "en" ? (edu.courseEn || edu.course) : edu.course;
+          const type = locale === "en" ? (edu.typeEn || edu.type) : edu.type;
           const description = locale === "en" ? (edu.descriptionEn || edu.description) : edu.description;
 
           return (
@@ -62,18 +66,23 @@ export function EducationGroup({
             >
               <div>
                 <span className="text-muted-2 font-mono text-xs mb-3 block">
-                  {edu.type}
+                  {type}
                 </span>
                 <h4 className="text-lg font-bold text-fg mb-1.5">{course}</h4>
-                <p className="text-fg-muted text-sm mb-3">{edu.institution}</p>
+                <p className="text-fg-muted text-sm mb-3 font-medium">{edu.institution}</p>
+
                 {description && (
-                  <p className="text-fg-muted/80 text-sm leading-relaxed mb-4 whitespace-pre-line">
-                    {description}
-                  </p>
+                  <div className="pt-3.5 mt-3.5 border-t border-line/70">
+                    <EducationDescription
+                      text={description}
+                      showMoreLabel={dict.showMore || "Ver mais"}
+                      showLessLabel={dict.showLess || "Ver menos"}
+                    />
+                  </div>
                 )}
               </div>
 
-              <div className="pt-2 mt-auto flex items-center justify-between gap-3 flex-wrap">
+              <div className="pt-4 mt-auto border-t border-line/40 flex items-center justify-between gap-3 flex-wrap">
                 <p className="text-muted-2 text-xs font-mono">
                   {formatPeriod(edu.startDate, edu.endDate, locale, false)}
                 </p>

@@ -104,9 +104,10 @@ export class DbSource implements ChunkSource {
       const contentPt = `${prefixPt}: ${education.course} - ${education.institution} (${periodPt}). Tipo: ${education.type}.${descPt}`;
       yield makeChunk(source, "education", 0, "pt", education.course, contentPt);
 
-      if (education.courseEn || education.descriptionEn) {
+      if (education.courseEn || education.descriptionEn || education.typeEn) {
         const descEn = (education.descriptionEn ?? education.description) ? ` Description: ${education.descriptionEn ?? education.description}.` : "";
-        const contentEn = `${prefixEn}: ${education.courseEn ?? education.course} - ${education.institution} (${periodEn}). Type: ${education.type}.${descEn}`;
+        const typeEnStr = education.typeEn ?? education.type;
+        const contentEn = `${prefixEn}: ${education.courseEn ?? education.course} - ${education.institution} (${periodEn}). Type: ${typeEnStr}.${descEn}`;
         yield makeChunk(source, "education", 1, "en", education.courseEn ?? education.course, contentEn);
       }
     }

@@ -9,6 +9,7 @@ export const UpdateEducationSchema = EducationSchema.pick({
     startDate: true,
     endDate: true,
     type: true,
+    typeEn: true,
 }).extend({
     category: EducationCategoryEnum.optional(),
     certificateUrl: z.string().max(500).optional().nullable(),

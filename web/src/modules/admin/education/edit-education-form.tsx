@@ -84,6 +84,16 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
             />
           </div>
           <div className="space-y-2">
+            <label className="text-sm text-fg-muted">Tipo</label>
+            <input
+              required
+              name="type"
+              defaultValue={education.type}
+              placeholder={category === "COURSE" ? "Ex: Curso Online, Especialização, Bootcamp..." : "Ex: Bacharelado, Tecnólogo, Ensino Técnico..."}
+              className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
+            />
+          </div>
+          <div className="space-y-2">
             <label className="text-sm text-fg-muted flex justify-between">
               Descrição
               <span className="text-muted-2 text-xs">Opcional</span>
@@ -107,6 +117,18 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
               name="courseEn"
               defaultValue={education.courseEn ?? ""}
               placeholder={category === "COURSE" ? "Ex: AI for Devs (optional)" : "Ex: Software Engineering (optional)"}
+              className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm text-fg-muted flex justify-between">
+              <span>Type <span className="text-muted-2">(English)</span></span>
+              <span className="text-muted-2 text-xs">Optional</span>
+            </label>
+            <input
+              name="typeEn"
+              defaultValue={education.typeEn ?? ""}
+              placeholder={category === "COURSE" ? "Ex: Online Course, Specialization, Bootcamp... (optional)" : "Ex: Bachelor's Degree, Associate Degree, Vocational... (optional)"}
               className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
             />
           </div>
@@ -162,17 +184,6 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
             className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
           />
         </div>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm text-fg-muted">Tipo</label>
-        <input
-          required
-          name="type"
-          defaultValue={education.type}
-          placeholder="Ex: Bacharelado, Tecnólogo, Ensino Técnico, Curso Online..."
-          className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
-        />
       </div>
 
       {category === "COURSE" && (

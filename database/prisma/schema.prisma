@@ -59,6 +59,7 @@ model Education {
   description    String?           @db.Text
   descriptionEn  String?           @db.Text
   type           String
+  typeEn         String?
   category       EducationCategory @default(ACADEMIC)
   certificateUrl String?
   order          Int               @default(0)

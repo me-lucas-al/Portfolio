@@ -24,6 +24,8 @@ export const en: Dictionary = {
     coursesTitle: 'Courses & Certifications',
     current: 'Present',
     viewCertificate: 'View certificate',
+    showMore: 'Show more',
+    showLess: 'Show less',
   },
   contact: {
     title: 'Contact',

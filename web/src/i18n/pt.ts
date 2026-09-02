@@ -21,6 +21,8 @@ export interface Dictionary {
     coursesTitle: string
     current: string
     viewCertificate: string
+    showMore: string
+    showLess: string
   }
   contact: {
     title: string
@@ -89,6 +91,8 @@ export const pt: Dictionary = {
     coursesTitle: "Cursos e Certificações",
     current: "Atual",
     viewCertificate: "Ver certificado",
+    showMore: "Ver mais",
+    showLess: "Ver menos",
   },
   contact: {
     title: "Contatos",
