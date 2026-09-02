@@ -47,7 +47,9 @@ export function SpeechBalloon({ skipLabel }: SpeechBalloonProps) {
       title={skipLabel}
       className="fixed bottom-32 left-6 z-40 max-w-[min(280px,calc(100vw-3rem))] rounded-2xl rounded-bl-sm border border-line bg-surface/95 px-3 py-2 text-left text-sm text-fg shadow-lg shadow-black/30"
     >
-      <TypedText fullText={typingSnapshot.fullText} isTyping={typingSnapshot.isTyping} />
+      <span className="line-clamp-6">
+        <TypedText fullText={typingSnapshot.fullText} isTyping={typingSnapshot.isTyping} />
+      </span>
     </button>
   )
 }
