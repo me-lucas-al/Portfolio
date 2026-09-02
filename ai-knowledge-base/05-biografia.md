@@ -21,6 +21,7 @@
 - Jogar videogame.
 - Sair com os amigos e com a família.
 - Esportes: Vôlei e futebol.
+- Torcedor roxo (fanático) do Corinthians.
 
 ## Trajetória Acadêmica e Profissional
 Sempre gostou de computadores e jogos, o que despertou o interesse pela área de tecnologia.
