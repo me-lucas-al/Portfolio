@@ -1,4 +1,4 @@
-# Dados pessoais — fonte de conhecimento do assistente
+# AI knowledge base — fonte de conhecimento do assistente
 
 Esta pasta é indexada pelo assistente de IA do portfólio (`@portfolio/assistant`,
 fonte `md:`) junto com o banco de dados e o código-fonte dos repositórios.
@@ -25,6 +25,8 @@ contexto e estilo — não fatos tabulares.
 - `02-preferencias-arquitetura.md` — como o Lucas gosta de estruturar projetos.
 - `03-como-trabalho.md` — processo, ritmo, forma de colaborar.
 - `04-faq-recrutadores.md` — respostas diretas para perguntas frequentes.
+- `05-biografia.md` — dados pessoais, trajetória acadêmica e profissional.
+- `06-cursos.md` — cursos concluídos e o que foi aprendido em cada um.
 
 ## Formato esperado pelo indexador
 
@@ -41,16 +43,16 @@ no `postinstall` do `package.json`) detecta commits que alteram algum `.md`
 direto nesta pasta e roda `pnpm --filter @portfolio/assistant run ingest
 --source=md` em background, sem travar o `git commit`. Saída em
 `.git/ingest-md.log`. Só dispara com o padrão exato lido por
-`MarkdownSource` (arquivos direto em `dados-pessoais/`, não recursivo), então
+`MarkdownSource` (arquivos direto em `ai-knowledge-base/`, não recursivo), então
 mudanças em `documentos/` não acionam esse hook.
 
 ## A subpasta `documentos/` se comporta diferente
 
 `documentos/` guarda PDF, DOCX e CSV indexados pela fonte `doc:` — ver a política completa em
-`dados-pessoais/documentos/README.md`. Duas coisas deliberadas que vale saber de antemão:
+`ai-knowledge-base/documentos/README.md`. Duas coisas deliberadas que vale saber de antemão:
 
 - `.md` dentro de `documentos/` **não** é indexado como `md:`, porque `MarkdownSource` faz
-  `readdir` não recursivo apenas nesta pasta (`dados-pessoais/`). Isso é intencional: o único uso de
+  `readdir` não recursivo apenas nesta pasta (`ai-knowledge-base/`). Isso é intencional: o único uso de
   `.md` dentro de `documentos/` é o sidecar de anotação manual, que não deve virar chunk.
 - `documentos/**` está no `.gitignore` (menos o `README.md`): os binários originais (currículo,
   certificados, planilhas) nunca são commitados, porque conteriam PII num repositório público. O

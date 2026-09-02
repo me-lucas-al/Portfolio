@@ -20,7 +20,7 @@ const ALLOWED_FILENAMES = new Set(["package.json", "turbo.json", "next.config.ts
 
 const SKIP_FILENAMES = new Set(["pnpm-lock.yaml", "package-lock.json", "yarn.lock", ".env.example"]);
 
-const DENYLIST_DIR_NAMES = new Set(["node_modules", ".next", "dist", ".git", ".turbo", "public", ".cache", "dados-pessoais"]);
+const DENYLIST_DIR_NAMES = new Set(["node_modules", ".next", "dist", ".git", ".turbo", "public", ".cache", "ai-knowledge-base"]);
 
 const ENV_PATH_GUARD = /\.env/i;
 

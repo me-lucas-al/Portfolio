@@ -11,7 +11,7 @@ import { hashContent } from "../ingest/hash";
 import { ChunkSource, RawChunk } from "./chunk-source.interface";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DOCUMENTS_DIR = path.resolve(__dirname, "../../../dados-pessoais/documentos");
+const DOCUMENTS_DIR = path.resolve(__dirname, "../../../ai-knowledge-base/documentos");
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const MAX_EXTRACTED_CHARS = 400_000;
@@ -97,7 +97,7 @@ export class DocsSource implements ChunkSource {
       .catch(() => false);
     if (!dirExists) {
       throw new Error(
-        `[docs-source] expected directory not found: ${DOCUMENTS_DIR}. This looks like a broken checkout, not "zero documents" — create the folder (see dados-pessoais/documentos/README.md) before running --source=docs.`,
+        `[docs-source] expected directory not found: ${DOCUMENTS_DIR}. This looks like a broken checkout, not "zero documents" — create the folder (see ai-knowledge-base/documentos/README.md) before running --source=docs.`,
       );
     }
 

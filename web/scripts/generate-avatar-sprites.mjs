@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url"
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url))
 const WEB_ROOT = path.resolve(SCRIPT_DIR, "..")
 const REPO_ROOT = path.resolve(WEB_ROOT, "..")
-const REFERENCE_IMAGE_PATH = path.resolve(REPO_ROOT, "dados-pessoais/avatar_lucas.jpg")
+const REFERENCE_IMAGE_PATH = path.resolve(REPO_ROOT, "ai-knowledge-base/avatar_lucas.jpg")
 const OUTPUT_DIR = path.resolve(WEB_ROOT, "public/avatar/sprites")
 const ENV_LOCAL_PATH = path.resolve(WEB_ROOT, ".env.local")
 

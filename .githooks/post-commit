@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Reindexa a base de conhecimento do assistente (dados-pessoais/*.md) sempre que
+# Reindexa a base de conhecimento do assistente (ai-knowledge-base/*.md) sempre que
 # um commit tocar nesses arquivos. Roda em background para não travar o `git commit`.
 # Ativado via `core.hooksPath=.githooks` (ver package.json -> "postinstall").
 set -euo pipefail
@@ -7,7 +7,7 @@ set -euo pipefail
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
-changed_md=$(git diff-tree --no-commit-id --name-only -r HEAD | grep -E '^dados-pessoais/[^/]+\.md$' || true)
+changed_md=$(git diff-tree --no-commit-id --name-only -r HEAD | grep -E '^ai-knowledge-base/[^/]+\.md$' || true)
 
 if [ -z "$changed_md" ]; then
   exit 0
@@ -20,6 +20,6 @@ log_file="$repo_root/.git/ingest-md.log"
   echo "$changed_md"
 } >>"$log_file"
 
-echo "post-commit: dados-pessoais/*.md mudou, reindexando em background (log: .git/ingest-md.log)"
+echo "post-commit: ai-knowledge-base/*.md mudou, reindexando em background (log: .git/ingest-md.log)"
 nohup pnpm --filter @portfolio/assistant run ingest --source=md >>"$log_file" 2>&1 &
 disown

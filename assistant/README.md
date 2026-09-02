@@ -1,7 +1,7 @@
 # @portfolio/assistant
 
 Workspace de conhecimento e IA do portfólio: pipeline de ingestão RAG (banco de
-dados, notas em `/dados-pessoais` e código-fonte indexado via pgvector) e uma
+dados, notas em `/ai-knowledge-base` e código-fonte indexado via pgvector) e uma
 fachada MCP local sobre a mesma base, para uso em Claude Desktop / Cursor.
 
 ## Ingestão

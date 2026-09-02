@@ -11,6 +11,8 @@ out/
 build/
 dist/
 
+.claude/
+
 # Prisma
 /src/generated/prisma
 *.db
@@ -51,5 +53,5 @@ assistant/.cache/
 
 # Documentos pessoais (PDF/DOCX/CSV) contêm PII e nunca devem ser commitados;
 # só o README.md curado (política de curadoria) fica versionado.
-dados-pessoais/documentos/**
-!dados-pessoais/documentos/README.md
+ai-knowledge-base/documentos/**
+!ai-knowledge-base/documentos/README.md

@@ -6,7 +6,7 @@ on:
       - main
       - feat/ai-assistant
     paths:
-      - 'dados-pessoais/**.md'
+      - 'ai-knowledge-base/**.md'
   workflow_dispatch:
 
 jobs:

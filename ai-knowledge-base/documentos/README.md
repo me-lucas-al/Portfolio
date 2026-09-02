@@ -4,29 +4,27 @@
 
 Cargo, empresa, período, tecnologias de cada experiência; curso, instituição e período de cada
 formação; título, descrição e stack de cada projeto — tudo isso já é editado pelo painel admin
-(`/control-painel`) e lido pela fonte `db:`. Um PDF ou DOCX que repete esses fatos (currículo,
-export do LinkedIn) **não deve ser indexado**: no dia em que um fato mudar no painel, o documento
-continua com a versão antiga, e o modelo recebe dois chunks contraditórios.
+(`/control-painel`) e lido pela fonte `db:`. Um PDF ou DOCX que repete só esses fatos e nada mais
+tende a ficar desatualizado no dia em que o painel mudar, deixando o modelo com dois chunks
+contraditórios — prefira sempre editar o painel a manter um documento duplicando o mesmo dado.
 
-Documentos aqui servem para o que `db:` **não modela**: emissor de um certificado, data de
-certificação, ID de credencial, carga horária, ementa de uma disciplina, conteúdo de uma
-planilha. Se o conteúdo é 100% redundante com o painel admin ou com os `.md` de
-`dados-pessoais/`, ele pertence a `_nao-indexar/`, não a uma subpasta indexada.
-
-Currículo em PDF e export do LinkedIn são o exemplo canônico de "não indexar": são os piores
-extratos possíveis (duas colunas, ordem de leitura embaralhada), envelhecem sem aviso e
-carregam PII pessoal. Coloque-os em `_nao-indexar/`. Se quiser esse conteúdo pesquisável, escreva
-um `.md` curado em `dados-pessoais/` com o que o banco não cobre — não indexe o PDF bruto.
+Documentos aqui servem sobretudo para o que `db:` **não modela**: emissor de um certificado, data
+de certificação, ID de credencial, carga horária, ementa de uma disciplina, conteúdo de uma
+planilha. Currículo em PDF e export do LinkedIn também podem ser indexados normalmente — são
+dados públicos do Lucas, sem restrição — mas fiquem cientes de que a extração de PDFs em duas
+colunas costuma embaralhar a ordem de leitura, então revise o relatório do ingest (`inspect:docs`)
+depois de adicionar um. Conteúdo que só existe como rascunho ou anotação pessoal, e não deve virar
+chunk nenhum, pertence a `_nao-indexar/`.
 
 ## Layout de pastas
 
 ```
-dados-pessoais/documentos/
+ai-knowledge-base/documentos/
   README.md          (este arquivo — o único item commitado)
   certificados/       certificados de curso, ementas, cargas horárias
   formacoes/          históricos escolares, diplomas
   planilhas/           CSVs com dados tabulares que o schema não modela
-  _nao-indexar/        qualquer coisa que NÃO deve virar chunk (currículo, LinkedIn, rascunhos)
+  _nao-indexar/        qualquer coisa que NÃO deve virar chunk (rascunhos, anotações pessoais)
 ```
 
 Qualquer subpasta (existente ou nova) cujo nome comece com `_` é ignorada pelo indexador —

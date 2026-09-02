@@ -59,9 +59,9 @@ projetos, com busca semântica (RAG) via **pgvector** sobre três fontes:
 - **`database` (`db:*`)**: fonte de verdade dos **fatos estruturados** — cargo,
   empresa, período, curso, instituição, stack de projeto. Editado pelo Painel
   de Controle e sincronizado automaticamente pelo pipeline de ingestão.
-- **`dados-pessoais/*.md` (`md:*`)**: narrativa de carreira, preferências de
+- **`ai-knowledge-base/*.md` (`md:*`)**: narrativa de carreira, preferências de
   arquitetura, forma de trabalhar e FAQ — **não** fatos tabulares (ver
-  `dados-pessoais/README.md`). Editar aqui não afeta o banco, e vice-versa.
+  `ai-knowledge-base/README.md`). Editar aqui não afeta o banco, e vice-versa.
 - **Código-fonte indexado (`code:*`)**: os repositórios em `REPOS_TO_INDEX`
   (somente públicos), com denylist de segredos e allowlist de extensões.
 
