@@ -12,6 +12,8 @@ export const UpdateEducationSchema = EducationSchema.pick({
 }).extend({
     category: EducationCategoryEnum.optional(),
     certificateUrl: z.string().max(500).optional().nullable(),
+    description: z.string().max(2000).optional().nullable(),
+    descriptionEn: z.string().max(2000).optional().nullable(),
     order: z.number().optional()
 })
 

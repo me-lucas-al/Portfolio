@@ -70,7 +70,7 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
             🇺🇸 EN-US
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="pt" className="mt-4 data-[state=inactive]:hidden" forceMount>
+        <TabsContent value="pt" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm text-fg-muted">
               {category === "COURSE" ? "Nome do Curso" : "Curso"}
@@ -83,8 +83,21 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
               className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
             />
           </div>
+          <div className="space-y-2">
+            <label className="text-sm text-fg-muted flex justify-between">
+              Descrição
+              <span className="text-muted-2 text-xs">Opcional</span>
+            </label>
+            <textarea
+              name="description"
+              rows={3}
+              defaultValue={education.description ?? ""}
+              placeholder="Principais aprendizados, tópicos abordados, projetos desenvolvidos..."
+              className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all resize-none"
+            />
+          </div>
         </TabsContent>
-        <TabsContent value="en" className="mt-4 data-[state=inactive]:hidden" forceMount>
+        <TabsContent value="en" className="space-y-4 mt-4 data-[state=inactive]:hidden" forceMount>
           <div className="space-y-2">
             <label className="text-sm text-fg-muted">
               {category === "COURSE" ? "Course Name" : "Course"}{" "}
@@ -95,6 +108,19 @@ export function EditEducationForm({ education, onSuccess }: { education: Educati
               defaultValue={education.courseEn ?? ""}
               placeholder={category === "COURSE" ? "Ex: AI for Devs (optional)" : "Ex: Software Engineering (optional)"}
               className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm text-fg-muted flex justify-between">
+              Description <span className="text-muted-2">(English)</span>
+              <span className="text-muted-2 text-xs">Optional</span>
+            </label>
+            <textarea
+              name="descriptionEn"
+              rows={3}
+              defaultValue={education.descriptionEn ?? ""}
+              placeholder="Key learnings, covered topics, projects built... (optional)"
+              className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-fg placeholder:text-muted-2 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all resize-none"
             />
           </div>
         </TabsContent>

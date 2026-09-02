@@ -159,6 +159,7 @@ A seção pública `#formacao` antes agrupava tanto formação acadêmica formal
 - **Subseção pública "Cursos e Certificações"**: renderizada dentro da mesma `<section id="formacao">`, preservando o link único de navegação e sem alterar o menu.
 - **Anexo e visualizador de certificados**: suporte a upload de certificados para cursos livres (PNG, JPG, WEBP e PDF até 10MB) via Cloudinary, com renderização de thumbnails automáticos da página 1 de PDFs sem bibliotecas adicionais e abertura em modal fullscreen acessível (`MediaFullscreenDialog`).
 - **Painel de Controle atualizado**: formulários de criação e edição agora contam com o componente `Select` do shadcn para escolha da categoria, campo dedicado de upload/troca/remoção de certificado e badges visuais por tipo na listagem administrativa.
+- **Campo de descrição bilíngue (`description` / `descriptionEn`)**: suporte a descrição detalhada opcional tanto para graduações quanto para cursos, com campos dedicados nas abas PT-BR/EN-US do painel administrativo, exibição harmoniosa nos cards da seção pública sem quebrar alinhamentos e integração contextual na base de conhecimento do assistente de IA.
 - **Indexação RAG refinada**: o assistente de IA agora diferencia com precisão "Formação acadêmica" de "Curso / certificação" durante a coleta de contexto do banco.
 
 ---

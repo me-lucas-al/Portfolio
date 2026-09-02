@@ -53,26 +53,38 @@ export function EducationGroup({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {educations.map((edu) => {
           const course = locale === "en" ? (edu.courseEn || edu.course) : edu.course;
+          const description = locale === "en" ? (edu.descriptionEn || edu.description) : edu.description;
+
           return (
             <div
               key={edu.id}
-              className="p-6 rounded-2xl bg-surface border border-line hover:border-line-strong transition-colors flex flex-col"
+              className="p-6 rounded-2xl bg-surface border border-line hover:border-line-strong transition-colors flex flex-col justify-between"
             >
-              <span className="text-muted-2 font-mono text-xs mb-4 block">
-                {edu.type}
-              </span>
-              <h4 className="text-lg font-bold text-fg mb-2">{course}</h4>
-              <p className="text-fg-muted text-sm mb-4">{edu.institution}</p>
-              <p className="text-muted-2 text-sm font-mono mt-auto">
-                {formatPeriod(edu.startDate, edu.endDate, locale, false)}
-              </p>
-              {edu.category === "COURSE" && edu.certificateUrl && (
-                <EducationCertificateViewer
-                  certificateUrl={edu.certificateUrl}
-                  label={viewCertificateLabel}
-                  srTitle={`${course} - ${edu.institution}`}
-                />
-              )}
+              <div>
+                <span className="text-muted-2 font-mono text-xs mb-3 block">
+                  {edu.type}
+                </span>
+                <h4 className="text-lg font-bold text-fg mb-1.5">{course}</h4>
+                <p className="text-fg-muted text-sm mb-3">{edu.institution}</p>
+                {description && (
+                  <p className="text-fg-muted/80 text-sm leading-relaxed mb-4 whitespace-pre-line">
+                    {description}
+                  </p>
+                )}
+              </div>
+
+              <div className="pt-2 mt-auto flex items-center justify-between gap-3 flex-wrap">
+                <p className="text-muted-2 text-xs font-mono">
+                  {formatPeriod(edu.startDate, edu.endDate, locale, false)}
+                </p>
+                {edu.category === "COURSE" && edu.certificateUrl && (
+                  <EducationCertificateViewer
+                    certificateUrl={edu.certificateUrl}
+                    label={viewCertificateLabel}
+                    srTitle={`${course} - ${edu.institution}`}
+                  />
+                )}
+              </div>
             </div>
           );
         })}

@@ -55,6 +55,11 @@ export function EducationList({ educations }: { educations: EducationType[] }) {
             <p className="text-sm text-muted-2">
               {edu.institution} • {new Date(edu.startDate).getFullYear()} - {edu.endDate ? new Date(edu.endDate).getFullYear() : 'Presente'} • <span className="text-xs">{edu.type}</span>
             </p>
+            {edu.description && (
+              <p className="text-xs text-fg-muted/80 line-clamp-2 max-w-xl">
+                {edu.description}
+              </p>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {edu.certificateUrl && (
