@@ -16,10 +16,11 @@ Para fugir do padrão, levantamos cinco estratégias de design e interatividade:
 ## 3. A História Extraída dos Commits (Jan - Set 2026)
 A análise de quase 300 commits revelou 4 grandes momentos que formam a espinha dorsal da sua narrativa:
 
-* **Janeiro e Fevereiro (A Fundação e o CMS):** O portfólio não nasceu como um template simples. Você estruturou uma arquitetura robusta com PostgreSQL, NextAuth, Zod, e transformou o projeto em um monorepo (Turborepo) com um painel de controle próprio (RBAC).
+* **Janeiro e Fevereiro (A Fundação e o CMS):** O portfólio não nasceu como um template simples. Você estruturou uma arquitetura robusta com PostgreSQL, NextAuth, Zod, e transformou o projeto em um monorepo (Turborepo) com um painel de controle próprio e sistema de papéis (RBAC simplificado).
 * **Março e Abril (A Batalha das Mídias e Deploy):** Transição de infraestrutura, remoção do Docker em produção para otimizar com Vercel/Server Actions, e a substituição do Firebase pelo Cloudinary após lidar com "imagens fantasmas" no carrossel. Aplicação do princípio SOLID (Inversão de Dependências).
-* **Agosto (A Era da IA e o Pivô do Avatar):** O mês mais intenso. Implementação de SEO avançado e internacionalização real (banco bilíngue). Criação do motor de busca semântica (RAG com `pgvector`). O grande destaque de UX: a **decisão corajosa de deletar um motor 3D WebGL pesado** para adotar a leveza, rapidez e carisma dos sprites 2D (Visual Novel).
-* **Setembro (Refinamento):** Polimento da interface imersiva do diálogo, testes automatizados (E2E) e organização de módulos (Cursos vs. Formação).
+* **Maio a Julho (O Hiato):** Um período de quase 10 semanas sem commits (última atividade em 15/05, retomada só em agosto). Vale nomear esse intervalo explicitamente na timeline — com um marco curto explicando o motivo real da pausa — em vez de deixar um buraco silencioso que pode passar a impressão de projeto abandonado para quem for direto ao histórico do GitHub.
+* **Agosto (A Era da IA e o Pivô do Avatar):** O mês mais intenso. Implementação de SEO avançado e internacionalização real (banco bilíngue). Criação do motor de busca semântica (RAG com `pgvector`). O grande destaque de UX: no dia 25/08, **duas implementações 3D foram descartadas no mesmo dia** — primeiro o avatar antigo baseado em VRM, depois um motor three.js recém-criado como substituto — antes de pousar na solução final com sprites 2D (Visual Novel). Esse duplo descarte no mesmo dia é um exemplo ainda mais forte para a seção "Cemitério de Ideias" do que uma única decisão de deletar um motor 3D. Também é nesse mês (24/08) que entram os primeiros testes automatizados (unitários e E2E) do assistente/TTS.
+* **Setembro (Refinamento):** Polimento da interface imersiva do diálogo e organização de módulos (Cursos vs. Formação).
 
 ## 4. A Decisão de Interface: Divulgação Progressiva (Sheet / Drawer)
 Para atender tanto o recrutador que tem pressa (escaneamento rápido) quanto o Tech Lead que quer profundidade (avaliação técnica), escolhemos o padrão de **Progressive Disclosure** através da **Opção 2**.
@@ -30,3 +31,8 @@ Para atender tanto o recrutador que tem pressa (escaneamento rápido) quanto o T
    * O relato do problema, o que quebrou e a solução arquitetural.
    * Prints de "antes e depois".
 3. **O Toque de Mestre (Integração IA):** Dentro do painel lateral de detalhes, haverá um botão para perguntar diretamente ao Avatar (Lucas Virtual) sobre aquela fase específica, unindo a navegação do portfólio ao seu sistema RAG de forma orgânica.
+
+### Sugestões de refinamento
+* **Sheet linkável:** abrir o painel via query param (ex.: `?timeline=agosto-avatar`) para que cada marco tenha uma URL própria e compartilhável — sem isso, um recrutador não consegue mandar o link direto de um card específico para o Tech Lead.
+* **Preview no card da home:** além da 1 frase de impacto, um thumbnail pequeno do "antes/depois" no próprio card aumenta a taxa de clique de quem só está escaneando.
+* **Contexto do RAG por fase:** garantir que a base indexada (`chunk` + pgvector) tenha conteúdo segmentado por marco/fase, não só texto solto — senão o botão "pergunte ao Avatar sobre essa fase" tende a responder de forma genérica e quebra a promessa de contexto específico.
