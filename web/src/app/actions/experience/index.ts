@@ -1,7 +1,7 @@
 "use server";
 
 import { makeExperienceService } from "@portfolio/core/src/factories/_index";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag, unstable_cache } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
 export async function createExperienceAction(
@@ -39,6 +39,7 @@ export async function createExperienceAction(
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("experiences");
 
     return { success: true, message: "Experiência criada com sucesso!" };
   } catch (error) {
@@ -82,6 +83,7 @@ export async function reorderExperienceAction(id: number, direction: 'up' | 'dow
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("experiences");
 
     return { success: true };
   } catch (error) {
@@ -123,6 +125,7 @@ export async function updateExperienceAction(
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("experiences");
 
     return { success: true, message: "Experiência atualizada com sucesso!" };
   } catch (error) {
@@ -138,10 +141,16 @@ export async function deleteExperienceAction(id: number) {
 
   revalidatePath("/");
   revalidatePath("/control-painel");
+  updateTag("experiences");
 
   return { success: true, message: "Experiência deletada com sucesso!" };
 }
 
-export async function getExperiencesAction() {
-  return makeExperienceService().getAllExperiences();
-}
+// unstable_cache serializes the result through JSON, so a cache hit returns
+// startDate/endDate as ISO strings instead of Date instances — consumers must
+// already handle both.
+export const getExperiencesAction = unstable_cache(
+  () => makeExperienceService().getAllExperiences(),
+  ["experiences"],
+  { tags: ["experiences"], revalidate: false }
+);

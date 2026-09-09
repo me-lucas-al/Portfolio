@@ -1,7 +1,7 @@
 "use server";
 
 import { makeEducationService } from "@portfolio/core/src/factories/_index";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag, unstable_cache } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 import { IUploadFileDTO } from "@portfolio/core/src/@types/storage-service";
 import { getStorageProvider } from "@/factories/storage-factory";
@@ -82,6 +82,7 @@ export async function createEducationAction(
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("educations");
 
     return { success: true, message: "Formação criada com sucesso!" };
   } catch (error) {
@@ -128,6 +129,7 @@ export async function reorderEducationAction(id: number, direction: 'up' | 'down
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("educations");
 
     return { success: true };
   } catch (error) {
@@ -182,6 +184,7 @@ export async function updateEducationAction(
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("educations");
 
     return { success: true, message: "Formação atualizada com sucesso!" };
   } catch (error) {
@@ -198,10 +201,16 @@ export async function deleteEducationAction(id: number) {
 
   revalidatePath("/");
   revalidatePath("/control-painel");
+  updateTag("educations");
 
   return { success: true, message: "Formação deletada com sucesso!" };
 }
 
-export async function getEducationsAction() {
-  return makeEducationService().getAllEducations();
-}
+// unstable_cache serializes the result through JSON, so a cache hit returns
+// startDate/endDate as ISO strings instead of Date instances — consumers must
+// already handle both.
+export const getEducationsAction = unstable_cache(
+  () => makeEducationService().getAllEducations(),
+  ["educations"],
+  { tags: ["educations"], revalidate: false }
+);

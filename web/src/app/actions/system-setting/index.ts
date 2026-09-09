@@ -1,7 +1,7 @@
 "use server";
 
 import { makeSystemSettingService } from "@portfolio/core/src/factories/_index";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag, unstable_cache } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
 export async function getSystemSettingAction(key: string) {
@@ -9,10 +9,14 @@ export async function getSystemSettingAction(key: string) {
   return setting?.value ?? null;
 }
 
-export async function getAllSystemSettingsAction() {
-  const settings = await makeSystemSettingService().getAll();
-  return settings.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {} as Record<string, string>);
-}
+export const getAllSystemSettingsAction = unstable_cache(
+  async () => {
+    const settings = await makeSystemSettingService().getAll();
+    return settings.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {} as Record<string, string>);
+  },
+  ["system-settings"],
+  { tags: ["system-settings"], revalidate: false }
+);
 
 export async function updateSystemSettingAction(_prevState: unknown, formData: FormData) {
   try {
@@ -30,6 +34,7 @@ export async function updateSystemSettingAction(_prevState: unknown, formData: F
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("system-settings");
 
     return { success: true, message: "Configuração atualizada com sucesso!" };
   } catch (error) {
@@ -55,6 +60,7 @@ export async function updateMultipleSystemSettingsAction(_prevState: unknown, fo
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("system-settings");
 
     return { success: true, message: "Configurações atualizadas com sucesso!" };
   } catch (error) {

@@ -1,7 +1,7 @@
 "use server";
 
 import { makeLinkService } from "@portfolio/core/src/factories/_index";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag, unstable_cache } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 
 export async function createLinkAction(_prevState: unknown, formData: FormData) {
@@ -21,6 +21,7 @@ export async function createLinkAction(_prevState: unknown, formData: FormData) 
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("links");
 
     return { success: true, message: "Link criado com sucesso!" };
   } catch (error) {
@@ -59,6 +60,7 @@ export async function reorderLinkAction(id: number, direction: 'up' | 'down') {
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("links");
 
     return { success: true };
   } catch (error) {
@@ -83,6 +85,7 @@ export async function updateLinkAction(_prevState: unknown, formData: FormData) 
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("links");
 
     return { success: true, message: "Link atualizado com sucesso!" };
   } catch (error) {
@@ -99,10 +102,13 @@ export async function deleteLinkAction(id: number) {
 
   revalidatePath("/");
   revalidatePath("/control-painel");
+  updateTag("links");
 
   return { success: true, message: "Link deletado com sucesso!" };
 }
 
-export async function getLinksAction() {
-  return makeLinkService().getAllLinks();
-}
+export const getLinksAction = unstable_cache(
+  () => makeLinkService().getAllLinks(),
+  ["links"],
+  { tags: ["links"], revalidate: false }
+);
