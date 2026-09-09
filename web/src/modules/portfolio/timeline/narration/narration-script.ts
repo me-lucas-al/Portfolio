@@ -1,7 +1,7 @@
 import type { Locale } from "@/i18n"
 import type { TimelineMilestone } from "../timeline-data"
 
-export type NarrationBeatKind = "title" | "impact" | "problem" | "inflection" | "solution" | "sequence" | "graveyard"
+export type NarrationBeatKind = "story"
 
 export interface NarrationBeat {
   id: string
@@ -10,19 +10,25 @@ export interface NarrationBeat {
   text: string
 }
 
-type StoryBeatKind = "title" | "impact" | "problem" | "inflection" | "solution"
+// One flowing, non-technical beat per milestone, so the assistant tells the journey as a
+// single continuous story from start to finish instead of reading out separate technical
+// fragments. The richer problem/inflection/solution fields stay written-only, for the
+// detail panel and for buildMilestonePhaseContext below.
+function buildStoryBeat(milestone: TimelineMilestone, locale: Locale): NarrationBeat | null {
+  const text = (locale === "en" ? milestone.narrationEn : milestone.narrationPt).trim()
+  if (!text) return null
 
-const STORY_BEAT_ORDER: StoryBeatKind[] = ["impact", "problem", "inflection", "solution"]
+  return { id: `${milestone.slug}-story`, milestoneSlug: milestone.slug, kind: "story", text }
+}
 
-function pickStoryBeatText(milestone: TimelineMilestone, kind: StoryBeatKind, locale: Locale): string {
+type PhaseContextKind = "impact" | "problem" | "inflection" | "solution"
+
+const PHASE_CONTEXT_STORY_KINDS: PhaseContextKind[] = ["impact", "problem", "inflection", "solution"]
+
+function pickPhaseContextText(milestone: TimelineMilestone, kind: PhaseContextKind, locale: Locale): string {
   const isEn = locale === "en"
 
   switch (kind) {
-    case "title": {
-      const dateLabel = isEn ? milestone.dateLabelEn : milestone.dateLabelPt
-      const title = isEn ? milestone.titleEn : milestone.titlePt
-      return `${dateLabel}: ${title}`
-    }
     case "impact":
       return isEn ? milestone.impactEn : milestone.impactPt
     case "problem":
@@ -32,34 +38,6 @@ function pickStoryBeatText(milestone: TimelineMilestone, kind: StoryBeatKind, lo
     case "solution":
       return isEn ? milestone.solutionEn : milestone.solutionPt
   }
-}
-
-function buildStoryBeats(milestone: TimelineMilestone, locale: Locale): NarrationBeat[] {
-  return STORY_BEAT_ORDER.map((kind) => ({ kind, text: pickStoryBeatText(milestone, kind, locale).trim() }))
-    .filter((beat) => beat.text.length > 0)
-    .map((beat) => ({ id: `${milestone.slug}-${beat.kind}`, milestoneSlug: milestone.slug, ...beat }))
-}
-
-function buildSequenceBeats(milestone: TimelineMilestone, locale: Locale): NarrationBeat[] {
-  const isEn = locale === "en"
-
-  return (milestone.sequence ?? []).map((step, index) => ({
-    id: `${milestone.slug}-sequence-${index}`,
-    milestoneSlug: milestone.slug,
-    kind: "sequence" as const,
-    text: `${isEn ? step.dateEn : step.datePt}: ${isEn ? step.labelEn : step.labelPt}`,
-  }))
-}
-
-function buildGraveyardBeats(milestone: TimelineMilestone, locale: Locale): NarrationBeat[] {
-  const isEn = locale === "en"
-
-  return (milestone.graveyard ?? []).map((idea, index) => ({
-    id: `${milestone.slug}-graveyard-${index}`,
-    milestoneSlug: milestone.slug,
-    kind: "graveyard" as const,
-    text: `${isEn ? idea.titleEn : idea.titlePt}: ${isEn ? idea.descriptionEn : idea.descriptionPt}`,
-  }))
 }
 
 function buildMilestoneDetailText(milestone: TimelineMilestone, locale: Locale): string {
@@ -76,12 +54,10 @@ function buildMilestoneDetailText(milestone: TimelineMilestone, locale: Locale):
   return [sequenceText, graveyardText].filter((text) => text.length > 0).join("\n\n")
 }
 
-const PHASE_CONTEXT_STORY_KINDS: StoryBeatKind[] = ["impact", "problem", "inflection", "solution"]
-
 export function buildMilestonePhaseContext(milestone: TimelineMilestone, locale: Locale): string {
-  const storyText = PHASE_CONTEXT_STORY_KINDS.map((kind) => pickStoryBeatText(milestone, kind, locale).trim()).filter(
-    (text) => text.length > 0
-  )
+  const storyText = PHASE_CONTEXT_STORY_KINDS.map((kind) =>
+    pickPhaseContextText(milestone, kind, locale).trim()
+  ).filter((text) => text.length > 0)
 
   const detailText = buildMilestoneDetailText(milestone, locale)
 
@@ -89,9 +65,7 @@ export function buildMilestonePhaseContext(milestone: TimelineMilestone, locale:
 }
 
 export function buildNarrationScript(milestones: TimelineMilestone[], locale: Locale): NarrationBeat[] {
-  return milestones.flatMap((milestone) => [
-    ...buildStoryBeats(milestone, locale),
-    ...buildSequenceBeats(milestone, locale),
-    ...buildGraveyardBeats(milestone, locale),
-  ])
+  return milestones
+    .map((milestone) => buildStoryBeat(milestone, locale))
+    .filter((beat): beat is NarrationBeat => beat !== null)
 }

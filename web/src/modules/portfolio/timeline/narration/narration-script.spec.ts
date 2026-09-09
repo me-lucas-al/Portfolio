@@ -3,92 +3,37 @@ import { timelineMilestones } from "../timeline-data"
 import { buildMilestonePhaseContext, buildNarrationScript } from "./narration-script"
 
 describe("buildNarrationScript", () => {
-  it("orders beats as impact, problem, inflection, solution within each milestone, without narrating the title", () => {
+  it("produces exactly one story beat per milestone, in order", () => {
     const script = buildNarrationScript(timelineMilestones, "pt")
-    const firstMilestoneBeats = script.filter((beat) => beat.milestoneSlug === "fundacao-cms")
 
-    expect(firstMilestoneBeats.map((beat) => beat.kind)).toEqual([
-      "impact",
-      "problem",
-      "inflection",
-      "solution",
-    ])
+    expect(script.map((beat) => beat.milestoneSlug)).toEqual(
+      timelineMilestones.map((milestone) => milestone.slug)
+    )
+    expect(script.every((beat) => beat.kind === "story")).toBe(true)
   })
 
   it("uses pt fields for locale pt", () => {
     const script = buildNarrationScript(timelineMilestones, "pt")
-    const impactBeat = script.find((beat) => beat.id === "fundacao-cms-impact")
+    const beat = script.find((item) => item.id === "fundacao-cms-story")
 
-    expect(impactBeat?.text).toBe(timelineMilestones[0].impactPt)
+    expect(beat?.text).toBe(timelineMilestones[0].narrationPt)
   })
 
   it("uses en fields for locale en", () => {
     const script = buildNarrationScript(timelineMilestones, "en")
-    const impactBeat = script.find((beat) => beat.id === "fundacao-cms-impact")
+    const beat = script.find((item) => item.id === "fundacao-cms-story")
 
-    expect(impactBeat?.text).toBe(timelineMilestones[0].impactEn)
+    expect(beat?.text).toBe(timelineMilestones[0].narrationEn)
   })
 
-  it("skips empty fields, such as a missing inflection", () => {
-    const script = buildNarrationScript(timelineMilestones, "pt")
-    const hiatoBeats = script.filter((beat) => beat.milestoneSlug === "hiato")
+  it("skips a milestone entirely if it has no narration text", () => {
+    const withoutNarration = timelineMilestones.map((milestone, index) =>
+      index === 1 ? { ...milestone, narrationPt: "", narrationEn: "" } : milestone
+    )
+    const script = buildNarrationScript(withoutNarration, "pt")
 
-    expect(hiatoBeats.map((beat) => beat.kind)).toEqual(["impact", "problem", "inflection", "solution"])
-  })
-
-  it("still produces beats for gap-kind milestones", () => {
-    const script = buildNarrationScript(timelineMilestones, "pt")
-    const hiatoBeats = script.filter((beat) => beat.milestoneSlug === "hiato")
-
-    expect(hiatoBeats.length).toBeGreaterThan(0)
-  })
-
-  it("produces one flat, ordered list across all milestones", () => {
-    const script = buildNarrationScript(timelineMilestones, "pt")
-    const slugsInOrder = [...new Set(script.map((beat) => beat.milestoneSlug))]
-
-    expect(slugsInOrder).toEqual(timelineMilestones.map((milestone) => milestone.slug))
-  })
-
-  it("narrates sequence steps and graveyard ideas after the core story beats", () => {
-    const script = buildNarrationScript(timelineMilestones, "pt")
-    const milestone = timelineMilestones.find((item) => item.slug === "era-ia-avatar")!
-    const beats = script.filter((beat) => beat.milestoneSlug === "era-ia-avatar")
-
-    const expectedKinds = [
-      "impact",
-      "problem",
-      "inflection",
-      "solution",
-      ...milestone.sequence!.map(() => "sequence"),
-      ...milestone.graveyard!.map(() => "graveyard"),
-    ]
-    expect(beats.map((beat) => beat.kind)).toEqual(expectedKinds)
-  })
-
-  it("narrates a sequence step as its date and label, in the requested locale", () => {
-    const script = buildNarrationScript(timelineMilestones, "en")
-    const milestone = timelineMilestones.find((item) => item.slug === "era-ia-avatar")!
-    const firstSequenceBeat = script.find((beat) => beat.id === "era-ia-avatar-sequence-0")
-    const step = milestone.sequence![0]
-
-    expect(firstSequenceBeat?.text).toBe(`${step.dateEn}: ${step.labelEn}`)
-  })
-
-  it("narrates a graveyard idea as its title and description", () => {
-    const script = buildNarrationScript(timelineMilestones, "pt")
-    const milestone = timelineMilestones.find((item) => item.slug === "era-ia-avatar")!
-    const firstGraveyardBeat = script.find((beat) => beat.id === "era-ia-avatar-graveyard-0")
-    const idea = milestone.graveyard![0]
-
-    expect(firstGraveyardBeat?.text).toBe(`${idea.titlePt}: ${idea.descriptionPt}`)
-  })
-
-  it("skips sequence/graveyard beats for milestones that have none", () => {
-    const script = buildNarrationScript(timelineMilestones, "pt")
-    const fundacaoBeats = script.filter((beat) => beat.milestoneSlug === "fundacao-cms")
-
-    expect(fundacaoBeats.some((beat) => beat.kind === "sequence" || beat.kind === "graveyard")).toBe(false)
+    expect(script.some((beat) => beat.milestoneSlug === withoutNarration[1].slug)).toBe(false)
+    expect(script.length).toBe(timelineMilestones.length - 1)
   })
 })
 

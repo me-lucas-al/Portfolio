@@ -27,6 +27,11 @@ export interface TimelineMilestone {
   impactPt: string
   impactEn: string
   tags: string[]
+  // A single flowing, non-technical paragraph, meant to be spoken by the assistant as
+  // one continuous story beat. Kept separate from problem/inflection/solution below,
+  // which stay technical for the written detail panel a Tech Lead reads.
+  narrationPt: string
+  narrationEn: string
   problemPt: string
   problemEn: string
   inflectionPt: string
@@ -50,6 +55,10 @@ export const timelineMilestones: TimelineMilestone[] = [
     impactPt: "Imaginei a cena: terminar um curso, mexer no código e publicar o site inteiro de novo só pra acrescentar um item numa lista. Foi aí que decidi que esse portfólio precisava se atualizar sozinho, sem eu ter que abrir o código toda vez.",
     impactEn: "I pictured the scene: finish a course, tweak the code, and publish the whole site again just to add one item to a list. That's when I decided this portfolio needed to update itself, without me having to open the code every time.",
     tags: ["Next.js", "PostgreSQL", "Prisma", "NextAuth", "Zod", "Turborepo"],
+    narrationPt:
+      "No começo eu só queria ter um portfólio online. Mas pensei bem: eu ia estar atualizando esse site toda semana, com projeto novo, certificado novo, e não queria ter que mexer no código toda vez só pra isso. Então, antes de qualquer coisa, construí um jeito de eu mesmo entrar no site e editar tudo sozinho, sem precisar programar de novo cada vez. Foi aí que esse portfólio deixou de ser só uma página parada e virou algo vivo, que eu podia atualizar na hora que quisesse.",
+    narrationEn:
+      "In the beginning, I just wanted an online portfolio. But I thought about it: I'd be updating this site every week, a new project here, a new certificate there, and I didn't want to touch the code every single time just for that. So, before anything else, I built a way to log in myself and edit everything on my own, without having to code it again each time. That's when this portfolio stopped being just a static page and became something alive, something I could update whenever I wanted.",
     problemPt:
       "No começo cheguei a cogitar um portfólio simples, só umas páginas estáticas: era a solução óbvia, a que qualquer tutorial recomendaria pra quem só quer algo no ar rápido. Mas bastou imaginar a rotina real pra essa ideia perder a graça: terminar um curso, abrir o código, editar um array à mão, redeployar o site inteiro só para acrescentar uma linha numa lista de certificações. Eu sabia, antes mesmo de escrever a primeira linha, que ia estar atualizando esse portfólio toda semana, um projeto novo aqui, uma certificação ali, e não queria que cada atualização virasse uma pequena via-crúcis de código só para exibir uma conquista.",
     problemEn:
@@ -73,6 +82,10 @@ export const timelineMilestones: TimelineMilestone[] = [
     impactPt: "A imagem simplesmente não aparecia, do nada, sem um padrão que desse pra entender, como se o serviço que guardava as fotos esquecesse delas no meio do caminho. E, por baixo do capô, a estrutura toda que hospedava o site já pesava mais do que devia.",
     impactEn: "The image would simply vanish, out of nowhere, with no pattern I could pin down, as if the service storing the photos forgot about them halfway through. And under the hood, the whole structure hosting the site already weighed more than it should.",
     tags: ["Vercel", "Server Actions", "Cloudinary", "SOLID"],
+    narrationPt:
+      "Depois de um tempo, comecei a notar um problema estranho: as fotos dos meus projetos, às vezes, simplesmente não apareciam no site, sem motivo nenhum. Tentei entender o que estava acontecendo, mas o erro ia e voltava sem explicação. Ao mesmo tempo, percebi que toda a estrutura por trás do site estava mais pesada e complicada do que precisava ser, só pra hospedar um portfólio pessoal. Decidi então trocar de vez o jeito como as imagens eram guardadas e simplificar toda essa estrutura. Deu certo: o site ficou mais leve, mais estável, e o problema nunca mais voltou.",
+    narrationEn:
+      "After a while, I started noticing a strange problem: the photos of my projects would sometimes just not show up on the site, with no clear reason. I tried to figure out what was going on, but the error kept coming and going without an explanation. At the same time, I realized the whole structure behind the site had gotten heavier and more complicated than it needed to be, just to host a personal portfolio. So I decided to change the way images were stored for good, and simplify that whole structure. It worked: the site got lighter, more stable, and the problem never came back.",
     problemPt:
       "Comecei a notar imagens do carrossel de projetos que simplesmente não carregavam: a página pedia a imagem, o link existia, o arquivo devia estar lá, mas às vezes ele não vinha, como se o Firebase esquecesse dele no meio do caminho. Tentei investigar de várias formas (recarregando, trocando de rede, olhando os logs), mas o problema ia e voltava sem um padrão claro, o que é o pior tipo de bug: intermitente e sem uma causa óbvia para apontar. Enquanto isso, em paralelo, o Docker rodando em produção só para hospedar um portfólio pessoal já parecia peso morto: uma camada inteira de complexidade e custo de manutenção para um projeto que não precisava de nada daquilo.",
     problemEn:
@@ -96,6 +109,10 @@ export const timelineMilestones: TimelineMilestone[] = [
     impactPt: "Passei semanas sem tocar em uma linha de código, convencido de que o portfólio estava pronto. Só que, toda vez que eu revisitava o site, notava mais alguma coisa que não parecia \"minha\".",
     impactEn: "I went weeks without touching a line of code, convinced the portfolio was done. But every time I revisited the site, I noticed one more thing that didn't feel like \"me\".",
     tags: [],
+    narrationPt:
+      "Depois de resolver aquilo, cheguei a achar que o portfólio estava pronto. Fiquei um bom tempo sem mexer em nada. Só que, toda vez que eu voltava pra olhar o site, alguma coisa me incomodava: parecia bonito, mas não parecia meu de verdade. Essa sensação foi crescendo aos poucos, até virar uma vontade forte de voltar e mudar tudo de novo.",
+    narrationEn:
+      "After fixing that, I actually thought the portfolio was done. I went a good while without touching anything. But every time I came back to look at the site, something bothered me: it looked nice, but it didn't really feel like mine. That feeling grew little by little, until it became a strong urge to come back and change everything again.",
     problemPt:
       "Depois da correria pra resolver mídia e infraestrutura, cheguei a acreditar de verdade que o portfólio estava pronto: no ar, funcionando, sem bugs visíveis, cumprindo o que um portfólio precisa cumprir. Passei um bom tempo sem tocar em uma linha de código, achando que essa fase tinha se encerrado. Mas, aos poucos, esse silêncio começou a incomodar mais do que eu esperava: cada vez que eu revisitava o site, mesmo só de passagem, notava mais alguma coisa que parecia datada, genérica, ou que simplesmente não parecia \"minha\", como se o site estivesse tecnicamente correto, mas emocionalmente vazio. A insatisfação foi crescendo bem devagar, quase sem eu perceber, até virar uma vontade real e concreta de mudar tudo de novo.",
     problemEn:
@@ -119,6 +136,10 @@ export const timelineMilestones: TimelineMilestone[] = [
     impactPt: "Voltando do hiato, olhei pro site e pensei: isso ainda não parece meu. E se desse pra perguntar alguma coisa sobre mim e uma IA respondesse na hora?",
     impactEn: "Coming back from the gap, I looked at the site and thought: this still doesn't feel like me. What if someone could ask a question about me and an AI answered right away?",
     tags: ["Product Thinking", "IA", "Identidade Visual"],
+    narrationPt:
+      "Voltando depois desse tempo parado, olhei pro site e pensei: isso ainda não parece com quem eu sou. E se alguém pudesse me perguntar alguma coisa e recebesse uma resposta na hora, como se estivesse conversando comigo mesmo? Juntei então duas ideias na minha cabeça: mudar a cara do site pra algo mais pessoal, e criar um assistente inteligente que soubesse falar sobre mim, minha trajetória e meus projetos. Decidi tocar as duas coisas ao mesmo tempo, e essa decisão abriu a fase mais intensa de todo o projeto.",
+    narrationEn:
+      "Coming back after that quiet stretch, I looked at the site and thought: this still doesn't feel like me. What if someone could ask me a question and get an answer right away, like they were talking to me? So I combined two ideas in my head: changing the look of the site into something more personal, and building a smart assistant that could talk about me, my journey and my projects. I decided to work on both at once, and that decision kicked off the most intense phase of the whole project.",
     problemPt:
       "O portfólio funcionava, mas continuava com a cara de qualquer outro portfólio: preto e azul, sem nada que dissesse quem eu sou de verdade. E quem visitava só podia ler o que eu escrevi, sem nenhuma forma de perguntar algo além do que já estava na tela.",
     problemEn:
@@ -142,6 +163,10 @@ export const timelineMilestones: TimelineMilestone[] = [
     impactPt: "Testei o 3D, mas além de pesado, era complexo demais pra um portfólio pessoal. O 2D inspirado no Xbox 360 acabou ficando mais simples, mais leve e, pra minha surpresa, até mais bonito.",
     impactEn: "I tried 3D, but besides being heavy, it was too complex for a personal portfolio. The 2D look inspired by Xbox 360 ended up simpler, lighter, and, to my surprise, even prettier.",
     tags: ["RAG", "pgvector", "Gemini", "Three.js", "SEO", "i18n"],
+    narrationPt:
+      "O assistente que eu tinha criado funcionava bem, mas parecia genérico, como o chat de suporte de qualquer empresa. E o site continuava sem uma cara própria. Resolvi dar um rosto a esse assistente. Testei um jeito bem elaborado e realista de fazer isso, mas achei pesado e complicado demais pra o que eu precisava. No mesmo dia, tentei outro caminho, ainda mais trabalhoso, e também não ficou bom. Foi então que percebi que a resposta certa era bem mais simples. Criei um desenho bem mais leve pro assistente, inspirado em jogos antigos, e, pra minha surpresa, ficou muito mais bonito e com muito mais personalidade do que as tentativas complicadas. No dia seguinte, aproveitei o embalo e troquei as cores frias do site por tons quentes, e finalmente o portfólio ganhou uma identidade visual própria.",
+    narrationEn:
+      "The assistant I had built worked fine, but it felt generic, like the support chat of any company. And the site still didn't have a look of its own. I decided to give that assistant a face. I tried a very elaborate, realistic way of doing that, but it felt too heavy and complex for what I actually needed. That same day, I tried another path, even more work, and it didn't turn out well either. That's when I realized the right answer was much simpler. I made a much lighter drawing for the assistant, inspired by old video games, and, to my surprise, it turned out way prettier and full of much more personality than the complicated attempts. The next day, riding that momentum, I swapped the site's cold colors for warm ones, and the portfolio finally got a look of its own.",
     problemPt:
       "Voltei ao projeto com domínio próprio e SEO avançado no ar, dois passos que já ajudavam a deixar claro que aquilo era meu e não um template qualquer. Mas tinha um problema que me incomodava mais do que qualquer bug técnico: o assistente virtual que eu tinha acabado de criar funcionava, respondia bem, tecnicamente estava correto, mas era genérico. Podia ser o chat de suporte de qualquer empresa, sem nenhuma personalidade, flat e indiferente. E a cara do site, ainda em preto e azul sem graça, o visual \"seguro\" que qualquer template usaria, também não parecia ter identidade nenhuma.",
     problemEn:
@@ -221,6 +246,10 @@ export const timelineMilestones: TimelineMilestone[] = [
     impactPt: "A conversa com o avatar ainda tinha arestas cruas, e Formação Acadêmica e Cursos viviam misturados numa lista só, difícil de escanear rápido. Faltava só arrumar essas duas pontas soltas pra fechar o projeto.",
     impactEn: "The conversation with the avatar still had rough edges, and Academic Background and Courses lived mixed into a single list, hard to scan quickly. Only these two loose ends were left to close out the project.",
     tags: ["UI polish", "Cursos", "Certificações"],
+    narrationPt:
+      "Com o visual e o assistente resolvidos, sobraram só alguns detalhes menores. A conversa com o assistente ainda tinha algumas partes meio cruas, e a lista de formação e cursos estava tudo misturado, difícil de entender rápido o que era faculdade e o que era curso extra. Separei essas duas listas e deixei a conversa com o assistente com a mesma qualidade visual do resto do site. Foi o último polimento antes de fechar essa fase do projeto.",
+    narrationEn:
+      "With the look and the assistant settled, only a few smaller details were left. The conversation with the assistant still had some rough parts, and the education and courses list was all mixed together, hard to quickly tell apart what was college and what was an extra course. I split those two lists and brought the assistant's conversation up to the same visual quality as the rest of the site. It was the last bit of polish before closing that phase of the project.",
     problemPt:
       "Com a identidade visual e o avatar resolvidos, sobraram os detalhes menores, mas ainda incômodos: a conversa com o avatar tinha umas arestas visuais meio cruas, funcional mas sem o polimento que o resto do site já tinha. E, numa parte totalmente diferente do site, Formação Acadêmica e Cursos apareciam misturados numa lista só, o que dificultava bater o olho e entender rápido o que era formação formal (faculdade, técnico) e o que era aprendizado por conta própria (cursos livres, certificações).",
     problemEn:
@@ -244,6 +273,10 @@ export const timelineMilestones: TimelineMilestone[] = [
     impactPt: "A professora chegou do meu lado numa aula de Arquitetura de Software e perguntou o que eu estava fazendo. No meio da conversa sobre o meu assistente virtual, descobri que ela trabalha com UX, e o que ela me disse mudou o rumo do projeto inteiro.",
     impactEn: "The professor walked up next to me during an Architecture of Software class and asked what I was working on. Midway through telling her about my virtual assistant, I found out she works in UX, and what she told me changed the whole direction of the project.",
     tags: ["UX Writing", "Storytelling", "shadcn/ui Sheet"],
+    narrationPt:
+      "Com tudo isso pronto, achei que o portfólio estava, enfim, completo. Só que, numa aula qualquer, uma professora chegou do meu lado e perguntou o que eu estava fazendo. Comecei a contar sobre o assistente e o resto do projeto, e no meio da conversa descobri que ela trabalha com design de experiência do usuário. Ela então me deu um conselho simples, mas que mudou tudo: em vez de só mostrar o resultado final, eu deveria contar a história de como cheguei até ali, com os problemas, as mudanças de rumo e as ideias que não deram certo pelo caminho. Foi esse conselho que virou exatamente esta seção que você está vendo agora.",
+    narrationEn:
+      "With all of that done, I thought the portfolio was finally complete. But then, during an ordinary class, a professor came over and asked what I was working on. I started telling her about the assistant and the rest of the project, and somewhere in that conversation I found out she works in user experience design. She then gave me a simple piece of advice that changed everything: instead of just showing the final result, I should tell the story of how I got there, the problems, the changes in direction, and the ideas that didn't work out along the way. That advice is exactly what turned into this very section you're looking at right now.",
     problemPt:
       "Com o Refinamento fechado, o portfólio estava tecnicamente completo: projetos, experiências, cursos, um assistente com identidade própria. Mas continuava sendo, no fundo, uma vitrine estática: mostrava o resultado final de cada seção, sem contar nada sobre o caminho pra chegar lá. Quase 300 commits de história, decisões, erros e recomeços ficavam invisíveis pra quem só via o produto pronto.",
     problemEn:
