@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { AssistantDialogueBar } from "./assistant-dialogue-bar"
 import { useAssistantChat } from "./use-assistant-chat"
+import { acknowledgeAssistantOpenRequest, setAssistantOpenState, useAssistantBridge } from "./contract"
 import {
   AvatarStage,
   classifyTone,
@@ -21,6 +22,7 @@ interface AssistantWidgetProps {
 
 export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
   const [open, setOpen] = useState(false)
+  const bridge = useAssistantBridge()
   const { isSpeaking, isPreparingVoice, speak, stopSpeaking } = useSpeechPlayer()
   const { startTypingSpeech, stopTypingSpeech } = useTypingSpeech()
   const {
@@ -35,7 +37,7 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
     handleChatInputKeyDown,
     cancelPending,
     clearChat,
-  } = useAssistantChat(dict, locale, {
+  } = useAssistantChat(dict, locale, bridge.phaseContext, {
 
     onModelMessage: (message, messageId) => {
       if (message.speech) speak(message.speech.url)
@@ -48,6 +50,13 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
       stopTypingSpeech()
     },
   })
+
+  useEffect(() => {
+    if (!bridge.openRequested) return
+
+    setOpen(true)
+    acknowledgeAssistantOpenRequest()
+  }, [bridge.openRequested])
 
   useEffect(() => {
     if (!open) {
@@ -66,7 +75,11 @@ export function AssistantWidget({ dict, locale }: AssistantWidgetProps) {
 
   useEffect(() => {
     setAvatarOverlayState(open)
-    return () => setAvatarOverlayState(false)
+    setAssistantOpenState(open)
+    return () => {
+      setAvatarOverlayState(false)
+      setAssistantOpenState(false)
+    }
   }, [open])
 
   return (
