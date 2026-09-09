@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { MessageCircleQuestion, X } from "lucide-react"
+import { ChevronsRight, MessageCircleQuestion, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useTypingSpeech } from "@/modules/portfolio/avatar/contract"
+import { skipTypingSpeech, useTypingSpeech } from "@/modules/portfolio/avatar/contract"
 import { useAssistantBridge } from "@/modules/portfolio/assistant/contract"
 import {
   advanceToNextBeat,
@@ -18,6 +18,7 @@ export interface NarrationHudDict {
   narrationContinue: string
   narrationExit: string
   askAboutPhase: string
+  skipNarrationBeat: string
   outro: string
 }
 
@@ -80,6 +81,18 @@ export function NarrationHud({ dict }: NarrationHudProps) {
       </span>
 
       <div className="flex items-center gap-2">
+        {!isFinished && isTyping && (
+          <Button
+            type="button"
+            size="icon-sm"
+            variant="ghost"
+            onClick={skipTypingSpeech}
+            aria-label={dict.skipNarrationBeat}
+            title={dict.skipNarrationBeat}
+          >
+            <ChevronsRight className="size-4" />
+          </Button>
+        )}
         {!isFinished && !isPausedForQuestion && (
           <Button type="button" size="sm" variant="outline" onClick={pauseNarrationForQuestion}>
             <MessageCircleQuestion className="size-4" />

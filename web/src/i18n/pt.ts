@@ -42,6 +42,7 @@ export interface Dictionary {
     narrationContinue: string
     narrationExit: string
     askAboutPhase: string
+    skipNarrationBeat: string
   }
   contact: {
     title: string
@@ -131,6 +132,7 @@ export const pt: Dictionary = {
     narrationContinue: "Continuar",
     narrationExit: "Sair da narração",
     askAboutPhase: "Perguntar",
+    skipNarrationBeat: "Pular para o fim desta fala",
   },
   contact: {
     title: "Contatos",

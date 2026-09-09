@@ -45,6 +45,7 @@ export const en: Dictionary = {
     narrationContinue: 'Continue',
     narrationExit: 'Exit narration',
     askAboutPhase: 'Ask about this',
+    skipNarrationBeat: 'Skip to the end of this line',
   },
   contact: {
     title: 'Contact',

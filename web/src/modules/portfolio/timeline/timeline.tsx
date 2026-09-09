@@ -88,6 +88,7 @@ export function Timeline({ locale }: TimelineProps) {
           narrationContinue: dict.narrationContinue,
           narrationExit: dict.narrationExit,
           askAboutPhase: dict.askAboutPhase,
+          skipNarrationBeat: dict.skipNarrationBeat,
           outro: dict.outro,
         }}
       />
