@@ -11,8 +11,8 @@ function formatPeriod(
 ) {
   const intlLocale = locale === "en" ? "en-US" : "pt-BR";
   const options: Intl.DateTimeFormatOptions = showMonth
-    ? { month: "short", year: "numeric" }
-    : { year: "numeric" };
+    ? { month: "short", year: "numeric", timeZone: "UTC" }
+    : { year: "numeric", timeZone: "UTC" };
 
   const formatter = new Intl.DateTimeFormat(intlLocale, options);
 
@@ -32,6 +32,7 @@ interface EducationGroupProps {
   educations: EducationType[];
   locale: Locale;
   viewCertificateLabel: string;
+  showMonth?: boolean;
 }
 
 export function EducationGroup({
@@ -39,6 +40,7 @@ export function EducationGroup({
   educations,
   locale,
   viewCertificateLabel,
+  showMonth,
 }: EducationGroupProps) {
   if (!educations || educations.length === 0) return null;
 
@@ -58,6 +60,7 @@ export function EducationGroup({
           const course = locale === "en" ? (edu.courseEn || edu.course) : edu.course;
           const type = locale === "en" ? (edu.typeEn || edu.type) : edu.type;
           const description = locale === "en" ? (edu.descriptionEn || edu.description) : edu.description;
+          const shouldShowMonth = showMonth ?? (edu.category === "COURSE");
 
           return (
             <div
@@ -84,7 +87,7 @@ export function EducationGroup({
 
               <div className="pt-4 mt-auto border-t border-line/40 flex items-center justify-between gap-3 flex-wrap">
                 <p className="text-muted-2 text-xs font-mono">
-                  {formatPeriod(edu.startDate, edu.endDate, locale, false)}
+                  {formatPeriod(edu.startDate, edu.endDate, locale, shouldShowMonth)}
                 </p>
                 {edu.category === "COURSE" && edu.certificateUrl && (
                   <EducationCertificateViewer

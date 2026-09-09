@@ -42,6 +42,7 @@ export function Education({ educations, locale }: EducationProps) {
             educations={courseEducations}
             locale={locale}
             viewCertificateLabel={dict.viewCertificate}
+            showMonth={true}
           />
         </div>
       )}

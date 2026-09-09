@@ -10,8 +10,8 @@ function formatPeriod(
 ) {
   const intlLocale = locale === "en" ? "en-US" : "pt-BR";
   const options: Intl.DateTimeFormatOptions = showMonth
-    ? { month: "short", year: "numeric" }
-    : { year: "numeric" };
+    ? { month: "short", year: "numeric", timeZone: "UTC" }
+    : { year: "numeric", timeZone: "UTC" };
 
   const formatter = new Intl.DateTimeFormat(intlLocale, options);
 
