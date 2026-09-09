@@ -1,0 +1,65 @@
+"use client"
+
+import { BookOpen, Moon } from "lucide-react"
+import type { Locale } from "@/i18n"
+import type { TimelineMilestone } from "./timeline-data"
+import { useTimelineSheet } from "./use-timeline-sheet"
+
+interface TimelineCardProps {
+  milestone: TimelineMilestone
+  locale: Locale
+  isLast: boolean
+}
+
+export function TimelineCard({ milestone, locale, isLast }: TimelineCardProps) {
+  const { openTimelineMilestone } = useTimelineSheet()
+
+  const isGap = milestone.kind === "gap"
+  const dateLabel = locale === "en" ? milestone.dateLabelEn : milestone.dateLabelPt
+  const title = locale === "en" ? milestone.titleEn : milestone.titlePt
+  const impact = locale === "en" ? milestone.impactEn : milestone.impactPt
+
+  return (
+    <div className={`flex gap-4 md:gap-6 ${isLast ? "" : "pb-10"}`}>
+      <div className="relative flex w-8 shrink-0 flex-col items-center md:w-10">
+        <span
+          className={`z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${
+            isGap ? "border-line-strong bg-ink" : "border-brand/40 bg-brand/15"
+          }`}
+        >
+          {isGap ? (
+            <Moon className="h-3 w-3 text-muted-2" />
+          ) : (
+            <BookOpen className="h-3.5 w-3.5 text-brand" />
+          )}
+        </span>
+        {!isLast && (
+          <span className="absolute left-1/2 top-6 bottom-0 w-1 -translate-x-1/2 bg-line-strong" />
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={() => openTimelineMilestone(milestone.slug)}
+        className={`group min-w-0 flex-1 text-left ${isGap ? "opacity-70" : ""}`}
+      >
+        <span className="font-mono text-sm text-muted-2">{dateLabel}</span>
+        <h4 className="mt-1 text-xl font-bold text-fg transition-colors group-hover:text-brand">
+          {title}
+        </h4>
+        <p className="mt-2 text-sm text-fg-muted">{impact}</p>
+        {!isGap && milestone.tags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {milestone.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-line bg-surface-2 px-2.5 py-1 font-mono text-xs text-fg-muted"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </button>
+    </div>
+  )
+}

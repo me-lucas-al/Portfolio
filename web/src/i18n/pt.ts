@@ -5,6 +5,7 @@ export interface Dictionary {
     projects: string
     experience: string
     education: string
+    timeline: string
     contact: string
   }
   hero: {
@@ -23,6 +24,24 @@ export interface Dictionary {
     viewCertificate: string
     showMore: string
     showLess: string
+  }
+  timeline: {
+    title: string
+    subtitle: string
+    problem: string
+    inflection: string
+    solution: string
+    sequenceTitle: string
+    graveyardTitle: string
+    discarded: string
+    viewBefore: string
+    viewAfter: string
+    outro: string
+    narrateCta: string
+    narrateFromHere: string
+    narrationContinue: string
+    narrationExit: string
+    askAboutPhase: string
   }
   contact: {
     title: string
@@ -74,6 +93,7 @@ export const pt: Dictionary = {
     projects: "Projetos",
     experience: "Experiência",
     education: "Formação",
+    timeline: "Jornada",
     contact: "Contatos",
   },
   hero: {
@@ -93,6 +113,24 @@ export const pt: Dictionary = {
     viewCertificate: "Ver certificado",
     showMore: "Ver mais",
     showLess: "Ver menos",
+  },
+  timeline: {
+    title: "Jornada do Projeto",
+    subtitle: "De um portfólio simples a um sistema vivo — o que aconteceu, os problemas e as decisões pelo caminho.",
+    problem: "O Problema",
+    inflection: "Ponto de Inflexão",
+    solution: "A Solução",
+    sequenceTitle: "Cronologia Detalhada",
+    graveyardTitle: "Cemitério de Ideias",
+    discarded: "Descartado",
+    viewBefore: "Ver antes",
+    viewAfter: "Ver depois",
+    outro: "o próximo capítulo está sendo escrito...",
+    narrateCta: "Contar minha jornada",
+    narrateFromHere: "Ouvir esta fase",
+    narrationContinue: "Continuar",
+    narrationExit: "Sair da narração",
+    askAboutPhase: "Perguntar",
   },
   contact: {
     title: "Contatos",
