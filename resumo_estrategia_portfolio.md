@@ -8,7 +8,7 @@ A ideia inicial era simples: ter um portfólio pessoal. Mas desde o início fico
 A escolha de stack (Next.js, PostgreSQL, Prisma, e o restante) também não foi por hype: foram as tecnologias com que já se tinha mais domínio e prática, priorizando velocidade de execução e confiança no que já se conhecia bem sobre experimentar algo novo sem necessidade.
 
 ## 1. A Ideia Original
-Tudo começou com um conselho valioso de uma professora de UX: **contar a história do portfólio de forma criativa**. A proposta é ir além de uma vitrine estática e mostrar os problemas enfrentados, as mudanças de rota (pivôs), como as ideias surgiram e resolvê-los por meio de uma linha do tempo. Isso humaniza o projeto e demonstra grande maturidade técnica e de produto.
+Tudo começou com um conselho valioso em uma aula Arquitetura de Software, quando despretensiosamente a professora chegou do meu lado e começou a me perguntar o que eu estava fazendo, e disse que tava refinando meu portfólio e falei sobre a ideia que tive do meu assistente e etc. Foi quando no meio da conversa eu descobri que na verdade ela trabalha como UX, e foi então que ela abriu o notebook dela (para mostrar exemplos) e me deu um conselho valioso: **contar a história do portfólio de forma criativa**. A proposta é ir além de uma vitrine estática e mostrar os problemas enfrentados, as mudanças de rota (pivôs), como as ideias surgiram e resolvê-los por meio de uma linha do tempo. Isso humaniza o projeto e demonstra grande maturidade técnica e de produto.
 
 ## 2. Abordagens Criativas Discutidas
 Para fugir do padrão, levantamos cinco estratégias de design e interatividade:
