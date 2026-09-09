@@ -14,13 +14,29 @@ import { buildNarrationScript, type NarrationBeat, type NarrationBeatKind } from
 import { getNarrationSnapshot, setNarrationState } from "./narration-state"
 
 const BEAT_TONE: Record<NarrationBeatKind, Tone> = {
-  title: "neutral",
-  impact: "surprised",
-  problem: "explanatory",
-  inflection: "surprised",
-  solution: "positive",
-  sequence: "explanatory",
-  graveyard: "explanatory",
+  story: "explanatory",
+}
+
+// A beat only gets the surprised expression when its text actually contains a genuine
+// twist or discovery, not on every impact/inflection beat regardless of content.
+const SURPRISE_MARKERS = [
+  "para minha surpresa",
+  "pra minha surpresa",
+  "para a minha surpresa",
+  "descobri que",
+  "to my surprise",
+  "much to my surprise",
+  "i found out",
+  "found out that",
+]
+
+function hasSurpriseMoment(text: string): boolean {
+  const normalized = text.toLowerCase()
+  return SURPRISE_MARKERS.some((marker) => normalized.includes(marker))
+}
+
+function resolveBeatTone(beat: NarrationBeat): Tone {
+  return hasSurpriseMoment(beat.text) ? "surprised" : BEAT_TONE[beat.kind]
 }
 
 // Negative and distinct from real chat message ids (which start at 1), so narration
@@ -30,7 +46,7 @@ function toNarrationMessageId(beatIndex: number): number {
 }
 
 function playBeat(beat: NarrationBeat, beatIndex: number): void {
-  setAvatarTone(BEAT_TONE[beat.kind])
+  setAvatarTone(resolveBeatTone(beat))
   startTypingSpeech(toNarrationMessageId(beatIndex), beat.text)
 }
 
@@ -94,7 +110,7 @@ export function resumeNarrationFromQuestion(): void {
   if (snapshot.status !== "paused-for-question") return
 
   const beat = snapshot.script[snapshot.beatIndex]
-  setAvatarTone(BEAT_TONE[beat.kind])
+  setAvatarTone(resolveBeatTone(beat))
   startTypingSpeech(toNarrationMessageId(snapshot.beatIndex), beat.text)
   skipTypingSpeech()
   setNarrationState({ status: "awaiting-advance" })
