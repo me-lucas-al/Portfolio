@@ -34,9 +34,9 @@ export function TimelineCard({ milestone, locale, isLast }: TimelineCardProps) {
     <div ref={cardRef} className={`flex gap-4 md:gap-6 ${isLast ? "" : "pb-10"}`}>
       <div className="relative flex w-8 shrink-0 flex-col items-center md:w-10">
         <span
-          className={`z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${
+          className={`z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-transform duration-300 ${
             isGap ? "border-line-strong bg-ink" : "border-brand/40 bg-brand/15"
-          }`}
+          } ${isFocused ? "narration-dot-focus border-brand shadow-[0_0_12px_2px_var(--brand)]" : ""}`}
         >
           {isGap ? (
             <Moon className="h-3 w-3 text-muted-2" />
@@ -53,7 +53,7 @@ export function TimelineCard({ milestone, locale, isLast }: TimelineCardProps) {
         onClick={() => openTimelineMilestone(milestone.slug)}
         className={`group min-w-0 flex-1 rounded-xl text-left transition-all duration-300 ${
           isGap ? "opacity-70" : ""
-        } ${isFocused ? "narration-focus scale-[1.02] bg-surface-2 p-3 -m-3" : "scale-100 p-0"}`}
+        } ${isFocused ? "narration-focus bg-surface-2 p-3 -m-3" : "p-0"}`}
       >
         <span className="font-mono text-sm text-muted-2">{dateLabel}</span>
         <h4 className="mt-1 cursor-pointer text-xl font-bold text-fg transition-colors group-hover:text-brand">
