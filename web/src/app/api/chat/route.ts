@@ -106,27 +106,31 @@ export async function POST(request: NextRequest) {
   const deadline = createDeadline(TOTAL_BUDGET_MS, request.signal);
   const answerCache = makeAssistantAnswerService();
 
+  const hasPhaseContext = Boolean(parsed.data.phaseContext);
+
   let cacheLookupEmbedding: number[] | undefined;
-  try {
-    const cached = await answerCache.findCachedAnswer(parsed.data.message, parsed.data.locale, deadline.signal);
-    cacheLookupEmbedding = cached.embedding;
-    if (cached.answer) {
-      const answerText = cached.answer;
+  if (!hasPhaseContext) {
+    try {
+      const cached = await answerCache.findCachedAnswer(parsed.data.message, parsed.data.locale, deadline.signal);
+      cacheLookupEmbedding = cached.embedding;
+      if (cached.answer) {
+        const answerText = cached.answer;
 
-      logMetric({
-        ip: ipHashPrefix,
-        locale: parsed.data.locale,
-        status: 200,
-        cacheHit: 1,
-        durationMs: Date.now() - startedAt,
-      });
+        logMetric({
+          ip: ipHashPrefix,
+          locale: parsed.data.locale,
+          status: 200,
+          cacheHit: 1,
+          durationMs: Date.now() - startedAt,
+        });
 
-      after(() => prewarmSpeech(apiKey, answerText).catch((error) => console.error("[assistant] speech prewarm failed:", error)));
+        after(() => prewarmSpeech(apiKey, answerText).catch((error) => console.error("[assistant] speech prewarm failed:", error)));
 
-      return Response.json({ text: answerText, speech: buildSpeechField(answerText) });
+        return Response.json({ text: answerText, speech: buildSpeechField(answerText) });
+      }
+    } catch (error) {
+      console.error("[assistant] cache lookup failed:", error);
     }
-  } catch (error) {
-    console.error("[assistant] cache lookup failed:", error);
   }
 
   if (await isDailyBudgetExceeded()) {
@@ -141,6 +145,7 @@ export async function POST(request: NextRequest) {
       history: parsed.data.history,
       locale: parsed.data.locale,
       deadline,
+      phaseContext: parsed.data.phaseContext,
     });
 
     const generationDurationMs = Date.now() - startedAt;
@@ -154,11 +159,13 @@ export async function POST(request: NextRequest) {
       durationMs: generationDurationMs,
     });
 
-    after(() =>
-      answerCache
-        .saveAnswer(parsed.data.message, text, parsed.data.locale, cacheLookupEmbedding)
-        .catch((error) => console.error("[assistant] failed to persist answer:", error)),
-    );
+    if (!hasPhaseContext) {
+      after(() =>
+        answerCache
+          .saveAnswer(parsed.data.message, text, parsed.data.locale, cacheLookupEmbedding)
+          .catch((error) => console.error("[assistant] failed to persist answer:", error)),
+      );
+    }
 
     if (generationDurationMs < PREWARM_MAX_GENERATION_MS) {
       after(() => prewarmSpeech(apiKey, text).catch((error) => console.error("[assistant] speech prewarm failed:", error)));
