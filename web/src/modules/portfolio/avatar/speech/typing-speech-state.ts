@@ -6,9 +6,10 @@ interface TypingSpeechState {
   messageId: number | null
   fullText: string
   isTyping: boolean
+  persistent: boolean
 }
 
-let snapshot: TypingSpeechState = { messageId: null, fullText: "", isTyping: false }
+let snapshot: TypingSpeechState = { messageId: null, fullText: "", isTyping: false, persistent: false }
 const listeners = new Set<() => void>()
 
 function emit(): void {
@@ -54,4 +55,8 @@ export function stopTypingSpeech(): void {
 
 export function skipTypingSpeech(): void {
   skipTyping()
+}
+
+export function setTypingSpeechPersistent(persistent: boolean): void {
+  setState({ persistent })
 }

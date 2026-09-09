@@ -13,6 +13,12 @@ export { TypedText } from "./speech/typed-text"
 export { AnswerBalloon } from "./speech/answer-balloon"
 export { useTypingSpeech } from "./speech/use-typing-speech"
 export type { UseTypingSpeechResult } from "./speech/use-typing-speech"
+export {
+  startTypingSpeech,
+  stopTypingSpeech,
+  skipTypingSpeech,
+  setTypingSpeechPersistent,
+} from "./speech/typing-speech-state"
 
 export type AvatarState = "idle" | "loading" | "error" | "unsupported"
 

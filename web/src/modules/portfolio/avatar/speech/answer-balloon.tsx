@@ -34,7 +34,9 @@ export function AnswerBalloon({ skipLabel, thinkingLabel }: AnswerBalloonProps) 
     )
   }
 
-  if (!typingSnapshot.fullText) return null
+  // Non-positive ids are synthetic (e.g. the timeline narration feeding this same store), not a real chat answer.
+  const isRealChatAnswer = typingSnapshot.fullText.length > 0 && (typingSnapshot.messageId ?? 0) > 0
+  if (!isRealChatAnswer) return null
 
   return (
     <button
