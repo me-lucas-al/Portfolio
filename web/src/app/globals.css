@@ -167,8 +167,18 @@
   animation: cursor-blink 1s step-end infinite;
 }
 
+@keyframes narration-focus-glow {
+  0%, 100% { box-shadow: 0 0 0 1px var(--brand), 0 0 16px 2px color-mix(in srgb, var(--brand) 45%, transparent); }
+  50% { box-shadow: 0 0 0 1px var(--brand-strong), 0 0 28px 6px color-mix(in srgb, var(--brand) 65%, transparent); }
+}
+
+.narration-focus {
+  animation: narration-focus-glow 1.8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .cursor-blink {
+  .cursor-blink,
+  .narration-focus {
     animation: none;
   }
 }

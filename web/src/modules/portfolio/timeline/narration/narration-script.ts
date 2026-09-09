@@ -12,7 +12,7 @@ export interface NarrationBeat {
 
 type StoryBeatKind = "title" | "impact" | "problem" | "inflection" | "solution"
 
-const STORY_BEAT_ORDER: StoryBeatKind[] = ["title", "impact", "problem", "inflection", "solution"]
+const STORY_BEAT_ORDER: StoryBeatKind[] = ["impact", "problem", "inflection", "solution"]
 
 function pickStoryBeatText(milestone: TimelineMilestone, kind: StoryBeatKind, locale: Locale): string {
   const isEn = locale === "en"
@@ -21,7 +21,7 @@ function pickStoryBeatText(milestone: TimelineMilestone, kind: StoryBeatKind, lo
     case "title": {
       const dateLabel = isEn ? milestone.dateLabelEn : milestone.dateLabelPt
       const title = isEn ? milestone.titleEn : milestone.titlePt
-      return `${dateLabel} — ${title}`
+      return `${dateLabel}: ${title}`
     }
     case "impact":
       return isEn ? milestone.impactEn : milestone.impactPt
@@ -47,7 +47,7 @@ function buildSequenceBeats(milestone: TimelineMilestone, locale: Locale): Narra
     id: `${milestone.slug}-sequence-${index}`,
     milestoneSlug: milestone.slug,
     kind: "sequence" as const,
-    text: `${isEn ? step.dateEn : step.datePt} — ${isEn ? step.labelEn : step.labelPt}`,
+    text: `${isEn ? step.dateEn : step.datePt}: ${isEn ? step.labelEn : step.labelPt}`,
   }))
 }
 
@@ -58,7 +58,7 @@ function buildGraveyardBeats(milestone: TimelineMilestone, locale: Locale): Narr
     id: `${milestone.slug}-graveyard-${index}`,
     milestoneSlug: milestone.slug,
     kind: "graveyard" as const,
-    text: `${isEn ? idea.titleEn : idea.titlePt} — ${isEn ? idea.descriptionEn : idea.descriptionPt}`,
+    text: `${isEn ? idea.titleEn : idea.titlePt}: ${isEn ? idea.descriptionEn : idea.descriptionPt}`,
   }))
 }
 
@@ -66,11 +66,11 @@ function buildMilestoneDetailText(milestone: TimelineMilestone, locale: Locale):
   const isEn = locale === "en"
 
   const sequenceText = (milestone.sequence ?? [])
-    .map((step) => `${isEn ? step.dateEn : step.datePt} — ${isEn ? step.labelEn : step.labelPt}`)
+    .map((step) => `${isEn ? step.dateEn : step.datePt}: ${isEn ? step.labelEn : step.labelPt}`)
     .join("\n")
 
   const graveyardText = (milestone.graveyard ?? [])
-    .map((idea) => `${isEn ? idea.titleEn : idea.titlePt} — ${isEn ? idea.descriptionEn : idea.descriptionPt}`)
+    .map((idea) => `${isEn ? idea.titleEn : idea.titlePt}: ${isEn ? idea.descriptionEn : idea.descriptionPt}`)
     .join("\n")
 
   return [sequenceText, graveyardText].filter((text) => text.length > 0).join("\n\n")

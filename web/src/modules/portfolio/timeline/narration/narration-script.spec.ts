@@ -3,12 +3,11 @@ import { timelineMilestones } from "../timeline-data"
 import { buildMilestonePhaseContext, buildNarrationScript } from "./narration-script"
 
 describe("buildNarrationScript", () => {
-  it("orders beats as title, impact, problem, inflection, solution within each milestone", () => {
+  it("orders beats as impact, problem, inflection, solution within each milestone, without narrating the title", () => {
     const script = buildNarrationScript(timelineMilestones, "pt")
     const firstMilestoneBeats = script.filter((beat) => beat.milestoneSlug === "fundacao-cms")
 
     expect(firstMilestoneBeats.map((beat) => beat.kind)).toEqual([
-      "title",
       "impact",
       "problem",
       "inflection",
@@ -18,23 +17,23 @@ describe("buildNarrationScript", () => {
 
   it("uses pt fields for locale pt", () => {
     const script = buildNarrationScript(timelineMilestones, "pt")
-    const titleBeat = script.find((beat) => beat.id === "fundacao-cms-title")
+    const impactBeat = script.find((beat) => beat.id === "fundacao-cms-impact")
 
-    expect(titleBeat?.text).toBe("Jan – Fev 2026 — A Fundação e o CMS")
+    expect(impactBeat?.text).toBe(timelineMilestones[0].impactPt)
   })
 
   it("uses en fields for locale en", () => {
     const script = buildNarrationScript(timelineMilestones, "en")
-    const titleBeat = script.find((beat) => beat.id === "fundacao-cms-title")
+    const impactBeat = script.find((beat) => beat.id === "fundacao-cms-impact")
 
-    expect(titleBeat?.text).toBe("Jan – Feb 2026 — The Foundation and the CMS")
+    expect(impactBeat?.text).toBe(timelineMilestones[0].impactEn)
   })
 
-  it("skips empty fields, such as the inflection of the hiato gap milestone", () => {
+  it("skips empty fields, such as a missing inflection", () => {
     const script = buildNarrationScript(timelineMilestones, "pt")
     const hiatoBeats = script.filter((beat) => beat.milestoneSlug === "hiato")
 
-    expect(hiatoBeats.map((beat) => beat.kind)).toEqual(["title", "impact", "problem", "solution"])
+    expect(hiatoBeats.map((beat) => beat.kind)).toEqual(["impact", "problem", "inflection", "solution"])
   })
 
   it("still produces beats for gap-kind milestones", () => {
@@ -57,7 +56,6 @@ describe("buildNarrationScript", () => {
     const beats = script.filter((beat) => beat.milestoneSlug === "era-ia-avatar")
 
     const expectedKinds = [
-      "title",
       "impact",
       "problem",
       "inflection",
@@ -70,20 +68,20 @@ describe("buildNarrationScript", () => {
 
   it("narrates a sequence step as its date and label, in the requested locale", () => {
     const script = buildNarrationScript(timelineMilestones, "en")
+    const milestone = timelineMilestones.find((item) => item.slug === "era-ia-avatar")!
     const firstSequenceBeat = script.find((beat) => beat.id === "era-ia-avatar-sequence-0")
+    const step = milestone.sequence![0]
 
-    expect(firstSequenceBeat?.text).toBe(
-      "Aug 11–13 — Own domain goes live and advanced SEO ships: JSON-LD, sitemap and Google Search Console."
-    )
+    expect(firstSequenceBeat?.text).toBe(`${step.dateEn}: ${step.labelEn}`)
   })
 
   it("narrates a graveyard idea as its title and description", () => {
     const script = buildNarrationScript(timelineMilestones, "pt")
+    const milestone = timelineMilestones.find((item) => item.slug === "era-ia-avatar")!
     const firstGraveyardBeat = script.find((beat) => beat.id === "era-ia-avatar-graveyard-0")
+    const idea = milestone.graveyard![0]
 
-    expect(firstGraveyardBeat?.text).toBe(
-      "Avatar 3D (VRM) — Primeira tentativa de dar um rosto ao assistente: um modelo 3D baseado em VRM com blendshapes ARKit. Tecnicamente funcionava, mas o resultado visual não convenceu."
-    )
+    expect(firstGraveyardBeat?.text).toBe(`${idea.titlePt}: ${idea.descriptionPt}`)
   })
 
   it("skips sequence/graveyard beats for milestones that have none", () => {
