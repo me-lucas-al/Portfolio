@@ -55,3 +55,5 @@ assistant/.cache/
 # só o README.md curado (política de curadoria) fica versionado.
 ai-knowledge-base/documentos/**
 !ai-knowledge-base/documentos/README.md
+
+.serena
