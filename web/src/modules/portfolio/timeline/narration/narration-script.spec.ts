@@ -2,33 +2,44 @@ import { describe, expect, it } from "vitest"
 import { timelineMilestones } from "../timeline-data"
 import { buildMilestonePhaseContext, buildNarrationScript } from "./narration-script"
 
+const MAX_BEATS_PER_MILESTONE = 3
+
 describe("buildNarrationScript", () => {
-  it("produces one or more short story beats per milestone, in order", () => {
+  it("produces at most 3 story beats per milestone, in order", () => {
     const script = buildNarrationScript(timelineMilestones, "pt")
 
     const orderedSlugs = [...new Set(script.map((beat) => beat.milestoneSlug))]
     expect(orderedSlugs).toEqual(timelineMilestones.map((milestone) => milestone.slug))
     expect(script.every((beat) => beat.kind === "story")).toBe(true)
-    // A chunk never spans more sentences than fit under the length budget; it can only run
-    // longer than that when a single sentence in the source text is long on its own, since
-    // splitting never breaks a sentence in half.
-    expect(script.every((beat) => beat.text.length <= 260)).toBe(true)
+
+    for (const slug of orderedSlugs) {
+      const beatCount = script.filter((beat) => beat.milestoneSlug === slug).length
+      expect(beatCount).toBeLessThanOrEqual(MAX_BEATS_PER_MILESTONE)
+    }
+  })
+
+  it("reassembles a milestone's beats back into the original narration text", () => {
+    const script = buildNarrationScript(timelineMilestones, "pt")
+
+    for (const milestone of timelineMilestones) {
+      const expectedText = milestone.narrationPt.trim()
+      if (!expectedText) continue
+
+      const beats = script.filter((beat) => beat.milestoneSlug === milestone.slug)
+      expect(beats.map((beat) => beat.text).join(" ")).toBe(expectedText)
+    }
   })
 
   it("never splits a chunk mid-sentence, even when a single sentence is long", () => {
     const longSentence = `Uma frase única e bem longa que ${"passa".repeat(20)} do limite de tamanho de um balão.`
-    const milestone = {
-      ...timelineMilestones[0],
-      narrationPt: longSentence,
-      narrationEn: longSentence,
-    }
+    const milestone = { ...timelineMilestones[0], narrationPt: longSentence, narrationEn: longSentence }
     const script = buildNarrationScript([milestone], "pt")
 
     expect(script).toHaveLength(1)
     expect(script[0].text).toBe(longSentence)
   })
 
-  it("keeps multi-sentence chunks under the length budget", () => {
+  it("splits many short sentences into at most 3 balanced beats", () => {
     const shortSentences = Array.from(
       { length: 10 },
       (_, index) => `Esta é a frase número ${index}, com um pouco mais de texto para ocupar espaço.`
@@ -37,34 +48,24 @@ describe("buildNarrationScript", () => {
     const script = buildNarrationScript([milestone], "pt")
 
     expect(script.length).toBeGreaterThan(1)
-    expect(script.every((beat) => beat.text.length <= 180)).toBe(true)
+    expect(script.length).toBeLessThanOrEqual(MAX_BEATS_PER_MILESTONE)
     expect(script.map((beat) => beat.text).join(" ")).toBe(shortSentences)
-  })
-
-  it("splits a milestone's narration into beats that reassemble the original text", () => {
-    const script = buildNarrationScript(timelineMilestones, "pt")
-    const beats = script.filter((beat) => beat.milestoneSlug === timelineMilestones[0].slug)
-
-    expect(beats.length).toBeGreaterThan(1)
-    expect(beats.map((beat) => beat.text).join(" ")).toBe(timelineMilestones[0].narrationPt)
   })
 
   it("uses pt fields for locale pt", () => {
     const script = buildNarrationScript(timelineMilestones, "pt")
-    const beat = script.find((item) => item.id === "fundacao-cms-story-0")
+    const beats = script.filter((beat) => beat.milestoneSlug === timelineMilestones[0].slug)
 
-    expect(beat?.text).toBe(
-      timelineMilestones[0].narrationPt.match(/[^.!?]+[.!?]+(?:\s+|$)/g)?.[0]?.trim()
-    )
+    expect(beats[0]?.id).toBe("fundacao-cms-story-0")
+    expect(beats.map((beat) => beat.text).join(" ")).toBe(timelineMilestones[0].narrationPt)
   })
 
   it("uses en fields for locale en", () => {
     const script = buildNarrationScript(timelineMilestones, "en")
-    const beat = script.find((item) => item.id === "fundacao-cms-story-0")
+    const beats = script.filter((beat) => beat.milestoneSlug === timelineMilestones[0].slug)
 
-    expect(beat?.text).toBe(
-      timelineMilestones[0].narrationEn.match(/[^.!?]+[.!?]+(?:\s+|$)/g)?.[0]?.trim()
-    )
+    expect(beats[0]?.id).toBe("fundacao-cms-story-0")
+    expect(beats.map((beat) => beat.text).join(" ")).toBe(timelineMilestones[0].narrationEn)
   })
 
   it("skips a milestone entirely if it has no narration text", () => {

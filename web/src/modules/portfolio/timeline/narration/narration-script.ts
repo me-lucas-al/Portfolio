@@ -10,28 +10,35 @@ export interface NarrationBeat {
   text: string
 }
 
-const MAX_CHUNK_LENGTH = 180
+// A speech balloon only has room for a couple of sentences, but too many balloons per
+// phase makes the journey feel tedious to click through. So a milestone's narration is
+// split into at most MAX_BEATS_PER_MILESTONE chunks, sized as evenly as possible, never
+// cutting a sentence in half.
+const MAX_BEATS_PER_MILESTONE = 3
 
 function splitNarrationIntoChunks(text: string): string[] {
-  const sentences = text.match(/[^.!?]+[.!?]+(?:\s+|$)/g) ?? [text]
-  const chunks: string[] = []
+  const sentences = (text.match(/[^.!?]+[.!?]+(?:\s+|$)/g) ?? [text]).map((s) => s.trim()).filter(Boolean)
+  if (sentences.length <= 1) return [text]
+
+  const groupCount = Math.min(MAX_BEATS_PER_MILESTONE, sentences.length)
+  const totalLength = sentences.reduce((sum, sentence) => sum + sentence.length, 0)
+  const targetLength = totalLength / groupCount
+
+  const groups: string[] = []
   let current = ""
 
-  for (const rawSentence of sentences) {
-    const sentence = rawSentence.trim()
-    if (!sentence) continue
-
-    const candidate = current ? `${current} ${sentence}` : sentence
-    if (current && candidate.length > MAX_CHUNK_LENGTH) {
-      chunks.push(current)
+  for (const sentence of sentences) {
+    const remainingGroups = groupCount - groups.length
+    if (current && remainingGroups > 1 && current.length >= targetLength) {
+      groups.push(current)
       current = sentence
     } else {
-      current = candidate
+      current = current ? `${current} ${sentence}` : sentence
     }
   }
-  if (current) chunks.push(current)
+  if (current) groups.push(current)
 
-  return chunks
+  return groups
 }
 
 function buildStoryBeats(milestone: TimelineMilestone, locale: Locale): NarrationBeat[] {
