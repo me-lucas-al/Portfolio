@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { timelineMilestones } from "../timeline-data"
+import { timelineMilestonesFixture as timelineMilestones } from "./timeline-milestones.fixture"
 import { buildMilestonePhaseContext, buildNarrationScript } from "./narration-script"
 
 const MAX_BEATS_PER_MILESTONE = 3
