@@ -169,56 +169,30 @@
 
 @keyframes narration-focus-glow {
   0%, 100% {
-    box-shadow: 0 0 0 1px var(--brand), 0 0 14px 2px color-mix(in srgb, var(--brand) 40%, transparent);
-    transform: scale(1.01);
+    box-shadow: 0 0 0 1px var(--brand), 0 0 8px 1px color-mix(in srgb, var(--brand) 25%, transparent);
   }
   50% {
-    box-shadow: 0 0 0 1.5px var(--brand-strong), 0 0 34px 9px color-mix(in srgb, var(--brand) 70%, transparent);
-    transform: scale(1.045);
+    box-shadow: 0 0 0 1px var(--brand-strong), 0 0 12px 2px color-mix(in srgb, var(--brand) 35%, transparent);
   }
-}
-
-@keyframes narration-focus-sweep {
-  0% { background-position: 160% 0; }
-  100% { background-position: -60% 0; }
 }
 
 .narration-focus {
   position: relative;
-  overflow: hidden;
-  animation: narration-focus-glow 1.3s ease-in-out infinite;
-}
-
-.narration-focus::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    115deg,
-    transparent 30%,
-    color-mix(in srgb, var(--brand-strong) 60%, transparent) 50%,
-    transparent 70%
-  );
-  background-size: 250% 100%;
-  animation: narration-focus-sweep 1.8s linear infinite;
-  mix-blend-mode: overlay;
-  pointer-events: none;
+  animation: narration-focus-glow 2.6s ease-in-out infinite;
 }
 
 @keyframes narration-dot-focus {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.35); }
+  50% { transform: scale(1.15); }
 }
 
 .narration-dot-focus {
-  animation: narration-dot-focus 1.3s ease-in-out infinite;
+  animation: narration-dot-focus 2.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cursor-blink,
   .narration-focus,
-  .narration-focus::after,
   .narration-dot-focus {
     animation: none;
   }
