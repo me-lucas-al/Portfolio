@@ -5,3 +5,4 @@ export * from './schemas/education';
 export * from './schemas/link';
 export * from './schemas/system-setting';
 export * from './schemas/assistant';
+export * from './schemas/timeline-milestone';
