@@ -25,11 +25,6 @@ function dehyphenate(text: string): string {
 const LIST_MARKER = /^\s*([-*•‣▪]|\d+[.)])\s+/;
 const SENTENCE_END = /[.:!?]["')\]]?\s*$/;
 
-// PDF text extraction hard-wraps every visual line break, so a paragraph of
-// prose arrives as one \n per line. Without recombining those into real
-// paragraphs, the windower (which splits on blank lines) sees one giant
-// "paragraph" per page and falls back to raw slicing instead of natural
-// breaks.
 function collapseLayoutBreaks(text: string): string {
   const lines = text.split("\n");
   const paragraphs: string[] = [];
@@ -63,9 +58,6 @@ function paragraphKey(paragraph: string): string {
   return paragraph.trim().replace(/\d+/g, "#");
 }
 
-// A repeated header/footer (contact block, "Page N of M") steals signal from
-// the embedding by making every chunk of the document look alike. Digits are
-// normalized to "#" so "Page 1 of 12" still matches "Page 2 of 12".
 function stripRepeatedHeaderFooter(pages: string[]): string[] {
   if (pages.length < HEADER_FOOTER_MIN_PAGES) return pages;
 

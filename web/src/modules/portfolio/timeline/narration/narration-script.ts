@@ -10,15 +10,40 @@ export interface NarrationBeat {
   text: string
 }
 
-// One flowing, non-technical beat per milestone, so the assistant tells the journey as a
-// single continuous story from start to finish instead of reading out separate technical
-// fragments. The richer problem/inflection/solution fields stay written-only, for the
-// detail panel and for buildMilestonePhaseContext below.
-function buildStoryBeat(milestone: TimelineMilestone, locale: Locale): NarrationBeat | null {
-  const text = (locale === "en" ? milestone.narrationEn : milestone.narrationPt).trim()
-  if (!text) return null
+const MAX_CHUNK_LENGTH = 180
 
-  return { id: `${milestone.slug}-story`, milestoneSlug: milestone.slug, kind: "story", text }
+function splitNarrationIntoChunks(text: string): string[] {
+  const sentences = text.match(/[^.!?]+[.!?]+(?:\s+|$)/g) ?? [text]
+  const chunks: string[] = []
+  let current = ""
+
+  for (const rawSentence of sentences) {
+    const sentence = rawSentence.trim()
+    if (!sentence) continue
+
+    const candidate = current ? `${current} ${sentence}` : sentence
+    if (current && candidate.length > MAX_CHUNK_LENGTH) {
+      chunks.push(current)
+      current = sentence
+    } else {
+      current = candidate
+    }
+  }
+  if (current) chunks.push(current)
+
+  return chunks
+}
+
+function buildStoryBeats(milestone: TimelineMilestone, locale: Locale): NarrationBeat[] {
+  const text = (locale === "en" ? milestone.narrationEn : milestone.narrationPt).trim()
+  if (!text) return []
+
+  return splitNarrationIntoChunks(text).map((chunk, index) => ({
+    id: `${milestone.slug}-story-${index}`,
+    milestoneSlug: milestone.slug,
+    kind: "story",
+    text: chunk,
+  }))
 }
 
 type PhaseContextKind = "impact" | "problem" | "inflection" | "solution"
@@ -65,7 +90,5 @@ export function buildMilestonePhaseContext(milestone: TimelineMilestone, locale:
 }
 
 export function buildNarrationScript(milestones: TimelineMilestone[], locale: Locale): NarrationBeat[] {
-  return milestones
-    .map((milestone) => buildStoryBeat(milestone, locale))
-    .filter((beat): beat is NarrationBeat => beat !== null)
+  return milestones.flatMap((milestone) => buildStoryBeats(milestone, locale))
 }

@@ -27,9 +27,6 @@ export interface TimelineMilestone {
   impactPt: string
   impactEn: string
   tags: string[]
-  // A single flowing, non-technical paragraph, meant to be spoken by the assistant as
-  // one continuous story beat. Kept separate from problem/inflection/solution below,
-  // which stay technical for the written detail panel a Tech Lead reads.
   narrationPt: string
   narrationEn: string
   problemPt: string

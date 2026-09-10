@@ -17,8 +17,6 @@ const BEAT_TONE: Record<NarrationBeatKind, Tone> = {
   story: "explanatory",
 }
 
-// A beat only gets the surprised expression when its text actually contains a genuine
-// twist or discovery, not on every impact/inflection beat regardless of content.
 const SURPRISE_MARKERS = [
   "para minha surpresa",
   "pra minha surpresa",
@@ -39,8 +37,6 @@ function resolveBeatTone(beat: NarrationBeat): Tone {
   return hasSurpriseMoment(beat.text) ? "surprised" : BEAT_TONE[beat.kind]
 }
 
-// Negative and distinct from real chat message ids (which start at 1), so narration
-// beats never collide with an actual chat message id in the shared typing-speech store.
 function toNarrationMessageId(beatIndex: number): number {
   return -(beatIndex + 1)
 }
@@ -89,10 +85,12 @@ function buildPhaseContextForCurrentBeat(): string | null {
   const currentBeat = snapshot.script[snapshot.beatIndex]
   if (!currentBeat) return null
 
+  // Beats from the same milestone are sentence-level chunks of one story, so they rejoin
+  // with a plain space to read as the original flowing paragraph, not as separate paragraphs.
   return snapshot.script
     .filter((beat) => beat.milestoneSlug === currentBeat.milestoneSlug)
     .map((beat) => beat.text)
-    .join("\n\n")
+    .join(" ")
 }
 
 export function pauseNarrationForQuestion(): void {

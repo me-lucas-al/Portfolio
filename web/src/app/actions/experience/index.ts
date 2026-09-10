@@ -146,9 +146,6 @@ export async function deleteExperienceAction(id: number) {
   return { success: true, message: "Experiência deletada com sucesso!" };
 }
 
-// unstable_cache serializes the result through JSON, so a cache hit returns
-// startDate/endDate as ISO strings instead of Date instances — consumers must
-// already handle both.
 export const getExperiencesAction = unstable_cache(
   () => makeExperienceService().getAllExperiences(),
   ["experiences"],
