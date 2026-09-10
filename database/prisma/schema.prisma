@@ -72,6 +72,48 @@ enum EducationCategory {
   COURSE
 }
 
+model TimelineMilestone {
+  id             Int                   @id @default(autoincrement())
+  slug           String                @unique
+  kind           TimelineMilestoneKind @default(MILESTONE)
+
+  dateLabelPt    String
+  dateLabelEn    String?
+  titlePt        String
+  titleEn        String?
+  impactPt       String                @db.Text
+  impactEn       String?               @db.Text
+  narrationPt    String                @db.Text
+  narrationEn    String?               @db.Text
+  problemPt      String                @db.Text
+  problemEn      String?               @db.Text
+  inflectionPt   String                @db.Text
+  inflectionEn   String?               @db.Text
+  solutionPt     String                @db.Text
+  solutionEn     String?               @db.Text
+
+  tags           String[]              @default([])
+
+  beforeImageUrl String?
+  beforeImageAlt String?
+  afterImageUrl  String?
+  afterImageAlt  String?
+
+  sequence       Json?                 @default("[]")
+  graveyard      Json?                 @default("[]")
+
+  order          Int                   @default(0)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@map("timeline_milestones")
+}
+
+enum TimelineMilestoneKind {
+  MILESTONE
+  GAP
+}
+
 enum Roles {
   ADMIN
   USER
