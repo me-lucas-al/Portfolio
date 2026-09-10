@@ -1,21 +1,22 @@
 import { Suspense } from "react"
 import { BookOpen, Moon } from "lucide-react"
 import { getDictionary, type Locale } from "@/i18n"
-import { timelineMilestones } from "./timeline-data"
+import type { TimelineMilestone } from "./timeline-data"
 import { TimelineCard } from "./timeline-card"
 import { TimelineSheet } from "./timeline-sheet"
 import { NarrationHud, StartNarrationButton } from "./narration/contract"
 
 interface TimelineProps {
   locale: Locale
+  milestones: TimelineMilestone[]
 }
 
-function TimelineStaticFallback({ locale }: { locale: Locale }) {
+function TimelineStaticFallback({ locale, milestones }: { locale: Locale; milestones: TimelineMilestone[] }) {
   return (
     <div>
-      {timelineMilestones.map((milestone, index) => {
+      {milestones.map((milestone, index) => {
         const isGap = milestone.kind === "gap"
-        const isLast = index === timelineMilestones.length - 1
+        const isLast = index === milestones.length - 1
         const dateLabel = locale === "en" ? milestone.dateLabelEn : milestone.dateLabelPt
         const title = locale === "en" ? milestone.titleEn : milestone.titlePt
         const impact = locale === "en" ? milestone.impactEn : milestone.impactPt
@@ -50,7 +51,7 @@ function TimelineStaticFallback({ locale }: { locale: Locale }) {
   )
 }
 
-export function Timeline({ locale }: TimelineProps) {
+export function Timeline({ locale, milestones }: TimelineProps) {
   const dict = getDictionary(locale).timeline
 
   return (
@@ -58,24 +59,24 @@ export function Timeline({ locale }: TimelineProps) {
       <div className="mb-3 flex items-center gap-6">
         <h3 className="font-display text-2xl font-bold text-fg">{dict.title}</h3>
         <div className="h-px flex-1 bg-line" />
-        <StartNarrationButton milestones={timelineMilestones} locale={locale} label={dict.narrateCta} />
+        <StartNarrationButton milestones={milestones} locale={locale} label={dict.narrateCta} />
       </div>
       <p className="mb-12 font-mono text-xs text-muted-2">
         <span className="text-brand">$</span> {dict.subtitle}
       </p>
 
-      <Suspense fallback={<TimelineStaticFallback locale={locale} />}>
+      <Suspense fallback={<TimelineStaticFallback locale={locale} milestones={milestones} />}>
         <div>
-          {timelineMilestones.map((milestone, index) => (
+          {milestones.map((milestone, index) => (
             <TimelineCard
               key={milestone.slug}
               milestone={milestone}
               locale={locale}
-              isLast={index === timelineMilestones.length - 1}
+              isLast={index === milestones.length - 1}
             />
           ))}
         </div>
-        <TimelineSheet milestones={timelineMilestones} locale={locale} dict={dict} />
+        <TimelineSheet milestones={milestones} locale={locale} dict={dict} />
       </Suspense>
 
       <p className="mt-10 pl-12 font-mono text-sm text-muted-2 md:pl-14">
