@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url"
 import prisma from "../prisma"
 
 interface SeedSequenceStep {
@@ -36,7 +37,7 @@ interface SeedMilestone {
   graveyard?: SeedGraveyardIdea[]
 }
 
-const milestones: SeedMilestone[] = [
+export const milestones: SeedMilestone[] = [
   {
     slug: "fundacao-cms",
     kind: "MILESTONE",
@@ -284,7 +285,7 @@ const milestones: SeedMilestone[] = [
   },
 ]
 
-async function seedTimelineMilestones() {
+export async function seedTimelineMilestones() {
   for (const [index, milestone] of milestones.entries()) {
     const { sequence, graveyard, ...rest } = milestone
     await prisma.timelineMilestone.upsert({
@@ -301,12 +302,16 @@ async function seedTimelineMilestones() {
   }
 }
 
-seedTimelineMilestones()
-  .then(() => {
-    console.log("Seed da jornada concluído.")
-    process.exit(0)
-  })
-  .catch((error) => {
-    console.error("Erro ao rodar o seed da jornada:", error)
-    process.exit(1)
-  })
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url)
+
+if (isMainModule) {
+  seedTimelineMilestones()
+    .then(() => {
+      console.log("Seed da jornada concluído.")
+      process.exit(0)
+    })
+    .catch((error) => {
+      console.error("Erro ao rodar o seed da jornada:", error)
+      process.exit(1)
+    })
+}
