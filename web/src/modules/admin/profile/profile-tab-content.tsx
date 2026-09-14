@@ -1,6 +1,7 @@
 "use client"
 
 import { EditProfileForm } from "./edit-profile-form"
+import { ClearAssistantCacheButton } from "./clear-assistant-cache-button"
 
 interface ProfileTabContentProps {
   systemSettings: Record<string, string>
@@ -18,8 +19,9 @@ export function ProfileTabContent({ systemSettings }: ProfileTabContentProps) {
         </div>
       </div>
 
-      <div className="max-w-2xl">
+      <div className="max-w-2xl space-y-6">
         <EditProfileForm systemSettings={systemSettings} />
+        <ClearAssistantCacheButton />
       </div>
     </div>
   )
