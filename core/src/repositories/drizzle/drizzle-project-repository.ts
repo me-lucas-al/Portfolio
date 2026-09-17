@@ -31,7 +31,7 @@ export class DrizzleProjectRepository implements IProjectRepository {
     const [result] = await this.db.update(projects).set({
       ...projectData,
       updatedAt: new Date(),
-    }).where(eq(projects.id, id)).returning();
+    }).where(eq(projects.id, id!)).returning();
     return result as any;
   }
 }

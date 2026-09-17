@@ -23,7 +23,7 @@ export class DrizzleChatUsageRepository implements IChatUsageRepository {
           gte(chatUsage.createdAt, since)
         )
       );
-    return result.value;
+    return result?.value ?? 0;
   }
 
   async countAllSince(since: Date, kind: ChatUsageKind): Promise<number> {
@@ -35,6 +35,6 @@ export class DrizzleChatUsageRepository implements IChatUsageRepository {
           gte(chatUsage.createdAt, since)
         )
       );
-    return result.value;
+    return result?.value ?? 0;
   }
 }
