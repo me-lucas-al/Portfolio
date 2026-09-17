@@ -17,7 +17,7 @@ Diferente de portfólios estáticos, este projeto conta com uma área administra
 ![Painel de Controle - Formulário de novo projeto com abas PT-BR/EN-US](web/public/add_new_control_panel.png)
 
 ### ⚙️ Funcionalidades do Painel:
-O painel de controle interage diretamente com o banco de dados via **Prisma ORM**, permitindo as seguintes operações de **CRUD** (Create, Read, Update, Delete):
+O painel de controle interage diretamente com o banco de dados via **Drizzle ORM**, permitindo as seguintes operações de **CRUD** (Create, Read, Update, Delete):
 
 - **📁 Gerenciamento de Projetos**: Adicionar novos projetos, editar os existentes, atualizar links de Deploy/GitHub, gerenciar as tecnologias utilizadas e reordenar imagens via drag-and-drop.
 - **💼 Experiências Profissionais**: Cadastrar novas experiências, descrever responsabilidades e tecnologias aplicadas em cada cargo.
@@ -37,7 +37,7 @@ O projeto utiliza o que há de mais moderno no ecossistema JavaScript/TypeScript
 - **Linguagem**: TypeScript
 - **Autenticação**: Next-Auth v5 (Auth.js)
 - **Banco de Dados**: PostgreSQL com **pgvector** (embeddings/busca semântica)
-- **ORM**: Prisma
+- **ORM**: Drizzle ORM
 - **IA**: Google Gemini (chat + geração de imagem) com pipeline de RAG próprio
 - **Mídia**: Cloudinary (cache de imagens e áudio sintetizado)
 - **Gerenciamento de Monorepo**: Turborepo
@@ -51,7 +51,7 @@ O projeto utiliza o que há de mais moderno no ecossistema JavaScript/TypeScript
 O projeto é organizado em um **Monorepo** gerenciado pelo **Turborepo**, utilizando uma arquitetura de pacotes internos para separar as responsabilidades e facilitar a manutenção:
 
 - **`web` (`@portfolio/web`)**: A aplicação principal em Next.js. Responsável por toda a interface do usuário (UI), rotas públicas, Server Actions e o Painel de Controle Administrativo.
-- **`database` (`@portfolio/database`)**: Camada de persistência. Contém o schema do Prisma, as migrações do banco de dados e a configuração do cliente Prisma para interagir com o PostgreSQL.
+- **`database` (`@portfolio/database`)**: Camada de persistência. Contém o schema do Drizzle, as migrações do banco de dados e a configuração do cliente para interagir com o PostgreSQL.
 - **`core` (`@portfolio/core`)**: Pacote de lógica de negócio e utilitários. Responsável por funções compartilhadas, validações centrais e regras que podem ser reutilizadas em diferentes partes do sistema.
 - **`packages` (`@portfolio/packages`)**: Contém schemas de validação e tipos compartilhados entre o frontend e o backend, garantindo consistência de dados em todo o monorepo.
 
@@ -131,7 +131,7 @@ Isso garante que qualquer desenvolvedor consiga rodar o projeto completo com ape
 2. Configure as variáveis de ambiente:
    Crie arquivos `.env` nas pastas `web` e `database` conforme os exemplos `.env.example` (Configurações de Database URL, NextAuth Secret, etc).
 
-3. Gere o cliente do Prisma e rode as migrações:
+3. Gere o cliente do banco e rode as migrações (Drizzle):
    ```bash
    pnpm db:generate
    ```
