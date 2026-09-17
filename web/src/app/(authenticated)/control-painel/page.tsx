@@ -3,6 +3,7 @@ import { getExperiencesAction } from "@/app/actions/experience"
 import { getEducationsAction } from "@/app/actions/education"
 import { getLinksAction } from "@/app/actions/link"
 import { getAllSystemSettingsAction } from "@/app/actions/system-setting"
+import { getTimelineMilestonesAction } from "@/app/actions/timeline-milestone"
 import { AdminDashboard } from "@/modules/admin/admin-dashboard"
 import { getUserRole } from "@/lib/get-user-role"
 import { redirect } from "next/navigation"
@@ -14,12 +15,13 @@ export default async function AdminPage() {
 
   if (!admin) redirect("/unauthorized")
 
-  const [projects, experiences, educations, links, systemSettings] = await Promise.all([
+  const [projects, experiences, educations, links, systemSettings, timelineMilestones] = await Promise.all([
     getProjectsAction(),
     getExperiencesAction(),
     getEducationsAction(),
     getLinksAction(),
     getAllSystemSettingsAction(),
+    getTimelineMilestonesAction(),
   ])
 
   return (
@@ -60,6 +62,7 @@ export default async function AdminPage() {
           educations={educations}
           links={links}
           systemSettings={systemSettings}
+          timelineMilestones={timelineMilestones}
         />
       </div>
     </main>

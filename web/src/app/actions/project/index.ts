@@ -1,7 +1,7 @@
 "use server";
 
 import { makeProjectService } from "@portfolio/core/src/factories/_index";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag, unstable_cache } from "next/cache";
 import { getUserRole } from "@/lib/get-user-role";
 import { IUploadFileDTO } from "@portfolio/core/src/@types/storage-service";
 import { getStorageProvider } from "@/factories/storage-factory";
@@ -65,6 +65,7 @@ export async function createProjectAction(_prevState: unknown, formData: FormDat
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("projects");
 
     return { success: true, message: "Projeto criado com sucesso!" };
   } catch (error) {
@@ -108,6 +109,7 @@ export async function reorderProjectAction(id: number, direction: 'up' | 'down')
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("projects");
 
     return { success: true };
   } catch (error) {
@@ -153,6 +155,7 @@ export async function updateProjectAction(_prevState: unknown, formData: FormDat
 
     revalidatePath("/");
     revalidatePath("/control-painel");
+    updateTag("projects");
 
     return { success: true, message: "Projeto atualizado com sucesso!" };
   } catch (error) {
@@ -169,10 +172,13 @@ export async function deleteProjectAction(id: number) {
 
   revalidatePath("/");
   revalidatePath("/control-painel");
+  updateTag("projects");
 
   return { success: true, message: "Projeto deletado com sucesso!" };
 }
 
-export async function getProjectsAction() {
-  return makeProjectService().getAllProjects();
-}
+export const getProjectsAction = unstable_cache(
+  () => makeProjectService().getAllProjects(),
+  ["projects"],
+  { tags: ["projects"], revalidate: false }
+);

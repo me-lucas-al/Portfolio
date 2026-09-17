@@ -9,3 +9,4 @@ export * from "./rate-limit-service.factory";
 export * from "./speech-cache-service.factory";
 export * from "./user-service.factory";
 export * from "./system-setting-service.factory";
+export * from "./timeline-milestone-service.factory";

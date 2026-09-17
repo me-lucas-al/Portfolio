@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import prisma from "../prisma";
 import bcrypt from 'bcryptjs';
+import { seedTimelineMilestones } from './seed-timeline';
 
 async function main() {
   console.log('🌱 A iniciar o seed da base de dados...');
@@ -107,17 +108,33 @@ async function main() {
   const formacoes = [
     {
       course: "Análise e Desenvolvimento de Sistemas",
+      courseEn: "Systems Analysis and Development",
       institution: "Instituto Federal de São Paulo (IFSP) - Bragança Paulista",
       startDate: new Date("2025-02-01"),
       endDate: new Date("2027-12-01"),
-      type: "Tecnólogo"
+      type: "Tecnólogo",
+      typeEn: "Associate Degree",
+      category: 'ACADEMIC' as const,
     },
     {
       course: "Técnico em Informática",
+      courseEn: "IT Technician",
       institution: "Instituto Federal de São Paulo (IFSP) - Bragança Paulista",
       startDate: new Date("2022-02-01"),
       endDate: new Date("2024-12-01"),
-      type: "Ensino Técnico"
+      type: "Ensino Técnico",
+      typeEn: "Technical High School",
+      category: 'ACADEMIC' as const,
+    },
+    {
+      course: "Docker para Desenvolvedores",
+      courseEn: "Docker for Developers",
+      institution: "Curso Livre Online",
+      startDate: new Date("2025-06-01"),
+      endDate: new Date("2025-06-01"),
+      type: "Curso Livre",
+      typeEn: "Online Course",
+      category: 'COURSE' as const,
     }
   ];
 
@@ -163,6 +180,40 @@ async function main() {
       console.log(`✅ Link inserido: ${linkData.title}`);
     }
   }
+
+  const systemSettings = [
+    {
+      key: 'about_me',
+      value: 'Sou um Desenvolvedor Full Stack com foco em arquitetura de software, construindo aplicações web escaláveis e orientadas a resultados de negócios. Com experiência prática no ecossistema JavaScript e TypeScript, atuo diariamente com Node.js, React.js e Next.js.\n\nMinha experiência inclui a aplicação de Clean Architecture, refatoração de código, gerenciamento de bancos de dados relacionais e a estruturação de pipelines CI/CD com Docker para garantir entregas contínuas, estabilidade e segurança.'
+    },
+    {
+      key: 'about_me_en',
+      value: 'I am a Full Stack Developer focused on software architecture, building scalable, business-oriented web applications. With hands-on experience in the JavaScript and TypeScript ecosystem, I work daily with Node.js, React.js and Next.js.\n\nMy experience includes applying Clean Architecture, refactoring code, managing relational databases and structuring CI/CD pipelines with Docker to ensure continuous delivery, stability and security.'
+    },
+    {
+      key: 'skills_frontend',
+      value: 'React, Next.js, TypeScript, Tailwind CSS, Jest'
+    },
+    {
+      key: 'skills_backend',
+      value: 'Node.js, Fastify, Clean Architecture, Prisma ORM, PostgreSQL, MongoDB'
+    },
+    {
+      key: 'skills_tools',
+      value: 'Docker, CI/CD, Github Actions'
+    }
+  ];
+
+  for (const setting of systemSettings) {
+    await prisma.systemSetting.upsert({
+      where: { key: setting.key },
+      update: {},
+      create: setting,
+    });
+    console.log(`✅ Configuração garantida: ${setting.key}`);
+  }
+
+  await seedTimelineMilestones();
 
   console.log('✅ Seed concluído com sucesso!');
 }

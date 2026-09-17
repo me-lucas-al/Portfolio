@@ -68,7 +68,6 @@ export function EducationCertificateField({
         <span className="text-muted-2 text-xs font-normal">Opcional (PNG, JPG ou PDF)</span>
       </label>
 
-      {/* Hidden inputs to send in FormData */}
       <input type="hidden" name="keptCertificateUrl" value={keptUrl} />
       <input
         ref={fileInputRef}
@@ -81,7 +80,6 @@ export function EducationCertificateField({
         className="sr-only"
       />
 
-      {/* State 1: Newly selected file */}
       {hasSelectedFile && (
         <div className="relative flex items-center justify-between p-4 rounded-xl border border-line bg-surface/80">
           <div className="flex items-center gap-3 overflow-hidden">
@@ -116,7 +114,6 @@ export function EducationCertificateField({
         </div>
       )}
 
-      {/* State 2: Existing certificate already saved */}
       {hasKeptCertificate && (
         <div className="relative flex items-center justify-between p-4 rounded-xl border border-line bg-surface/80">
           <div className="flex items-center gap-3 overflow-hidden">
@@ -165,7 +162,6 @@ export function EducationCertificateField({
         </div>
       )}
 
-      {/* State 3: Empty dropzone */}
       {!hasSelectedFile && !hasKeptCertificate && (
         <label
           htmlFor={inputId}

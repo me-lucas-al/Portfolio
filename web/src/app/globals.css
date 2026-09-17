@@ -167,8 +167,33 @@
   animation: cursor-blink 1s step-end infinite;
 }
 
+@keyframes narration-focus-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 1px var(--brand), 0 0 8px 1px color-mix(in srgb, var(--brand) 25%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 1px var(--brand-strong), 0 0 12px 2px color-mix(in srgb, var(--brand) 35%, transparent);
+  }
+}
+
+.narration-focus {
+  position: relative;
+  animation: narration-focus-glow 2.6s ease-in-out infinite;
+}
+
+@keyframes narration-dot-focus {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.narration-dot-focus {
+  animation: narration-dot-focus 2.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .cursor-blink {
+  .cursor-blink,
+  .narration-focus,
+  .narration-dot-focus {
     animation: none;
   }
 }

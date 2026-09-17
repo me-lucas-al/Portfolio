@@ -34,7 +34,8 @@ export function AnswerBalloon({ skipLabel, thinkingLabel }: AnswerBalloonProps) 
     )
   }
 
-  if (!typingSnapshot.fullText) return null
+  const isRealChatAnswer = typingSnapshot.fullText.length > 0 && (typingSnapshot.messageId ?? 0) > 0
+  if (!isRealChatAnswer) return null
 
   return (
     <button

@@ -7,7 +7,7 @@
   "scripts": {
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
-    "db:push": "prisma db push",
+    "db:migrate:dev": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio"
   },

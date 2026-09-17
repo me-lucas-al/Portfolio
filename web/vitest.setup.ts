@@ -1,7 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { vi } from "vitest";
 
-// Mock the Web Audio API Context
 class AudioContextMock {
   destination = {};
   state = "suspended";

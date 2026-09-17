@@ -33,11 +33,19 @@ export interface RunAssistantOptions {
   history: AssistantHistoryMessage[];
   locale: "pt" | "en";
   deadline: Deadline;
+  phaseContext?: string;
 }
 
-function toInitialContents(history: AssistantHistoryMessage[], message: string): Content[] {
+function wrapPhaseContext(phaseContext: string): string {
+  return `<fase_atual>\n${phaseContext.replaceAll("</fase_atual>", "")}\n</fase_atual>`;
+}
+
+function toInitialContents(history: AssistantHistoryMessage[], message: string, phaseContext?: string): Content[] {
   const contents: Content[] = history.map((entry) => ({ role: entry.role, parts: [{ text: entry.content }] }));
-  contents.push({ role: "user", parts: [{ text: message }] });
+  const messageParts: Part[] = phaseContext
+    ? [{ text: wrapPhaseContext(phaseContext) }, { text: message }]
+    : [{ text: message }];
+  contents.push({ role: "user", parts: messageParts });
   return contents;
 }
 
@@ -58,7 +66,7 @@ export interface RunAssistantResult {
 
 export async function runAssistant(options: RunAssistantOptions): Promise<RunAssistantResult> {
   const ai = new GoogleGenAI({ apiKey: options.apiKey, httpOptions: buildGeminiHttpOptions(GENERATION_BUDGET) });
-  const contents = toInitialContents(options.history, options.message);
+  const contents = toInitialContents(options.history, options.message, options.phaseContext);
   const systemInstruction = buildSystemInstruction(options.locale);
   const fallbackDeps = { ai, models: resolveModelChain(), remainingMs: options.deadline.remainingMs };
 

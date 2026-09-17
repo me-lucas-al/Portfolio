@@ -1,17 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import { LayoutGrid, Plus, Briefcase, GraduationCap, Code, User } from "lucide-react"
-import { ProjectType, ExperienceType, EducationType } from "@portfolio/packages"
+import { LayoutGrid, Plus, Briefcase, GraduationCap, Code, User, Route } from "lucide-react"
+import { ProjectType, ExperienceType, EducationType, TimelineMilestoneType } from "@portfolio/packages"
 
 import { ProjectTabContent } from "./project/project-tab-content"
 import { ExperienceTabContent } from "./experience/experience-tab-content"
 import { EducationTabContent } from "./education/education-tab-content"
 import { LinkTabContent } from "./link/link-tab-content"
 import { ProfileTabContent } from "./profile/profile-tab-content"
+import { TimelineMilestoneTabContent } from "./timeline-milestone/timeline-milestone-tab-content"
 import { DefaultLinkType } from "@portfolio/packages/schemas/link"
 
-export type EntityTab = "projects" | "experiences" | "educations" | "links" | "profile"
+export type EntityTab = "projects" | "experiences" | "educations" | "links" | "profile" | "timelineMilestones"
 export type ViewTab = "view" | "create"
 
 interface AdminDashboardProps {
@@ -20,9 +21,10 @@ interface AdminDashboardProps {
   educations: EducationType[]
   links: (DefaultLinkType & { id: number })[]
   systemSettings: Record<string, string>
+  timelineMilestones: TimelineMilestoneType[]
 }
 
-export function AdminDashboard({ projects, experiences, educations, links, systemSettings }: AdminDashboardProps) {
+export function AdminDashboard({ projects, experiences, educations, links, systemSettings, timelineMilestones }: AdminDashboardProps) {
   const [activeEntity, setActiveEntity] = useState<EntityTab>("projects")
   const [activeView, setActiveView] = useState<ViewTab>("view")
 
@@ -55,6 +57,14 @@ export function AdminDashboard({ projects, experiences, educations, links, syste
           }`}
         >
           <GraduationCap className="w-4 h-4" /> Formação
+        </button>
+        <button
+          onClick={() => { setActiveEntity("timelineMilestones"); setActiveView("view"); }}
+          className={`flex items-center gap-2 pb-4 border-b-2 font-medium transition-colors whitespace-nowrap cursor-pointer ${
+            activeEntity === "timelineMilestones" ? "text-brand border-brand" : "text-fg-muted border-transparent hover:text-fg hover:border-line-strong"
+          }`}
+        >
+          <Route className="w-4 h-4" /> Jornada
         </button>
         <button
           onClick={() => { setActiveEntity("links"); setActiveView("view"); }}
@@ -110,6 +120,9 @@ export function AdminDashboard({ projects, experiences, educations, links, syste
         )}
         {activeEntity === "educations" && (
           <EducationTabContent activeView={activeView} educations={educations} />
+        )}
+        {activeEntity === "timelineMilestones" && (
+          <TimelineMilestoneTabContent activeView={activeView} milestones={timelineMilestones} />
         )}
         {activeEntity === "links" && (
           <LinkTabContent activeView={activeView} links={links} cvUrlPt={cvUrlPt} cvUrlEn={cvUrlEn} />

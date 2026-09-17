@@ -29,6 +29,7 @@ export function MobileNav({ dict, locale, hasSession }: MobileNavProps) {
     { href: "#projetos", label: dict.nav.projects },
     { href: "#experiencia", label: dict.nav.experience },
     { href: "#formacao", label: dict.nav.education },
+    { href: "#jornada", label: dict.nav.timeline },
     { href: "#contatos", label: dict.nav.contact },
   ]
 

@@ -14,6 +14,7 @@ export const ChatRequestSchema = z.object({
     .max(600, { message: "A mensagem é muito longa" }),
   history: z.array(ChatHistoryMessageSchema).max(6, { message: "Histórico muito longo" }).default([]),
   locale: z.enum(["pt", "en"]),
+  phaseContext: z.string().max(2000).optional(),
 });
 
 export type ChatHistoryMessageType = z.infer<typeof ChatHistoryMessageSchema>;

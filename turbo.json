@@ -5,7 +5,7 @@
       "cache": false,
       "env": ["DATABASE_URL", "DIRECT_DATABASE_URL"]
     },
-    "db:push": {
+    "db:migrate:dev": {
       "cache": false,
       "env": ["DATABASE_URL", "DIRECT_DATABASE_URL"]
     },

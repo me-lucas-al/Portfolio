@@ -4,6 +4,7 @@ import { About } from "@/modules/portfolio/about"
 import { Skills } from "@/modules/portfolio/skills"
 import { Experience } from "@/modules/portfolio/experience"
 import { Education } from "@/modules/portfolio/education"
+import { Timeline } from "@/modules/portfolio/timeline/timeline"
 import { Contact } from "@/modules/portfolio/contact"
 import { AssistantWidget } from "@/modules/portfolio/assistant/assistant-widget"
 import { ProjectGrid } from "@/components/project/project-grid"
@@ -12,18 +13,21 @@ import { getExperiencesAction } from "@/app/actions/experience"
 import { getEducationsAction } from "@/app/actions/education"
 import { getLinksAction } from "@/app/actions/link"
 import { getAllSystemSettingsAction } from "@/app/actions/system-setting"
+import { getTimelineMilestonesAction } from "@/app/actions/timeline-milestone"
 import { getLocale } from "@/lib/locale"
 import { getDictionary } from "@/i18n"
+import { toPublicTimelineMilestone } from "@/modules/portfolio/timeline/timeline-data"
 
 export const revalidate = 3600
 
 export default async function HomePage() {
-  const [projects, experiences, educations, links, systemSettings, locale] = await Promise.all([
+  const [projects, experiences, educations, links, systemSettings, timelineMilestones, locale] = await Promise.all([
     getProjectsAction(),
     getExperiencesAction(),
     getEducationsAction(),
     getLinksAction(),
     getAllSystemSettingsAction(),
+    getTimelineMilestonesAction(),
     getLocale(),
   ])
 
@@ -128,6 +132,7 @@ export default async function HomePage() {
         </div>
         <Experience experiences={experiences} locale={locale} />
         <Education educations={educations} locale={locale} />
+        <Timeline locale={locale} milestones={timelineMilestones.map(toPublicTimelineMilestone)} />
         <Contact links={links} locale={locale} />
       </div>
       <footer className="border-t border-line py-8 text-center text-xs text-muted-2 mt-12">

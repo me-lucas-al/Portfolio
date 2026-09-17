@@ -72,6 +72,7 @@ export interface UseAssistantChatOptions {
 export function useAssistantChat(
   dict: Dictionary["assistant"],
   locale: Locale,
+  phaseContext: string | null,
   options: UseAssistantChatOptions = {}
 ) {
   const { onModelMessage, onBeforeSend } = options
@@ -129,7 +130,7 @@ export function useAssistantChat(
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, history, locale }),
+        body: JSON.stringify({ message, history, locale, phaseContext: phaseContext ?? undefined }),
         signal,
       })
 
