@@ -1,8 +1,8 @@
-import prisma from "@portfolio/database";
-import { PrismaExperienceRepository } from "../repositories/prisma/prisma-experience-repository";
+import { db } from "@portfolio/database/src/client";
+import { DrizzleExperienceRepository } from "../repositories/drizzle/drizzle-experience-repository";
 import { ExperienceService } from "../services/experience";
 
 export function makeExperienceService() {
-  const experienceRepository = new PrismaExperienceRepository(prisma);
+  const experienceRepository = new DrizzleExperienceRepository(db);
   return new ExperienceService(experienceRepository);
 }

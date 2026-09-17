@@ -1,5 +1,5 @@
-import prisma from "@portfolio/database";
-import { PrismaAssistantAnswerRepository } from "../repositories/prisma/prisma-assistant-answer-repository";
+import { db } from "@portfolio/database/src/client";
+import { DrizzleAssistantAnswerRepository } from "../repositories/drizzle/drizzle-assistant-answer-repository";
 import { GeminiEmbeddingProvider } from "../providers/gemini-embedding-provider";
 import { AssistantAnswerService } from "../services/assistant-answer";
 
@@ -9,7 +9,7 @@ export function makeAssistantAnswerService() {
     throw new Error("GEMINI_API_KEY is not set");
   }
 
-  const assistantAnswerRepository = new PrismaAssistantAnswerRepository(prisma);
+  const assistantAnswerRepository = new DrizzleAssistantAnswerRepository(db);
   const embeddingProvider = new GeminiEmbeddingProvider(apiKey);
   return new AssistantAnswerService(assistantAnswerRepository, embeddingProvider);
 }

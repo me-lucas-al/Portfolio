@@ -1,8 +1,8 @@
-import prisma from "@portfolio/database";
-import { PrismaSystemSettingRepository } from "../repositories/prisma/prisma-system-setting-repository";
+import { db } from "@portfolio/database/src/client";
+import { DrizzleSystemSettingRepository } from "../repositories/drizzle/drizzle-system-setting-repository";
 import { SystemSettingService } from "../services/system-setting";
 
 export function makeSystemSettingService() {
-  const repo = new PrismaSystemSettingRepository(prisma);
+  const repo = new DrizzleSystemSettingRepository(db);
   return new SystemSettingService(repo);
 }

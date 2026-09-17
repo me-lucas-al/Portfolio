@@ -1,8 +1,8 @@
-import prisma from "@portfolio/database";
-import { PrismaSpeechCacheRepository } from "../repositories/prisma/prisma-speech-cache-repository";
+import { db } from "@portfolio/database/src/client";
+import { DrizzleSpeechCacheRepository } from "../repositories/drizzle/drizzle-speech-cache-repository";
 import { SpeechCacheService } from "../services/speech-cache";
 
 export function makeSpeechCacheService() {
-  const speechCacheRepository = new PrismaSpeechCacheRepository(prisma);
+  const speechCacheRepository = new DrizzleSpeechCacheRepository(db);
   return new SpeechCacheService(speechCacheRepository);
 }

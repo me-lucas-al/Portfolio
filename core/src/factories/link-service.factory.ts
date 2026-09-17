@@ -1,8 +1,8 @@
-import prisma from "@portfolio/database";
-import { PrismaLinkRepository } from "../repositories/prisma/prisma-link-repository";
+import { db } from "@portfolio/database/src/client";
+import { DrizzleLinkRepository } from "../repositories/drizzle/drizzle-link-repository";
 import { LinkService } from "../services/link";
 
 export function makeLinkService() {
-  const linkRepository = new PrismaLinkRepository(prisma);
+  const linkRepository = new DrizzleLinkRepository(db);
   return new LinkService(linkRepository);
 }

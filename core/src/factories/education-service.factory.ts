@@ -1,8 +1,8 @@
-import prisma from "@portfolio/database";
-import { PrismaEducationRepository } from "../repositories/prisma/prisma-education-repository";
+import { db } from "@portfolio/database/src/client";
+import { DrizzleEducationRepository } from "../repositories/drizzle/drizzle-education-repository";
 import { EducationService } from "../services/education";
 
 export function makeEducationService() {
-  const educationRepository = new PrismaEducationRepository(prisma);
+  const educationRepository = new DrizzleEducationRepository(db);
   return new EducationService(educationRepository);
 }
