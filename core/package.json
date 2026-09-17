@@ -21,13 +21,14 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@portfolio/packages": "workspace:*",
-    "@portfolio/database": "workspace:*",
     "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@google/genai": "^2.17.1",
+    "@portfolio/database": "workspace:*",
+    "@portfolio/packages": "workspace:*",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "bcryptjs": "^3.0.3",
+    "drizzle-orm": "^0.45.2",
     "jose": "^6.1.3",
     "swagger-ui-express": "^5.0.1",
     "yaml": "^2.8.2"
