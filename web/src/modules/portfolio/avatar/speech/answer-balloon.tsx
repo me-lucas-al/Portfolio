@@ -44,7 +44,7 @@ export function AnswerBalloon({ skipLabel, thinkingLabel }: AnswerBalloonProps) 
       aria-label={skipLabel}
       title={skipLabel}
       aria-live="polite"
-      className="w-full text-left text-sm leading-relaxed text-fg transition-opacity hover:opacity-80"
+      className="w-full min-w-0 break-words text-left text-sm leading-relaxed text-fg transition-opacity hover:opacity-80"
     >
       <TypedText fullText={typingSnapshot.fullText} isTyping={typingSnapshot.isTyping} />
     </button>

@@ -54,7 +54,7 @@ export function AssistantStage({
             {dict.title}
           </span>
 
-          <div ref={transcriptRef} className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
+          <div ref={transcriptRef} className="flex min-h-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto pr-1">
             {messages.length === 0 && !loading && <p className="text-sm text-fg-muted">{dict.subtitle}</p>}
 
             {messages.map((message) => {
@@ -62,7 +62,7 @@ export function AssistantStage({
 
               if (message.role === "user") {
                 return (
-                  <p key={message.id} className="text-sm font-medium text-brand">
+                  <p key={message.id} className="break-words text-sm font-medium text-brand">
                     <span aria-hidden="true">▸ </span>
                     {message.content}
                   </p>
