@@ -1,14 +1,16 @@
-import { GoogleGenAI, Content, Part, GenerateContentResponse, createPartFromFunctionResponse } from "@google/genai";
+import { GoogleGenAI, Content, Part, GenerateContentResponse, GenerateContentParameters, ThinkingLevel, createPartFromFunctionResponse } from "@google/genai";
 import { buildGeminiHttpOptions } from "@portfolio/core/src/providers/gemini-request-options";
 import { ASSISTANT_FUNCTION_DECLARATIONS, dispatchAssistantTool } from "./tools";
 import { buildSystemInstruction } from "./system-instruction";
 import { resolveModelChain } from "./model-chain";
-import { generateContentWithFallback } from "./generate-content-with-fallback";
+import { generateContentWithFallback, GenerateContentWithFallbackDeps } from "./generate-content-with-fallback";
 import type { Deadline } from "./deadline";
 
-const MAX_TOOL_ROUNDS = 2;
-const MAX_OUTPUT_TOKENS = 1400;
+const MAX_TOOL_ROUNDS = 3;
+const MAX_OUTPUT_TOKENS = 2048;
 const TEMPERATURE = 0.3;
+const THINKING_LEVEL = ThinkingLevel.LOW;
+const RETRY_THINKING_LEVEL = ThinkingLevel.MINIMAL;
 
 const GENERATION_BUDGET = {
   attempts: 3,
@@ -49,7 +51,7 @@ function toInitialContents(history: AssistantHistoryMessage[], message: string, 
   return contents;
 }
 
-function logGenerationMetric(round: number | "final", response: GenerateContentResponse): void {
+function logGenerationMetric(round: string, response: GenerateContentResponse): void {
   const model = response.modelVersion;
   const finishReason = response.candidates?.[0]?.finishReason;
   const thoughtsTokenCount = response.usageMetadata?.thoughtsTokenCount;
@@ -59,9 +61,34 @@ function logGenerationMetric(round: number | "final", response: GenerateContentR
   );
 }
 
+function isTruncatedEmpty(response: GenerateContentResponse): boolean {
+  const finishReason = response.candidates?.[0]?.finishReason;
+  return finishReason === "MAX_TOKENS" && !response.text?.trim();
+}
+
+async function generateWithThinkingRetry(
+  fallbackDeps: GenerateContentWithFallbackDeps,
+  params: Omit<GenerateContentParameters, "model">,
+  round: string,
+): Promise<GenerateContentResponse> {
+  const response = await generateContentWithFallback(fallbackDeps, params);
+  logGenerationMetric(round, response);
+
+  if (!isTruncatedEmpty(response)) return response;
+
+  const retryParams = {
+    ...params,
+    config: { ...params.config, thinkingConfig: { thinkingLevel: RETRY_THINKING_LEVEL } },
+  };
+  const retryResponse = await generateContentWithFallback(fallbackDeps, retryParams);
+  logGenerationMetric(`${round}-retry`, retryResponse);
+  return retryResponse;
+}
+
 export interface RunAssistantResult {
   text: string;
   toolCallRounds: number;
+  grounded: boolean;
 }
 
 export async function runAssistant(options: RunAssistantOptions): Promise<RunAssistantResult> {
@@ -74,19 +101,24 @@ export async function runAssistant(options: RunAssistantOptions): Promise<RunAss
     systemInstruction,
     temperature: TEMPERATURE,
     maxOutputTokens: MAX_OUTPUT_TOKENS,
+    thinkingConfig: { thinkingLevel: THINKING_LEVEL },
     abortSignal: options.deadline.signal,
   };
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
-    const response = await generateContentWithFallback(fallbackDeps, {
-      contents,
-      config: { ...baseConfig, tools: [{ functionDeclarations: ASSISTANT_FUNCTION_DECLARATIONS }] },
-    });
-    logGenerationMetric(round, response);
+    const response = await generateWithThinkingRetry(
+      fallbackDeps,
+      {
+        contents,
+        config: { ...baseConfig, tools: [{ functionDeclarations: ASSISTANT_FUNCTION_DECLARATIONS }] },
+      },
+      String(round),
+    );
 
     const functionCalls = response.functionCalls ?? [];
     if (functionCalls.length === 0) {
-      return { text: response.text?.trim() || FALLBACK_MESSAGE[options.locale], toolCallRounds: round };
+      const text = response.text?.trim();
+      return { text: text || FALLBACK_MESSAGE[options.locale], toolCallRounds: round, grounded: Boolean(text) };
     }
 
     const modelParts: Part[] = response.candidates?.[0]?.content?.parts ?? functionCalls.map((call) => ({ functionCall: call }));
@@ -102,14 +134,12 @@ export async function runAssistant(options: RunAssistantOptions): Promise<RunAss
     contents.push({ role: "user", parts: functionResponseParts });
   }
 
-  const finalResponse = await generateContentWithFallback(fallbackDeps, {
-    contents,
-    config: baseConfig,
-  });
-  logGenerationMetric("final", finalResponse);
+  const finalResponse = await generateWithThinkingRetry(fallbackDeps, { contents, config: baseConfig }, "final");
+  const finalText = finalResponse.text?.trim();
 
   return {
-    text: finalResponse.text?.trim() || FALLBACK_MESSAGE[options.locale],
+    text: finalText || FALLBACK_MESSAGE[options.locale],
     toolCallRounds: MAX_TOOL_ROUNDS,
+    grounded: Boolean(finalText),
   };
 }
