@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { text, toolCallRounds } = await runAssistant({
+    const { text, toolCallRounds, grounded } = await runAssistant({
       apiKey,
       message: parsed.data.message,
       history: parsed.data.history,
@@ -156,10 +156,11 @@ export async function POST(request: NextRequest) {
       status: 200,
       cacheHit: 0,
       toolCallRounds,
+      grounded: grounded ? 1 : 0,
       durationMs: generationDurationMs,
     });
 
-    if (!hasPhaseContext) {
+    if (!hasPhaseContext && grounded) {
       after(() =>
         answerCache
           .saveAnswer(parsed.data.message, text, parsed.data.locale, cacheLookupEmbedding)
